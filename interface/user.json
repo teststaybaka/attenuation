@@ -1,0 +1,33 @@
+[{
+  "message": {
+    "name": "User",
+    "fields": [{
+      "name": "id",
+      "type": "string"
+    }, {
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "email",
+      "type": "string"
+    }, {
+      "name": "hashedPassword",
+      "type": "string"
+    }, {
+      "name": "created",
+      "type": "number",
+      "comment": "timestamp in seconds"
+    }],
+    "datastore": {
+      "output": "../backend/data_model/user_model",
+      "key": "id",
+      "queries": [{
+        "name": "FindUser",
+        "filters": [{
+          "fieldName": "username",
+          "operator": "="
+        }]
+      }]
+    }
+  }
+}]
