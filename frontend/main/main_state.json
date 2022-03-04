@@ -1,0 +1,74 @@
+[{
+  "message": {
+    "name": "TopicState",
+    "fields": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "topic",
+      "type": "string"
+    }],
+    "isObservable": true
+  }
+}, {
+  "enum": {
+    "name": "UnlockedPage",
+    "values": [{
+      "name": "HOME",
+      "value": 1
+    }, {
+      "name": "TOPIC",
+      "value": 2
+    }, {
+      "name": "PROFILE",
+      "value": 3
+    }, {
+      "name": "MANAGE_TOPICS",
+      "value": 4
+    }, {
+      "name": "FOLLOWERS",
+      "value": 5
+    }, {
+      "name": "FOLLOWING",
+      "value": 6
+    }]
+  }
+}, {
+  "message": {
+    "name": "UnlockedState",
+    "fields": [{
+      "name": "page",
+      "type": "UnlockedPage"
+    }, {
+      "name": "topicState",
+      "type": "TopicState"
+    }],
+    "isObservable": true
+  }
+}, {
+  "enum": {
+    "name": "GatePage",
+    "values": [{
+      "name": "SIGN_IN",
+      "value": 1
+    }, {
+      "name": "SIGN_UP",
+      "value": 2
+    }, {
+      "name": "UNLOCKED",
+      "value": 3
+    }]
+  }
+}, {
+  "message": {
+    "name": "MainState",
+    "fields": [{
+      "name": "page",
+      "type": "GatePage"
+    }, {
+      "name": "unlockedState",
+      "type": "UnlockedState"
+    }],
+    "isObservable": true
+  }
+}]
