@@ -12,7 +12,7 @@
   }
 }, {
   "enum": {
-    "name": "UnlockedPage",
+    "name": "MainContentPage",
     "values": [{
       "name": "HOME",
       "value": 1
@@ -35,39 +35,13 @@
   }
 }, {
   "message": {
-    "name": "UnlockedState",
+    "name": "MainContentState",
     "fields": [{
       "name": "page",
-      "type": "UnlockedPage"
+      "type": "MainContentPage"
     }, {
       "name": "topicState",
       "type": "TopicState"
-    }],
-    "isObservable": true
-  }
-}, {
-  "enum": {
-    "name": "GatePage",
-    "values": [{
-      "name": "SIGN_IN",
-      "value": 1
-    }, {
-      "name": "SIGN_UP",
-      "value": 2
-    }, {
-      "name": "UNLOCKED",
-      "value": 3
-    }]
-  }
-}, {
-  "message": {
-    "name": "MainState",
-    "fields": [{
-      "name": "page",
-      "type": "GatePage"
-    }, {
-      "name": "unlockedState",
-      "type": "UnlockedState"
     }],
     "isObservable": true
   }
