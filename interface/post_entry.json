@@ -1,0 +1,19 @@
+[{
+  "message": {
+    "name": "PostEntry",
+    "fields": [{
+      "name": "id",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "content",
+      "type": "string"
+    }, {
+      "name": "created",
+      "type": "number",
+      "comments": "in seconds"
+    }]
+  }
+}]

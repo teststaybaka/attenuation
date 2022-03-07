@@ -50,4 +50,49 @@
     "request": "SignInRequest",
     "response": "SignInResponse"
   }
+}, {
+  "message": {
+    "name": "CreatePostRequest",
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }, {
+      "name": "postEntry",
+      "type": "PostEntry",
+      "import": "./post_entry"
+    }]
+  }
+}, {
+  "message": {
+    "name": "CreatePostResponse",
+    "fields": [{
+      "name": "postEntry",
+      "type": "PostEntry",
+      "import": "./post_entry"
+    }]
+  }
+}, {
+  "service": {
+    "name": "CreatePost",
+    "path": "/CreatePost",
+    "request": "CreatePostRequest",
+    "response": "CreatePostResponse"
+  }
+}, {
+  "message": {
+    "name": "ReadPostsRequest",
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }]
+  }
+}, {
+  "message": {
+    "name": "ReadPostsResponse",
+    "fields": [{
+      "name": "postEntries",
+      "type": "PostEntry",
+      "isArray": true
+    }]
+  }
 }]
