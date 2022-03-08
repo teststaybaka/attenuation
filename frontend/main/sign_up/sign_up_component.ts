@@ -1,10 +1,10 @@
 import EventEmitter = require("events");
-import { SIGN_UP } from "../../interface/service";
-import { FillButtonComponent } from "../common/button_component";
-import { ColorScheme } from "../common/color_scheme";
-import { LOCAL_SESSION_STORAGE } from "./local_session_storage";
-import { LOCALIZED_TEXT } from "./locales/localized_text";
-import { SERVICE_CLIENT } from "./service_client";
+import { SIGN_UP } from "../../../interface/service";
+import { FillButtonComponent } from "../../common/button_component";
+import { ColorScheme } from "../../common/color_scheme";
+import { LOCAL_SESSION_STORAGE } from "../local_session_storage";
+import { LOCALIZED_TEXT } from "../locales/localized_text";
+import { SERVICE_CLIENT } from "../service_client";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
 import { ServiceClient } from "@selfage/service_client";
