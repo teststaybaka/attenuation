@@ -20,4 +20,7 @@ export default class Text {
   get signUpButtonLabel() {
     return `Sign up`;
   }
+  get sendPostEntryButtonLabel() {
+    return `Send`;
+  }
 }
