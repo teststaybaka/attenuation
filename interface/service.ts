@@ -176,3 +176,10 @@ export let READ_POSTS_RESPONSE: MessageDescriptor<ReadPostsResponse> = {
     },
   ]
 };
+
+export let READ_POSTS: AuthedServiceDescriptor<ReadPostsRequest, ReadPostsResponse> = {
+  name: "ReadPosts",
+  path: "/ReadPosts",
+  requestDescriptor: READ_POSTS_REQUEST,
+  responseDescriptor: READ_POSTS_RESPONSE,
+};

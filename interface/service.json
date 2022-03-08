@@ -95,4 +95,11 @@
       "isArray": true
     }]
   }
+}, {
+  "service": {
+    "name": "ReadPosts",
+    "path": "/ReadPosts",
+    "request": "ReadPostsRequest",
+    "response": "ReadPostsResponse"
+  }
 }]
