@@ -1,6 +1,6 @@
 {
   "entries": [{
     "source": "./main/main",
-    "output": "./index"
+    "output": "./user/index"
   }]
 }
