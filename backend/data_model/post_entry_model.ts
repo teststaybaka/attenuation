@@ -4,7 +4,7 @@ import { PostEntry, POST_ENTRY } from '../../interface/post_entry';
 export let POST_ENTRY_MODEL: DatastoreModelDescriptor<PostEntry> = {
   name: "PostEntry",
   key: "id",
-  excludedIndexes: ["id", "userId", "content"],
+  excludedIndexes: ["id", "userId", "content", "upvotes"],
   valueDescriptor: POST_ENTRY,
 }
 

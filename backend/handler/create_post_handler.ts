@@ -31,6 +31,7 @@ export class CreatePostHandler
   ): Promise<CreatePostResponse> {
     let postEntry = request.postEntry;
     postEntry.userId = session.userId;
+    postEntry.upvotes = 0;
     postEntry.created = this.getNow() / 1000;
     postEntry.expiration = postEntry.created + 60 * 24 * 24;
     await this.datastoreClient.allocateKeys([postEntry], POST_ENTRY_MODEL);

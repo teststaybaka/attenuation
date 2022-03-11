@@ -11,6 +11,9 @@
       "name": "content",
       "type": "string"
     }, {
+      "name": "upvotes",
+      "type": "number"
+    }, {
       "name": "created",
       "type": "number",
       "comments": "in seconds"

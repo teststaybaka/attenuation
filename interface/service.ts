@@ -183,3 +183,44 @@ export let READ_POSTS: AuthedServiceDescriptor<ReadPostsRequest, ReadPostsRespon
   requestDescriptor: READ_POSTS_REQUEST,
   responseDescriptor: READ_POSTS_RESPONSE,
 };
+
+export interface UpvotePostRequest {
+  signedSession?: string,
+  postEntryId?: string,
+}
+
+export let UPVOTE_POST_REQUEST: MessageDescriptor<UpvotePostRequest> = {
+  name: 'UpvotePostRequest',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+    {
+      name: 'signedSession',
+      primitiveType: PrimitiveType.STRING,
+    },
+    {
+      name: 'postEntryId',
+      primitiveType: PrimitiveType.STRING,
+    },
+  ]
+};
+
+export interface UpvotePostResponse {
+}
+
+export let UPVOTE_POST_RESPONSE: MessageDescriptor<UpvotePostResponse> = {
+  name: 'UpvotePostResponse',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+  ]
+};
+
+export let UPVOTE_POST: AuthedServiceDescriptor<UpvotePostRequest, UpvotePostResponse> = {
+  name: "UpvotePost",
+  path: "/UpvotePost",
+  requestDescriptor: UPVOTE_POST_REQUEST,
+  responseDescriptor: UPVOTE_POST_RESPONSE,
+};

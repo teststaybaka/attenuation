@@ -102,4 +102,27 @@
     "request": "ReadPostsRequest",
     "response": "ReadPostsResponse"
   }
+}, {
+  "message": {
+    "name": "UpvotePostRequest",
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }, {
+      "name": "postEntryId",
+      "type": "string"
+    }]
+  }
+}, {
+  "message": {
+    "name": "UpvotePostResponse",
+    "fields": []
+  }
+}, {
+  "service": {
+    "name": "UpvotePost",
+    "path": "/UpvotePost",
+    "request": "UpvotePostRequest",
+    "response": "UpvotePostResponse"
+  }
 }]
