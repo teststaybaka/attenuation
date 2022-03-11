@@ -16,10 +16,13 @@ export class UpvotePostHandler
   public sessionDescriptor = USER_SESSION;
   public serviceDescriptor = UPVOTE_POST;
 
-  public constructor(private datastoreClient: DatastoreClient) {}
+  public constructor(
+    private datastoreClient: DatastoreClient,
+    private getNow: () => number
+  ) {}
 
   public static create(): UpvotePostHandler {
-    return new UpvotePostHandler(DatastoreClient.create());
+    return new UpvotePostHandler(DatastoreClient.create(), () => Date.now());
   }
 
   public async handle(
@@ -32,12 +35,16 @@ export class UpvotePostHandler
       POST_ENTRY_MODEL
     );
     if (postEntries.length < 1) {
-      throw newNotFoundError(
-        `${logContext}Post entry ${request.postEntryId} is not found.`
-      );
+      throw newNotFoundError(`Post entry ${request.postEntryId} is not found.`);
     }
     let postEntry = postEntries[0];
+    if (postEntry.expiration < this.getNow() / 1000) {
+      console.log(
+        `${logContext}Post entry ${request.postEntryId} has expired.`
+      );
+    }
     postEntry.upvotes += 1;
+    postEntry.expiration += 60;
     this.datastoreClient.save([postEntry], POST_ENTRY_MODEL, "update");
     return {};
   }
