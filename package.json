@@ -20,6 +20,7 @@
     "@types/express": "^4.17.13"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^2.19.0",
     "@selfage/closest_locale_finder": "^1.0.1",
     "@selfage/datastore_client": "^2.0.3",
     "@selfage/element": "^3.1.4",
