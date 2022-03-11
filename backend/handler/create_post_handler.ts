@@ -32,9 +32,9 @@ export class CreatePostHandler
     let postEntry = request.postEntry;
     postEntry.userId = session.userId;
     postEntry.created = this.getNow() / 1000;
+    postEntry.expiration = postEntry.created + 60 * 24 * 24;
     await this.datastoreClient.allocateKeys([postEntry], POST_ENTRY_MODEL);
     await this.datastoreClient.save([postEntry], POST_ENTRY_MODEL, "insert");
-
     return {
       postEntry,
     };
