@@ -5,6 +5,7 @@ export interface PostEntry {
   userId?: string,
   content?: string,
   created?: number,
+  expiration?: number,
 }
 
 export let POST_ENTRY: MessageDescriptor<PostEntry> = {
@@ -27,6 +28,10 @@ export let POST_ENTRY: MessageDescriptor<PostEntry> = {
     },
     {
       name: 'created',
+      primitiveType: PrimitiveType.NUMBER,
+    },
+    {
+      name: 'expiration',
       primitiveType: PrimitiveType.NUMBER,
     },
   ]

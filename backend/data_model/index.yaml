@@ -1,7 +1,1 @@
-indexes:
-  - kind: PostEntry
-    properties:
-      - name: userId
-        direction: asc
-      - name: created
-        direction: desc
+indexes: []

@@ -14,19 +14,25 @@
       "name": "created",
       "type": "number",
       "comments": "in seconds"
+    }, {
+      "name": "expiration",
+      "type": "number",
+      "comments": "in seconds"
     }],
     "datastore": {
       "output": "../backend/data_model/post_entry_model",
       "key": "id",
       "queries": [{
         "name": "Descend",
-        "filters": [{
-          "fieldName": "userId",
-          "operator": "="
-        }],
         "orderings": [{
           "fieldName": "created",
           "descending": true
+        }]
+      }, {
+        "name": "Expired",
+        "filters": [{
+          "fieldName": "expiration",
+          "operator": "<"
         }]
       }]
     }
