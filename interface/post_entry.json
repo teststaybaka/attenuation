@@ -2,7 +2,7 @@
   "message": {
     "name": "PostEntry",
     "fields": [{
-      "name": "id",
+      "name": "postEntryId",
       "type": "string"
     }, {
       "name": "userId",
@@ -14,30 +14,48 @@
       "name": "upvotes",
       "type": "number"
     }, {
-      "name": "created",
+      "name": "createdTimestamp",
       "type": "number",
       "comments": "in seconds"
     }, {
-      "name": "expiration",
+      "name": "expirationTimestamp",
       "type": "number",
       "comments": "in seconds"
-    }],
-    "datastore": {
-      "output": "../backend/data_model/post_entry_model",
-      "key": "id",
-      "queries": [{
-        "name": "Descend",
-        "orderings": [{
-          "fieldName": "created",
-          "descending": true
-        }]
-      }, {
-        "name": "Expired",
-        "filters": [{
-          "fieldName": "expiration",
-          "operator": "<"
-        }]
-      }]
-    }
+    }]
+  }
+}, {
+  "enum": {
+    "name": "Reaction",
+    "values": [{
+      "name": "unknown",
+      "value": 0
+    }, {
+      "name": "upvote",
+      "value": 1
+    }, {
+      "name": "downvote",
+      "value": 2
+    }, {
+      "name": "seen",
+      "value": 3
+    }]
+  }
+}, {
+  "message": {
+    "name": "PostEntrySeen",
+    "fields": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "seenUserId",
+      "type": "string"
+    }, {
+      "name": "reaction",
+      "type": "Reaction"
+    }, {
+      "name": "seenTimestamp",
+      "type": "number",
+      "comments": "in seconds"
+    }]
   }
 }]

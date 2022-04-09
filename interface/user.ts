@@ -1,12 +1,12 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 
 export interface User {
-  id?: string,
+  userId?: string,
   username?: string,
-  email?: string,
-  hashedPassword?: string,
+  passwordHashV1?: string,
+  googleUserId?: string,
 /* timestamp in seconds */
-  created?: number,
+  createdTimestamp?: number,
 }
 
 export let USER: MessageDescriptor<User> = {
@@ -16,7 +16,7 @@ export let USER: MessageDescriptor<User> = {
   },
   fields: [
     {
-      name: 'id',
+      name: 'userId',
       primitiveType: PrimitiveType.STRING,
     },
     {
@@ -24,15 +24,15 @@ export let USER: MessageDescriptor<User> = {
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'email',
+      name: 'passwordHashV1',
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'hashedPassword',
+      name: 'googleUserId',
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'created',
+      name: 'createdTimestamp',
       primitiveType: PrimitiveType.NUMBER,
     },
   ]

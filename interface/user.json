@@ -2,32 +2,21 @@
   "message": {
     "name": "User",
     "fields": [{
-      "name": "id",
+      "name": "userId",
       "type": "string"
     }, {
       "name": "username",
       "type": "string"
     }, {
-      "name": "email",
+      "name": "passwordHashV1",
       "type": "string"
     }, {
-      "name": "hashedPassword",
+      "name": "googleUserId",
       "type": "string"
     }, {
-      "name": "created",
+      "name": "createdTimestamp",
       "type": "number",
       "comment": "timestamp in seconds"
-    }],
-    "datastore": {
-      "output": "../backend/data_model/user_model",
-      "key": "id",
-      "queries": [{
-        "name": "FindUser",
-        "filters": [{
-          "fieldName": "username",
-          "operator": "="
-        }]
-      }]
-    }
+    }]
   }
 }]
