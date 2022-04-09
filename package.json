@@ -14,19 +14,21 @@
   "homepage": "https://github.com/teststaybaka/attenuation#readme",
   "datastoreIndex": "./backend/data_model/index",
   "devDependencies": {
-    "@selfage/bundler_cli": "^2.3.0",
+    "@selfage/bundler_cli": "^2.4.1",
     "@selfage/cli": "^2.6.0",
     "@selfage/tsconfig": "^1.0.7",
     "@types/express": "^4.17.13"
   },
   "dependencies": {
+    "@google-cloud/logging": "^9.8.2",
     "@google-cloud/pubsub": "^2.19.0",
+    "@google-cloud/spanner": "^5.18.0",
     "@selfage/closest_locale_finder": "^1.0.1",
     "@selfage/datastore_client": "^2.0.3",
     "@selfage/element": "^3.1.4",
     "@selfage/http_error": "^1.1.1",
     "@selfage/service_client": "^3.1.0",
-    "@selfage/service_handler": "^2.0.1",
+    "@selfage/service_handler": "^3.1.1",
     "@selfage/tabs": "^2.0.2",
     "@selfage/web_app_base_dir": "^1.0.0",
     "express": "^4.17.2",

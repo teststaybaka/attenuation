@@ -32,10 +32,7 @@ export class SignUpHandler
     );
   }
 
-  public async handle(
-    logContext: string,
-    request: SignUpRequest
-  ): Promise<SignUpResponse> {
+  public async handle(request: SignUpRequest): Promise<SignUpResponse> {
     let user: User = {
       username: request.username,
       hashedPassword: this.passwordHasher.hash(request.password),

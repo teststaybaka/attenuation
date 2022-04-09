@@ -33,10 +33,7 @@ export class SignInHandler
     );
   }
 
-  public async handle(
-    logContext: string,
-    request: SignInRequest
-  ): Promise<SignInResponse> {
+  public async handle(request: SignInRequest): Promise<SignInResponse> {
     let response = await this.datastoreClient.query(
       new FindUserQueryBuilder().equalToUsername(request.username).build()
     );
