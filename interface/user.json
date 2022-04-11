@@ -15,8 +15,7 @@
       "type": "string"
     }, {
       "name": "createdTimestamp",
-      "type": "number",
-      "comment": "timestamp in seconds"
+      "type": "number"
     }]
   }
 }]

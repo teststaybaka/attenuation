@@ -5,22 +5,40 @@
       "name": "postEntryId",
       "type": "string"
     }, {
+      "name": "repliedEntryId",
+      "type": "string"
+    }, {
       "name": "userId",
       "type": "string"
     }, {
       "name": "content",
       "type": "string"
     }, {
+      "name": "views",
+      "type": "number"
+    }, {
       "name": "upvotes",
       "type": "number"
     }, {
       "name": "createdTimestamp",
-      "type": "number",
-      "comments": "in seconds"
+      "type": "number"
     }, {
       "name": "expirationTimestamp",
-      "type": "number",
-      "comments": "in seconds"
+      "type": "number"
+    }]
+  }
+}, {
+  "message": {
+    "name": "PostEntryViewed",
+    "fields": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "viewerId",
+      "type": "string"
+    }, {
+      "name": "viewTimestamp",
+      "type": "number"
     }]
   }
 }, {
@@ -35,27 +53,23 @@
     }, {
       "name": "downvote",
       "value": 2
-    }, {
-      "name": "seen",
-      "value": 3
     }]
   }
 }, {
   "message": {
-    "name": "PostEntrySeen",
+    "name": "PostEntryReacted",
     "fields": [{
       "name": "postEntryId",
       "type": "string"
     }, {
-      "name": "seenUserId",
+      "name": "reactorId",
       "type": "string"
     }, {
       "name": "reaction",
       "type": "Reaction"
     }, {
-      "name": "seenTimestamp",
-      "type": "number",
-      "comments": "in seconds"
+      "name": "reactedTimestamp",
+      "type": "number"
     }]
   }
 }]

@@ -5,7 +5,6 @@ export interface User {
   username?: string,
   passwordHashV1?: string,
   googleUserId?: string,
-/* timestamp in seconds */
   createdTimestamp?: number,
 }
 

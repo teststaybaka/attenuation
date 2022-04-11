@@ -1,6 +1,6 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 import { UnauthedServiceDescriptor, AuthedServiceDescriptor } from '@selfage/service_descriptor';
-import { PostEntry, POST_ENTRY } from './post_entry';
+import { PostEntry, POST_ENTRY, Reaction, REACTION } from './post_entry';
 
 export interface SignUpRequest {
   username?: string,
@@ -96,7 +96,7 @@ export let SIGN_IN: UnauthedServiceDescriptor<SignInRequest, SignInResponse> = {
 
 export interface CreatePostRequest {
   signedSession?: string,
-  postEntry?: PostEntry,
+  content?: string,
 }
 
 export let CREATE_POST_REQUEST: MessageDescriptor<CreatePostRequest> = {
@@ -110,8 +110,8 @@ export let CREATE_POST_REQUEST: MessageDescriptor<CreatePostRequest> = {
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'postEntry',
-      messageDescriptor: POST_ENTRY,
+      name: 'content',
+      primitiveType: PrimitiveType.STRING,
     },
   ]
 };
@@ -184,13 +184,14 @@ export let READ_POSTS: AuthedServiceDescriptor<ReadPostsRequest, ReadPostsRespon
   responseDescriptor: READ_POSTS_RESPONSE,
 };
 
-export interface UpvotePostRequest {
+export interface ReactToPostRequest {
   signedSession?: string,
   postEntryId?: string,
+  reaction?: Reaction,
 }
 
-export let UPVOTE_POST_REQUEST: MessageDescriptor<UpvotePostRequest> = {
-  name: 'UpvotePostRequest',
+export let REACT_TO_POST_REQUEST: MessageDescriptor<ReactToPostRequest> = {
+  name: 'ReactToPostRequest',
   factoryFn: () => {
     return new Object();
   },
@@ -203,14 +204,18 @@ export let UPVOTE_POST_REQUEST: MessageDescriptor<UpvotePostRequest> = {
       name: 'postEntryId',
       primitiveType: PrimitiveType.STRING,
     },
+    {
+      name: 'reaction',
+      enumDescriptor: REACTION,
+    },
   ]
 };
 
-export interface UpvotePostResponse {
+export interface ReactToPostResponse {
 }
 
-export let UPVOTE_POST_RESPONSE: MessageDescriptor<UpvotePostResponse> = {
-  name: 'UpvotePostResponse',
+export let REACT_TO_POST_RESPONSE: MessageDescriptor<ReactToPostResponse> = {
+  name: 'ReactToPostResponse',
   factoryFn: () => {
     return new Object();
   },
@@ -218,9 +223,9 @@ export let UPVOTE_POST_RESPONSE: MessageDescriptor<UpvotePostResponse> = {
   ]
 };
 
-export let UPVOTE_POST: AuthedServiceDescriptor<UpvotePostRequest, UpvotePostResponse> = {
-  name: "UpvotePost",
-  path: "/UpvotePost",
-  requestDescriptor: UPVOTE_POST_REQUEST,
-  responseDescriptor: UPVOTE_POST_RESPONSE,
+export let REACT_TO_POST: AuthedServiceDescriptor<ReactToPostRequest, ReactToPostResponse> = {
+  name: "ReactToPost",
+  path: "/ReactToPost",
+  requestDescriptor: REACT_TO_POST_REQUEST,
+  responseDescriptor: REACT_TO_POST_RESPONSE,
 };

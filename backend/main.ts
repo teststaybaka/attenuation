@@ -9,6 +9,9 @@ import { HandlerRegister } from "@selfage/service_handler/handler_register";
 import { SessionSigner } from "@selfage/service_handler/session_signer";
 import "../environment";
 import "@selfage/web_app_base_dir";
+import { CreatePostHandler } from "./handler/create_post_handler";
+import { ReadPostsHandler } from "./handler/read_posts_handler";
+import { UpvotePostHandler } from "./handler/react_to_post_handler";
 
 async function main(): Promise<void> {
   if (globalThis.ENVIRONMENT === "local") {
@@ -30,6 +33,9 @@ function registerHandlers(sessionKey: string): express.Express {
   register.registerCorsAllowedPreflightHandler();
   register.registerUnauthed(SignInHandler.create());
   register.registerUnauthed(SignUpHandler.create());
+  register.registerAuthed(CreatePostHandler.create());
+  register.registerAuthed(ReadPostsHandler.create());
+  register.registerAuthed(UpvotePostHandler.create());
   app.get("/*", (req, res, next) => {
     LOGGER.info(`Received GET request at ${req.originalUrl}.`);
     next();

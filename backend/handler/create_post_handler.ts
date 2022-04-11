@@ -1,12 +1,14 @@
+import { PostEntry } from "../../interface/post_entry";
 import {
   CREATE_POST,
   CreatePostRequest,
   CreatePostResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
-import { POST_ENTRY_MODEL } from "../data_model/post_entry_model";
-import { DatastoreClient } from "@selfage/datastore_client";
+import { POST_ENTRY_TABLE } from "../common/spanner_tables";
+import { Table } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
+import { v4 as uuidv4 } from "uuid";
 
 export class CreatePostHandler
   implements
@@ -16,26 +18,40 @@ export class CreatePostHandler
   public serviceDescriptor = CREATE_POST;
 
   public constructor(
-    private datastoreClient: DatastoreClient,
+    private postEntryTable: Table,
     private getNow: () => number
   ) {}
 
   public static create(): CreatePostHandler {
-    return new CreatePostHandler(DatastoreClient.create(), () => Date.now());
+    return new CreatePostHandler(POST_ENTRY_TABLE, () => Date.now());
   }
 
   public async handle(
-    logContext: string,
     request: CreatePostRequest,
     session: UserSession
   ): Promise<CreatePostResponse> {
-    let postEntry = request.postEntry;
-    postEntry.userId = session.userId;
-    postEntry.upvotes = 0;
-    postEntry.created = this.getNow() / 1000;
-    postEntry.expiration = postEntry.created + 60 * 24 * 24;
-    await this.datastoreClient.allocateKeys([postEntry], POST_ENTRY_MODEL);
-    await this.datastoreClient.save([postEntry], POST_ENTRY_MODEL, "insert");
+    let createdTimestamp = this.getNow();
+    let expirationTimestamp = createdTimestamp + 60 * 24 * 24 * 1000;
+    let postEntry: PostEntry = {
+      postEntryId: uuidv4(),
+      userId: session.userId,
+      content: request.content,
+      views: 0,
+      upvotes: 0,
+      createdTimestamp,
+      expirationTimestamp,
+    };
+    await this.postEntryTable.insert([
+      {
+        postEntryId: postEntry.postEntryId,
+        userId: postEntry.userId,
+        content: postEntry.content,
+        views: "0",
+        upvotes: "0",
+        createdTimestamp: new Date(createdTimestamp).toISOString(),
+        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
+      },
+    ]);
     return {
       postEntry,
     };

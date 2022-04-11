@@ -57,9 +57,8 @@
       "name": "signedSession",
       "type": "string"
     }, {
-      "name": "postEntry",
-      "type": "PostEntry",
-      "import": "./post_entry"
+      "name": "content",
+      "type": "string"
     }]
   }
 }, {
@@ -104,25 +103,29 @@
   }
 }, {
   "message": {
-    "name": "UpvotePostRequest",
+    "name": "ReactToPostRequest",
     "fields": [{
       "name": "signedSession",
       "type": "string"
     }, {
       "name": "postEntryId",
       "type": "string"
+    }, {
+      "name": "reaction",
+      "type": "Reaction",
+      "import": "./post_entry"
     }]
   }
 }, {
   "message": {
-    "name": "UpvotePostResponse",
+    "name": "ReactToPostResponse",
     "fields": []
   }
 }, {
   "service": {
-    "name": "UpvotePost",
-    "path": "/UpvotePost",
-    "request": "UpvotePostRequest",
-    "response": "UpvotePostResponse"
+    "name": "ReactToPost",
+    "path": "/ReactToPost",
+    "request": "ReactToPostRequest",
+    "response": "ReactToPostResponse"
   }
 }]
