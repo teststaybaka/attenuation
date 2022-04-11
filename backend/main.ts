@@ -11,7 +11,7 @@ import "../environment";
 import "@selfage/web_app_base_dir";
 import { CreatePostHandler } from "./handler/create_post_handler";
 import { ReadPostsHandler } from "./handler/read_posts_handler";
-import { UpvotePostHandler } from "./handler/react_to_post_handler";
+import { ReactToPostHandler } from "./handler/react_to_post_handler";
 
 async function main(): Promise<void> {
   if (globalThis.ENVIRONMENT === "local") {
@@ -35,7 +35,8 @@ function registerHandlers(sessionKey: string): express.Express {
   register.registerUnauthed(SignUpHandler.create());
   register.registerAuthed(CreatePostHandler.create());
   register.registerAuthed(ReadPostsHandler.create());
-  register.registerAuthed(UpvotePostHandler.create());
+  register.registerAuthed(ReactToPostHandler.create());
+
   app.get("/*", (req, res, next) => {
     LOGGER.info(`Received GET request at ${req.originalUrl}.`);
     next();

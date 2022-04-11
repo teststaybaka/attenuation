@@ -1,22 +1,37 @@
 import { Reaction } from "../../interface/post_entry";
 
+interface PostEntryCounter {
+  views: number,
+  upvotes: number,
+}
+
 export class PostEntriesCountCache {
-  private views = new Map<string, number>();
-  private reacts = new Map<string, Map<Reaction, number>>();
+  public counters = new Map<string, PostEntryCounter>();
 
   public incView(postEntryId: string): void {
-    let entryViews = this.views.get(postEntryId) ?? 0;
-    this.views.set(postEntryId, entryViews + 1);
+    let counter = this.getCounter(postEntryId);
+    counter.views += 1;
+  }
+
+  private getCounter(postEntryId: string): PostEntryCounter {
+    let counter = this.counters.get(postEntryId);
+    if (!counter) {
+      counter = {
+        views: 0,
+        upvotes: 0,
+      };
+      this.counters.set(postEntryId, counter);
+    }
+    return counter;
   }
 
   public incReact(postEntryId: string, reaction: Reaction): void {
-    let entryReaction = this.reacts.get(postEntryId);
-    if (!entryReaction) {
-      entryReaction = new Map<Reaction, number>();
-      this.reacts.set(postEntryId, entryReaction);
+    let counter = this.counters.get(postEntryId);
+    switch (reaction) {
+      case Reaction.UPVOTE:
+        counter.upvotes += 1;
+        break;
     }
-    let reactionCount = entryReaction.get(reaction) ?? 0;
-    entryReaction.set(reaction, reactionCount + 1);
   }
 }
 

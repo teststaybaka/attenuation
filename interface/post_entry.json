@@ -45,14 +45,11 @@
   "enum": {
     "name": "Reaction",
     "values": [{
-      "name": "unknown",
+      "name": "UNKNOWN",
       "value": 0
     }, {
-      "name": "upvote",
+      "name": "UPVOTE",
       "value": 1
-    }, {
-      "name": "downvote",
-      "value": 2
     }]
   }
 }, {

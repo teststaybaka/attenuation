@@ -80,25 +80,20 @@ export let POST_ENTRY_VIEWED: MessageDescriptor<PostEntryViewed> = {
 };
 
 export enum Reaction {
-  unknown = 0,
-  upvote = 1,
-  downvote = 2,
+  UNKNOWN = 0,
+  UPVOTE = 1,
 }
 
 export let REACTION: EnumDescriptor<Reaction> = {
   name: 'Reaction',
   values: [
     {
-      name: 'unknown',
+      name: 'UNKNOWN',
       value: 0,
     },
     {
-      name: 'upvote',
+      name: 'UPVOTE',
       value: 1,
-    },
-    {
-      name: 'downvote',
-      value: 2,
     },
   ]
 }

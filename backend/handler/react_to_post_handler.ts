@@ -12,7 +12,7 @@ import { POST_ENTRY_REACTED_TABLE } from "../common/spanner_tables";
 import { Table } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
 
-export class UpvotePostHandler
+export class ReactToPostHandler
   implements
     AuthedServiceHandler<ReactToPostRequest, ReactToPostResponse, UserSession>
 {
@@ -24,8 +24,8 @@ export class UpvotePostHandler
     private postEntriesCountCache: PostEntriesCountCache
   ) {}
 
-  public static create(): UpvotePostHandler {
-    return new UpvotePostHandler(
+  public static create(): ReactToPostHandler {
+    return new ReactToPostHandler(
       POST_ENTRY_REACTED_TABLE,
       POST_ENTRIES_COUNT_CACHE
     );
