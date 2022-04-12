@@ -14,7 +14,15 @@ import "@selfage/web_app_base_dir";
 import { PostEntryCountFlusher } from "./reducer/post_entry_count_flusher";
 
 async function main(): Promise<void> {
-  if (globalThis.ENVIRONMENT === "local" || globalThis.ENVIRONMENT === "dev") {
+  if (globalThis.ENVIRONMENT === "dev") {
+    let app = registerHandlers("randomlocalkey");
+    let httpServer = http.createServer(app);
+    httpServer.listen(80, () => {
+      LOGGER.info("Http server started at 80.");
+    });
+
+    PostEntryCountFlusher.create();
+  } else if (globalThis.ENVIRONMENT === "local") {
     let app = registerHandlers("randomlocalkey");
     let httpServer = http.createServer(app);
     httpServer.listen(8080, () => {
