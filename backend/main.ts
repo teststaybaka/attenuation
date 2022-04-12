@@ -17,7 +17,7 @@ async function main(): Promise<void> {
     let app = registerHandlers("randomlocalkey");
     let httpServer = http.createServer(app);
     httpServer.listen(8080, () => {
-      console.log("Http server started at 8080.");
+      LOGGER.info("Http server started at 8080.");
     });
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
