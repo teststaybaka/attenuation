@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@google-cloud/logging": "^9.8.2",
-    "@google-cloud/pubsub": "^2.19.0",
     "@google-cloud/spanner": "^5.18.0",
     "@selfage/closest_locale_finder": "^1.0.1",
     "@selfage/element": "^3.1.4",
@@ -30,6 +29,7 @@
     "@selfage/message": "^2.2.0",
     "@selfage/service_client": "^3.1.0",
     "@selfage/service_handler": "^3.1.1",
+    "@selfage/stateful_navigator": "^1.2.0",
     "@selfage/tabs": "^2.0.2",
     "@selfage/web_app_base_dir": "^1.0.0",
     "express": "^4.17.2",

@@ -78,7 +78,7 @@ export class MainContentComponent extends EventEmitter {
 
   private async send(): Promise<void> {
     let response = await this.serivceClient.fetchAuthed(
-      { postEntry: { content: this.postEntryContentInput.value } },
+      { content: this.postEntryContentInput.value },
       CREATE_POST
     );
     this.postEntryList.appendChild(

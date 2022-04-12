@@ -1,5 +1,8 @@
 import { ORIGIN_LOCAL } from "../../constants";
+import { MainComponent } from "./main_component";
+import { MAIN_CONTENT_STATE } from "./main_content/main_content_state";
 import { SERVICE_CLIENT } from "./service_client";
+import { createLoaderAndUpdater } from "@selfage/stateful_navigator";
 import "../../environment";
 
 async function main(): Promise<void> {
@@ -16,6 +19,13 @@ async function main(): Promise<void> {
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
   }
+
+  let queryParamKeyForState = "q";
+  let [loader] = createLoaderAndUpdater(
+    MAIN_CONTENT_STATE,
+    queryParamKeyForState
+  );
+  document.body.appendChild(MainComponent.create(loader.state).body);
 }
 
 main();

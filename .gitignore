@@ -1,4 +1,7 @@
 node_modules/
+bin/
 *.d.ts
 *.js
+*.html
+*.gz
 *.tsbuildinfo
