@@ -11,6 +11,7 @@ import { HandlerRegister } from "@selfage/service_handler/handler_register";
 import { SessionSigner } from "@selfage/service_handler/session_signer";
 import "../environment";
 import "@selfage/web_app_base_dir";
+import { PostEntryCountFlusher } from "./reducer/post_entry_count_flusher";
 
 async function main(): Promise<void> {
   if (globalThis.ENVIRONMENT === "local" || globalThis.ENVIRONMENT === "dev") {
@@ -19,6 +20,8 @@ async function main(): Promise<void> {
     httpServer.listen(8080, () => {
       LOGGER.info("Http server started at 8080.");
     });
+
+    PostEntryCountFlusher.create();    
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
   }
