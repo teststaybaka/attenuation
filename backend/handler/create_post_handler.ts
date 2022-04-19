@@ -5,7 +5,7 @@ import {
   CreatePostResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
-import { POST_ENTRY_TABLE } from "../common/spanner_tables";
+import { POST_ENTRY_TABLE } from "../common/spanner_database";
 import { Table } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
 import { v4 as uuidv4 } from "uuid";

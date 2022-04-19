@@ -2,8 +2,7 @@ import {
   POST_ENTRIES_COUNT_CACHE,
   PostEntriesCountCache,
 } from "../common/post_entries_count_cache";
-import { POSTS_DATABASE } from "../common/spanner_database";
-import { POST_ENTRY_TABLE } from "../common/spanner_tables";
+import { POSTS_DATABASE, POST_ENTRY_TABLE } from "../common/spanner_database";
 import { Database, Table } from "@google-cloud/spanner";
 
 export class PostEntryCountFlusher {

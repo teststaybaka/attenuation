@@ -8,7 +8,7 @@ import {
   POST_ENTRIES_COUNT_CACHE,
   PostEntriesCountCache,
 } from "../common/post_entries_count_cache";
-import { POST_ENTRY_REACTED_TABLE } from "../common/spanner_tables";
+import { POST_ENTRY_REACTED_TABLE } from "../common/spanner_database";
 import { Table } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
 
