@@ -34,6 +34,7 @@
     "@selfage/web_app_base_dir": "^1.0.0",
     "express": "^4.17.3",
     "express-static-gzip": "^2.1.2",
+    "redis": "^4.0.6",
     "uuid": "^8.3.2"
   }
 }

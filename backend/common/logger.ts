@@ -1,5 +1,4 @@
 import { Log, Logging } from "@google-cloud/logging";
-import "../environment";
 
 export interface Logger {
   info(str: string): void;
@@ -7,13 +6,13 @@ export interface Logger {
   error(str: string): void;
 }
 
+export let LOGGER: Logger;
+
 export class RemoteLogger implements Logger {
   public constructor(private internalLogger: Log) {}
-
-  public static create(): RemoteLogger {
-    return new RemoteLogger(new Logging().log("backend"));
+  public static create(): void {
+    LOGGER = new RemoteLogger(new Logging().log("backend"));
   }
-
   public info(str: string): void {
     this.internalLogger.info(this.internalLogger.entry(str));
   }
@@ -26,6 +25,9 @@ export class RemoteLogger implements Logger {
 }
 
 export class ConsoleLogger implements Logger {
+  public static create(): void {
+    LOGGER = new ConsoleLogger();
+  }
   public info(str: string): void {
     console.log(str);
   }
@@ -36,11 +38,3 @@ export class ConsoleLogger implements Logger {
     console.error(str);
   }
 }
-
-export let LOGGER: Logger = (function () {
-  if (globalThis.ENVIRONMENT === "prod" || globalThis.ENVIRONMENT === "dev") {
-    return RemoteLogger.create();
-  } else {
-    return new ConsoleLogger();
-  }
-})();
