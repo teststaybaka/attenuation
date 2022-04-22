@@ -57,6 +57,7 @@ export class PostEntryCounterFlusher {
       .sMembers(shard)
       .del(shard)
       .exec()) as any;
+    // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
       keys: postEntryIds,
