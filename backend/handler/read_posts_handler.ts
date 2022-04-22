@@ -10,9 +10,9 @@ import {
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
 import {
-  POST_ENTRIES_COUNT_CACHE,
-  PostEntriesCountCache,
-} from "../common/post_entries_count_cache";
+  POST_ENTRIES_REDIS_COUNTER,
+  PostEntriesRedisCounter,
+} from "../common/post_entry_redis_counter";
 import {
   POSTS_DATABASE,
   POST_ENTRY_VIEWED_TABLE,
@@ -31,7 +31,7 @@ export class ReadPostsHandler
   public constructor(
     private postsDatabase: Database,
     private postEntryViewedTable: Table,
-    private postEntriesCountCache: PostEntriesCountCache,
+    private postEntriesRedisCounter: PostEntriesRedisCounter,
     private getNow: () => number
   ) {}
 
@@ -39,7 +39,7 @@ export class ReadPostsHandler
     return new ReadPostsHandler(
       POSTS_DATABASE,
       POST_ENTRY_VIEWED_TABLE,
-      POST_ENTRIES_COUNT_CACHE,
+      POST_ENTRIES_REDIS_COUNTER,
       () => Date.now()
     );
   }
@@ -64,7 +64,7 @@ export class ReadPostsHandler
         postEntryId: postEntry.postEntryId,
         viewerId: session.userId,
       });
-      this.postEntriesCountCache.incView(postEntry.postEntryId);
+      this.postEntriesRedisCounter.incView(postEntry.postEntryId);
       if (postEntry.expirationTimestamp >= this.getNow()) {
         postEntries.push(postEntry);
       }

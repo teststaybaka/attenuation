@@ -2,13 +2,14 @@ import express = require("express");
 import expressStaticGzip = require("express-static-gzip");
 import http = require("http");
 import { ConsoleLogger, LOGGER, RemoteLogger } from "./common/logger";
+import { PostEntryRedisCounter } from "./common/post_entry_redis_counter";
 import { createRedisClients } from "./common/redis_clients";
 import { CreatePostHandler } from "./handler/create_post_handler";
 import { ReactToPostHandler } from "./handler/react_to_post_handler";
 import { ReadPostsHandler } from "./handler/read_posts_handler";
 import { SignInHandler } from "./handler/sign_in_handler";
 import { SignUpHandler } from "./handler/sign_up_handler";
-import { PostEntryCountFlusher } from "./reducer/post_entry_count_flusher";
+import { PostEntryCounterFlusher } from "./reducer/post_entry_count_flusher";
 import { HandlerRegister } from "@selfage/service_handler/handler_register";
 import { SessionSigner } from "@selfage/service_handler/session_signer";
 import "../environment";
@@ -18,25 +19,25 @@ async function main(): Promise<void> {
   if (globalThis.ENVIRONMENT === "dev") {
     RemoteLogger.create();
     createRedisClients(`10.150.129.188:6379`);
+    PostEntryRedisCounter.create();
+    PostEntryCounterFlusher.create();
 
     let app = registerHandlers("randomlocalkey");
     let httpServer = http.createServer(app);
     httpServer.listen(80, () => {
       LOGGER.info("Http server started at 80.");
     });
-
-    PostEntryCountFlusher.create();
   } else if (globalThis.ENVIRONMENT === "local") {
     ConsoleLogger.create();
     createRedisClients(`10.150.129.188:6379`);
+    PostEntryRedisCounter.create();
+    PostEntryCounterFlusher.create();
 
     let app = registerHandlers("randomlocalkey");
     let httpServer = http.createServer(app);
     httpServer.listen(8080, () => {
       LOGGER.info("Http server started at 8080.");
     });
-
-    PostEntryCountFlusher.create();
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
   }

@@ -5,9 +5,9 @@ import {
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
 import {
-  POST_ENTRIES_COUNT_CACHE,
-  PostEntriesCountCache,
-} from "../common/post_entries_count_cache";
+  POST_ENTRIES_REDIS_COUNTER,
+  PostEntriesRedisCounter,
+} from "../common/post_entry_redis_counter";
 import { POST_ENTRY_REACTED_TABLE } from "../common/spanner_database";
 import { Table } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
@@ -21,13 +21,13 @@ export class ReactToPostHandler
 
   public constructor(
     private postEntryReactedTable: Table,
-    private postEntriesCountCache: PostEntriesCountCache
+    private postEntriesRedisCounter: PostEntriesRedisCounter
   ) {}
 
   public static create(): ReactToPostHandler {
     return new ReactToPostHandler(
       POST_ENTRY_REACTED_TABLE,
-      POST_ENTRIES_COUNT_CACHE
+      POST_ENTRIES_REDIS_COUNTER
     );
   }
 
@@ -44,7 +44,10 @@ export class ReactToPostHandler
       },
     ]);
 
-    this.postEntriesCountCache.incReact(request.postEntryId, request.reaction);
+    this.postEntriesRedisCounter.incReact(
+      request.postEntryId,
+      request.reaction
+    );
     return {};
   }
 }

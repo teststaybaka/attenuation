@@ -1,24 +1,24 @@
-import {
-  POST_ENTRIES_COUNT_CACHE,
-  PostEntriesCountCache,
-} from "../common/post_entries_count_cache";
+import redis = require("redis");
+import { Reaction } from "../../interface/post_entry";
+import { REDIS_CLIENTS } from "../common/redis_clients";
 import { POSTS_DATABASE, POST_ENTRY_TABLE } from "../common/spanner_database";
 import { Database, Table } from "@google-cloud/spanner";
 
-export class PostEntryCountFlusher {
+export class PostEntryCounterFlusher {
+  private static SHARDS_PER_REDIS_CLIENT = ["1", "2"];
   private static CYCLE_INTERVAL = 1000; // ms
 
   public constructor(
-    private postEntriesCountCache: PostEntriesCountCache,
+    private redisClients: Array<[string, redis.RedisClientType]>,
     private postsDatabase: Database,
     private postEntriesTable: Table,
     private setTimeout: (handler: TimerHandler, timeout: number) => void,
     private getNow: () => number
   ) {}
 
-  public static create(): PostEntryCountFlusher {
-    return new PostEntryCountFlusher(
-      POST_ENTRIES_COUNT_CACHE,
+  public static create(): PostEntryCounterFlusher {
+    return new PostEntryCounterFlusher(
+      REDIS_CLIENTS,
       POSTS_DATABASE,
       POST_ENTRY_TABLE,
       setTimeout,
@@ -28,39 +28,62 @@ export class PostEntryCountFlusher {
 
   public init(): this {
     this.setTimeout(
-      () => this.flushCount(),
-      PostEntryCountFlusher.CYCLE_INTERVAL
+      () => this.flushCounters(),
+      PostEntryCounterFlusher.CYCLE_INTERVAL
     );
     return this;
   }
 
-  private async flushCount(): Promise<void> {
-    let counters = this.postEntriesCountCache.counters;
-    this.postEntriesCountCache.counters = new Map();
-    let keys = new Array<string>();
-    for (let postEntrId of counters.keys()) {
-      keys.push(postEntrId);
+  private async flushCounters(): Promise<void> {
+    let flushPromises = new Array<Promise<void>>();
+    for (let [url, redisClient] of this.redisClients) {
+      for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
+        flushPromises.push(this.flushOneShard(redisClient, shard));
+      }
     }
+    await Promise.all(flushPromises);
+    this.setTimeout(
+      () => this.flushCounters(),
+      PostEntryCounterFlusher.CYCLE_INTERVAL
+    );
+  }
+
+  private async flushOneShard(
+    redisClient: redis.RedisClientType,
+    shard: string
+  ): Promise<void> {
+    let [postEntryIds] = (await redisClient
+      .multi()
+      .sMembers(shard)
+      .del(shard)
+      .exec()) as any;
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
-      keys,
+      keys: postEntryIds,
     });
     let rowsToUpdate = new Array<object>();
     let idsToDelete = new Array<string>();
     for (let row of rows) {
       let jsoned = row.toJSON();
-      let counter = counters.get(jsoned.postEntryId);
-      let views = jsoned.views + counter.views;
-      let upvotes = jsoned.upvotes + counter.upvotes;
+      let [[viewCountStr], [upvoteCountStr]] = (await redisClient
+        .multi()
+        .hGet(jsoned.postEntryId, "views")
+        .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
+        .del(jsoned.postEntryId)
+        .exec()) as any;
+      let viewCount = Number.parseInt(viewCountStr);
+      let upvoteCount = Number.parseInt(upvoteCountStr);
+      let totalViews = jsoned.views + viewCount;
+      let totalUpvotes = jsoned.upvotes + upvoteCount;
       let expirationTimestamp =
         Date.parse(jsoned.expirationTimestamp) -
-        counter.views * 60 * 1000 +
-        counter.upvotes * 2 * 60 * 1000;
+        viewCount * 60 * 1000 +
+        upvoteCount * 2 * 60 * 1000;
       if (expirationTimestamp > this.getNow()) {
         rowsToUpdate.push({
           postEntryId: jsoned.postEntryId,
-          views: `${views}`,
-          upvotes: `${upvotes}`,
+          views: `${totalViews}`,
+          upvotes: `${totalUpvotes}`,
           expirationTimestamp: new Date(expirationTimestamp).toISOString(),
         });
       } else {
@@ -99,10 +122,5 @@ export class PostEntryCountFlusher {
         },
       }),
     ]);
-
-    this.setTimeout(
-      () => this.flushCount(),
-      PostEntryCountFlusher.CYCLE_INTERVAL
-    );
   }
 }
