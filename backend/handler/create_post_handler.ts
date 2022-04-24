@@ -31,7 +31,7 @@ export class CreatePostHandler
     session: UserSession
   ): Promise<CreatePostResponse> {
     let createdTimestamp = this.getNow();
-    let expirationTimestamp = createdTimestamp + 60 * 24 * 24 * 1000;
+    let expirationTimestamp = createdTimestamp + 24 * 60 * 60 * 1000;
     let postEntry: PostEntry = {
       postEntryId: uuidv4(),
       userId: session.userId,
