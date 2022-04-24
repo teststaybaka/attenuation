@@ -49,7 +49,7 @@ export class ReadPostsHandler
     session: UserSession
   ): Promise<ReadPostsResponse> {
     let [rows] = await this.postsDatabase.run(
-      `SELECT pe.* FROM PostEntry as pe JOIN PostEntryViewed as pev ON pe.postEntryId = pev.postEntryId WHERE pev.postEntryId = NULL ORDER BY pe.createdTimestamp DESC LIMIT 30`
+      `SELECT pe.* FROM PostEntry as pe JOIN PostEntryViewed as pev ON pe.postEntryId = pev.postEntryId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30`
     );
 
     let postEntries = new Array<PostEntry>();

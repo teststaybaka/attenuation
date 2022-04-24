@@ -6,6 +6,6 @@ export class PasswordHasher {
   }
 
   public hash(password: string): string {
-    return crypto.createHash('sha256').update(password).digest('base64');
+    return crypto.createHash("sha256").update(password).digest("base64");
   }
 }
