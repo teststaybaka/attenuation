@@ -87,7 +87,7 @@ export class ReadPostsHandler
       jsoned.expirationTimestamp = Date.parse(jsoned.expirationTimestamp);
 
       let postEntry = parseMessage(jsoned, POST_ENTRY);
-      LOGGER.info(`row:${JSON.stringify(jsoned)}; postEntry:${postEntry}`);
+      LOGGER.info(`row:${JSON.stringify(jsoned)}; postEntry:${JSON.stringify(postEntry)}`);
       postEntriesViewed.push({
         postEntryId: postEntry.postEntryId,
         viewerId: session.userId,
@@ -97,6 +97,7 @@ export class ReadPostsHandler
         postEntries.push(postEntry);
       }
     }
+    LOGGER.info(`postEntries:${JSON.stringify(postEntries)}`);
 
     this.postEntryViewedTable.insert(
       postEntriesViewed.map((viewed) => {
