@@ -22,8 +22,9 @@ async function main(): Promise<void> {
     PostEntryRedisCounter.create();
     PostEntryCounterFlusher.create();
 
-    let app = registerWebApps();
+    let app = express();
     registerHandlers(app, "randomlocalkey");
+    registerWebApps(app);
     let httpServer = http.createServer(app);
     httpServer.listen(80, () => {
       LOGGER.info("Http server started at 80.");
@@ -31,7 +32,8 @@ async function main(): Promise<void> {
   } else if (globalThis.ENVIRONMENT === "local") {
     ConsoleLogger.create();
 
-    let app = registerWebApps();
+    let app = express();
+    registerWebApps(app);
     let httpServer = http.createServer(app);
     httpServer.listen(8080, () => {
       LOGGER.info("Http server started at 8080.");
@@ -52,8 +54,7 @@ function registerHandlers(app: express.Express, sessionKey: string): void {
   register.registerAuthed(ReactToPostHandler.create());
 }
 
-function registerWebApps(): express.Express {
-  let app = express();
+function registerWebApps(app: express.Express): void {
   app.get("/*", (req, res, next) => {
     LOGGER.info(`Received GET request at ${req.originalUrl}.`);
     next();
@@ -67,7 +68,6 @@ function registerWebApps(): express.Express {
       },
     })
   );
-  return app;
 }
 
 main();
