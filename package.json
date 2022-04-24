@@ -36,5 +36,8 @@
     "express-static-gzip": "^2.1.2",
     "redis": "^4.0.6",
     "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "local": "bundage bws backend/main backend/main_bin -ec frontend/entries.json -e environment_local; node backend/main_bin"
   }
 }

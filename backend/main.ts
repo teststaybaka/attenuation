@@ -22,18 +22,16 @@ async function main(): Promise<void> {
     PostEntryRedisCounter.create();
     PostEntryCounterFlusher.create();
 
-    let app = registerHandlers("randomlocalkey");
+    let app = registerWebApps();
+    registerHandlers(app, "randomlocalkey");
     let httpServer = http.createServer(app);
     httpServer.listen(80, () => {
       LOGGER.info("Http server started at 80.");
     });
   } else if (globalThis.ENVIRONMENT === "local") {
     ConsoleLogger.create();
-    createRedisClients(`10.150.129.188:6379`);
-    PostEntryRedisCounter.create();
-    PostEntryCounterFlusher.create();
 
-    let app = registerHandlers("randomlocalkey");
+    let app = registerWebApps();
     let httpServer = http.createServer(app);
     httpServer.listen(8080, () => {
       LOGGER.info("Http server started at 8080.");
@@ -43,9 +41,8 @@ async function main(): Promise<void> {
   }
 }
 
-function registerHandlers(sessionKey: string): express.Express {
+function registerHandlers(app: express.Express, sessionKey: string): void {
   SessionSigner.SECRET_KEY = sessionKey;
-  let app = express();
   let register = new HandlerRegister(app, LOGGER);
   register.registerCorsAllowedPreflightHandler();
   register.registerUnauthed(SignInHandler.create());
@@ -53,7 +50,10 @@ function registerHandlers(sessionKey: string): express.Express {
   register.registerAuthed(CreatePostHandler.create());
   register.registerAuthed(ReadPostsHandler.create());
   register.registerAuthed(ReactToPostHandler.create());
+}
 
+function registerWebApps(): express.Express {
+  let app = express();
   app.get("/*", (req, res, next) => {
     LOGGER.info(`Received GET request at ${req.originalUrl}.`);
     next();

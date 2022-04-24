@@ -1,4 +1,4 @@
-import { ORIGIN_DEV, ORIGIN_LOCAL } from "../../constants";
+import { ORIGIN_DEV } from "../../constants";
 import { MainComponent } from "./main_component";
 import { MAIN_CONTENT_STATE } from "./main_content/main_content_state";
 import { SERVICE_CLIENT } from "./service_client";
@@ -17,7 +17,7 @@ async function main(): Promise<void> {
   if (globalThis.ENVIRONMENT === "dev") {
     SERVICE_CLIENT.origin = ORIGIN_DEV;
   } else if (globalThis.ENVIRONMENT === "local") {
-    SERVICE_CLIENT.origin = ORIGIN_LOCAL;
+    SERVICE_CLIENT.origin = ORIGIN_DEV;
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
   }
