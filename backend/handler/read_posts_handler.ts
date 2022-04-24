@@ -97,7 +97,6 @@ export class ReadPostsHandler
         postEntries.push(postEntry);
       }
     }
-    LOGGER.info(`postEntries:${JSON.stringify(postEntries)}`);
 
     this.postEntryViewedTable.insert(
       postEntriesViewed.map((viewed) => {
@@ -108,6 +107,7 @@ export class ReadPostsHandler
       })
     );
 
+    LOGGER.info(`postEntries:${JSON.stringify(postEntries)}`);
     return {
       postEntries,
     };

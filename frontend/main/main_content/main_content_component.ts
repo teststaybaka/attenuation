@@ -81,6 +81,7 @@ export class MainContentComponent extends EventEmitter {
       { content: this.postEntryContentInput.value },
       CREATE_POST
     );
+    console.log(JSON.stringify(response));
     this.postEntryList.appendChild(
       this.postEntryComponentFactoryFn(response.postEntry).body
     );

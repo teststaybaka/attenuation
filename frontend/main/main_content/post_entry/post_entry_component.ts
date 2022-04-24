@@ -8,6 +8,7 @@ export class PostEntryComponent {
     this.body = E.div(
       {
         class: "post-entry",
+        style: "font-size: 1.6rem;"
       },
       E.text(postEntry.content)
     );
