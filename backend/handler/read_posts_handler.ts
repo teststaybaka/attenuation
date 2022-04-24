@@ -48,9 +48,35 @@ export class ReadPostsHandler
     request: ReadPostsRequest,
     session: UserSession
   ): Promise<ReadPostsResponse> {
-    let [rows] = await this.postsDatabase.run(
-      `SELECT pe.* FROM PostEntry as pe JOIN PostEntryViewed as pev ON pe.postEntryId = pev.postEntryId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30`
-    );
+    let [rows] = await this.postsDatabase.run({
+      sql: `SELECT
+              pe.*
+            FROM
+              PostEntry AS pe
+            LEFT JOIN (
+              SELECT
+                postEntryId
+              FROM
+                PostEntryViewed
+              WHERE
+                viewerId = @viewerId) AS pev
+            ON
+              pe.postEntryId = pev.postEntryId
+            WHERE
+              pev.postEntryId IS NULL
+            ORDER BY
+              pe.createdTimestamp DESC
+            LIMIT
+              30`,
+      params: {
+        viewerId: session.userId,
+      },
+      types: {
+        viewerId: {
+          type: "string",
+        },
+      },
+    });
 
     let postEntries = new Array<PostEntry>();
     let postEntriesViewed = new Array<PostEntryViewed>();
