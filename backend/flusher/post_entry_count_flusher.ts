@@ -1,5 +1,6 @@
 import redis = require("redis");
 import { Reaction } from "../../interface/post_entry";
+import { LOGGER } from "../common/logger";
 import { REDIS_CLIENTS } from "../common/redis_clients";
 import { POSTS_DATABASE, POST_ENTRY_TABLE } from "../common/spanner_database";
 import { Database, Table } from "@google-cloud/spanner";
@@ -36,9 +37,9 @@ export class PostEntryCounterFlusher {
 
   private async flushCounters(): Promise<void> {
     let flushPromises = new Array<Promise<void>>();
-    for (let [url, redisClient] of this.redisClients) {
+    for (let clientPair of this.redisClients) {
       for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
-        flushPromises.push(this.flushOneShard(redisClient, shard));
+        flushPromises.push(this.flushOneShard(clientPair[1], shard));
       }
     }
     await Promise.all(flushPromises);
@@ -57,6 +58,7 @@ export class PostEntryCounterFlusher {
       .sMembers(shard)
       .del(shard)
       .exec()) as any;
+    LOGGER.info(`postEntryIds: ${JSON.stringify(postEntryIds)}`);
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
@@ -72,6 +74,11 @@ export class PostEntryCounterFlusher {
         .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
         .del(jsoned.postEntryId)
         .exec()) as any;
+      LOGGER.info(
+        `viewCountStr: ${JSON.stringify(
+          viewCountStr
+        )}; upvoteCountStr: ${JSON.stringify(upvoteCountStr)}`
+      );
       let viewCount = Number.parseInt(viewCountStr);
       let upvoteCount = Number.parseInt(upvoteCountStr);
       let totalViews = jsoned.views + viewCount;

@@ -5,8 +5,8 @@ import {
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
 import {
-  POST_ENTRIES_REDIS_COUNTER,
-  PostEntriesRedisCounter,
+  POST_ENTRY_REDIS_COUNTER,
+  PostEntryRedisCounter,
 } from "../common/post_entry_redis_counter";
 import { POST_ENTRY_REACTED_TABLE } from "../common/spanner_database";
 import { Table } from "@google-cloud/spanner";
@@ -21,13 +21,13 @@ export class ReactToPostHandler
 
   public constructor(
     private postEntryReactedTable: Table,
-    private postEntriesRedisCounter: PostEntriesRedisCounter
+    private postEntryRedisCounter: PostEntryRedisCounter
   ) {}
 
   public static create(): ReactToPostHandler {
     return new ReactToPostHandler(
       POST_ENTRY_REACTED_TABLE,
-      POST_ENTRIES_REDIS_COUNTER
+      POST_ENTRY_REDIS_COUNTER
     );
   }
 
@@ -44,7 +44,7 @@ export class ReactToPostHandler
       },
     ]);
 
-    this.postEntriesRedisCounter.incReact(
+    this.postEntryRedisCounter.incReact(
       request.postEntryId,
       request.reaction
     );
