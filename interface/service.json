@@ -91,7 +91,8 @@
     "fields": [{
       "name": "postEntries",
       "type": "PostEntry",
-      "isArray": true
+      "isArray": true,
+      "import": "./post_entry"
     }]
   }
 }, {

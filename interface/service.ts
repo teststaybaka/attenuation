@@ -169,7 +169,7 @@ export let READ_POSTS_RESPONSE: MessageDescriptor<ReadPostsResponse> = {
   fields: [
     {
       name: 'postEntries',
-      enumDescriptor: POST_ENTRY,
+      messageDescriptor: POST_ENTRY,
       arrayFactoryFn: () => {
         return new Array<any>();
       },
