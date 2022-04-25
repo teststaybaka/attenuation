@@ -46,7 +46,7 @@ export class PostEntryCounterFlusher {
     try {
       await Promise.all(flushPromises);
     } catch (e) {
-      LOGGER.error(e);
+      LOGGER.error(e.stack);
     }
     this.setTimeout(
       () => this.flushCounters(),
