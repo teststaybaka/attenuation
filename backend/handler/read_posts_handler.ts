@@ -20,7 +20,6 @@ import {
 import { Database, Table } from "@google-cloud/spanner";
 import { parseMessage } from "@selfage/message/parser";
 import { AuthedServiceHandler } from "@selfage/service_handler";
-import { LOGGER } from "../common/logger";
 
 export class ReadPostsHandler
   implements
@@ -87,7 +86,6 @@ export class ReadPostsHandler
       jsoned.expirationTimestamp = Date.parse(jsoned.expirationTimestamp);
 
       let postEntry = parseMessage(jsoned, POST_ENTRY);
-      LOGGER.info(`row:${JSON.stringify(jsoned)}; postEntry:${JSON.stringify(postEntry)}`);
       postEntriesViewed.push({
         postEntryId: postEntry.postEntryId,
         viewerId: session.userId,
@@ -107,7 +105,6 @@ export class ReadPostsHandler
       })
     );
 
-    LOGGER.info(`postEntries:${JSON.stringify(postEntries)}`);
     return {
       postEntries,
     };

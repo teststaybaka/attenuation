@@ -81,7 +81,6 @@ export class MainContentComponent extends EventEmitter {
       { content: this.postEntryContentInput.value },
       CREATE_POST
     );
-    console.log(JSON.stringify(response));
     this.postEntryList.appendChild(
       this.postEntryComponentFactoryFn(response.postEntry).body
     );
@@ -89,7 +88,6 @@ export class MainContentComponent extends EventEmitter {
 
   public async show(): Promise<void> {
     let response = await this.serivceClient.fetchAuthed({}, READ_POSTS);
-    console.log(JSON.stringify(response));
     for (let postEntry of response.postEntries) {
       this.postEntryList.appendChild(
         this.postEntryComponentFactoryFn(postEntry).body
