@@ -48,10 +48,10 @@ export class PostEntryCounterFlusher {
     } catch (e) {
       LOGGER.error(e.stack);
     }
-    this.setTimeout(
-      () => this.flushCounters(),
-      PostEntryCounterFlusher.CYCLE_INTERVAL
-    );
+    // this.setTimeout(
+    //   () => this.flushCounters(),
+    //   PostEntryCounterFlusher.CYCLE_INTERVAL
+    // );
   }
 
   private async flushOneShard(
