@@ -36,13 +36,18 @@ export class PostEntryCounterFlusher {
   }
 
   private async flushCounters(): Promise<void> {
+    LOGGER.info('flushing');
     let flushPromises = new Array<Promise<void>>();
     for (let clientPair of this.redisClients) {
       for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
         flushPromises.push(this.flushOneShard(clientPair[1], shard));
       }
     }
-    await Promise.all(flushPromises);
+    try {
+      await Promise.all(flushPromises);
+    } catch (e) {
+      LOGGER.error(e);
+    }
     this.setTimeout(
       () => this.flushCounters(),
       PostEntryCounterFlusher.CYCLE_INTERVAL
@@ -58,7 +63,7 @@ export class PostEntryCounterFlusher {
       .sMembers(shard)
       .del(shard)
       .exec()) as any;
-    LOGGER.info(`postEntryIds: ${JSON.stringify(postEntryIds)}`);
+    LOGGER.info(`shard:${shard};postEntryIds: ${JSON.stringify(postEntryIds)}`);
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
