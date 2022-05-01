@@ -83,8 +83,8 @@ export class PostEntryCounterFlusher {
         )
       )
     );
-    LOGGER.info(JSON.stringify(`rowsToUpdate:${rowsToUpdate}`));
-    LOGGER.info(JSON.stringify(`idsToDelete:${idsToDelete}`));
+    LOGGER.info(JSON.stringify(`rowsToUpdate:${JSON.stringify(rowsToUpdate)}`));
+    LOGGER.info(JSON.stringify(`idsToDelete:${JSON.stringify(idsToDelete)}`));
 
     this.postsDatabase.runTransaction(async (err, transaction) => {
       if (err) {
@@ -161,7 +161,11 @@ export class PostEntryCounterFlusher {
           },
         }),
       ]);
-      await transaction.commit();
+      try {      
+        await transaction.commit();
+      } catch (e) {
+        LOGGER.info(e.stack);
+      }
     });
   }
 
@@ -187,15 +191,7 @@ export class PostEntryCounterFlusher {
       Date.parse(jsoned.expirationTimestamp) -
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
-    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${upvoteCount},${expirationTimestamp},${this.getNow()}`);
     if (expirationTimestamp > this.getNow()) {
-      let toBeUpdated = {
-        postEntryId: jsoned.postEntryId,
-        views: totalViews,
-        upvotes: totalUpvotes,
-        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
-      };
-      LOGGER.info(`toBeUpdated:${JSON.stringify(toBeUpdated)}`);
       rowsToUpdate.push({
         postEntryId: jsoned.postEntryId,
         views: totalViews,
@@ -203,8 +199,7 @@ export class PostEntryCounterFlusher {
         expirationTimestamp: new Date(expirationTimestamp).toISOString(),
       });
     } else {
-      // idsToDelete.push(jsoned.postEntryId);
-      // LOGGER.info(`toBeDeleted:${jsoned.postEntryId}`);
+      idsToDelete.push(jsoned.postEntryId);
     }
   }
 }
