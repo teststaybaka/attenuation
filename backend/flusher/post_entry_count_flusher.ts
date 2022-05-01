@@ -180,6 +180,7 @@ export class PostEntryCounterFlusher {
       .del(jsoned.postEntryId)
       .exec()) as any;
     let viewCount = viewCountStr ?? Number.parseInt(viewCountStr);
+    LOGGER.info(`upvoteCountStr:${upvoteCountStr}`);
     let upvoteCount = upvoteCountStr ?? Number.parseInt(upvoteCountStr);
     let totalViews = jsoned.views + viewCount;
     let totalUpvotes = jsoned.upvotes + upvoteCount;
@@ -187,7 +188,7 @@ export class PostEntryCounterFlusher {
       Date.parse(jsoned.expirationTimestamp) -
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
-    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${expirationTimestamp},${this.getNow()}`);      
+    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${upvoteCount},${expirationTimestamp},${this.getNow()}`);      
     if (expirationTimestamp > this.getNow()) {
       let toBeUpdated = {
         postEntryId: jsoned.postEntryId,
