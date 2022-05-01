@@ -83,6 +83,8 @@ export class PostEntryCounterFlusher {
         )
       )
     );
+    LOGGER.info(JSON.stringify(`rowsToUpdate:${rowsToUpdate}`));
+    LOGGER.info(JSON.stringify(`idsToDelete:${idsToDelete}`));
 
     this.postsDatabase.runTransaction(async (err, transaction) => {
       if (err) {
@@ -90,8 +92,6 @@ export class PostEntryCounterFlusher {
         return;
       }
 
-      LOGGER.info(JSON.stringify(`rowsToUpdate:${rowsToUpdate}`));
-      LOGGER.info(JSON.stringify(`idsToDelete:${idsToDelete}`));
       await Promise.all([
         rowsToUpdate.map((row) => {
           transaction.runUpdate({
@@ -154,7 +154,7 @@ export class PostEntryCounterFlusher {
   private async calculateToUpdateOrDelete(
     row: Row | Json,
     redisClient: redis.RedisClientType,
-    rowsToUpdate: Array<object>,
+    rowsToUpdate: Array<any>,
     idsToDelete: Array<string>
   ): Promise<void> {
     let jsoned = row.toJSON();
@@ -174,6 +174,13 @@ export class PostEntryCounterFlusher {
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
     if (expirationTimestamp > this.getNow()) {
+      let toBeUpdated = {
+        postEntryId: jsoned.postEntryId,
+        views: totalViews,
+        upvotes: totalUpvotes,
+        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
+      };
+      LOGGER.info(`toBeUpdated:${JSON.stringify(toBeUpdated)}`);
       rowsToUpdate.push({
         postEntryId: jsoned.postEntryId,
         views: totalViews,
@@ -182,6 +189,7 @@ export class PostEntryCounterFlusher {
       });
     } else {
       idsToDelete.push(jsoned.postEntryId);
+      LOGGER.info(`toBeDeleted:${jsoned.postEntryId}`);
     }
   }
 }
