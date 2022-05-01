@@ -93,11 +93,19 @@ export class PostEntryCounterFlusher {
       }
 
       await transaction.runUpdate({
-        sql: `UPDATE PostEntry SET views = 1, upvotes = 2 WHERE postEntryId = @postEntryId`,
+        sql: `UPDATE PostEntry SET views = @views, upvotes = @upvotes WHERE postEntryId = @postEntryId`,
         params: {
+          views: 1,
+          upvotes: 1,
           postEntryId: "af11d5c1-2693-47f3-9582-fbfb8d7b23dc",
         },
         types: {
+          views: {
+            type: "int64"
+          },
+          upvotes: {
+            type: "int64"
+          },
           postEntryId: {
             type: "string",
           },
