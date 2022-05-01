@@ -36,7 +36,7 @@ export class PostEntryCounterFlusher {
   }
 
   private async flushCounters(): Promise<void> {
-    LOGGER.info('flushing');
+    LOGGER.info("flushing");
     let flushPromises = new Array<Promise<void>>();
     for (let clientPair of this.redisClients) {
       for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
@@ -73,17 +73,15 @@ export class PostEntryCounterFlusher {
     let idsToDelete = new Array<string>();
     for (let row of rows) {
       let jsoned = row.toJSON();
-      let [[viewCountStr], [upvoteCountStr]] = (await redisClient
+      LOGGER.info(`row: ${JSON.stringify(row)}`);
+      let res = (await redisClient
         .multi()
         .hGet(jsoned.postEntryId, "views")
         .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
         .del(jsoned.postEntryId)
         .exec()) as any;
-      LOGGER.info(
-        `viewCountStr: ${JSON.stringify(
-          viewCountStr
-        )}; upvoteCountStr: ${JSON.stringify(upvoteCountStr)}`
-      );
+      LOGGER.info(`res: ${JSON.stringify(res)}`);
+      let [viewCountStr, upvoteCountStr] = res;
       let viewCount = Number.parseInt(viewCountStr);
       let upvoteCount = Number.parseInt(upvoteCountStr);
       let totalViews = jsoned.views + viewCount;
