@@ -179,16 +179,15 @@ export class PostEntryCounterFlusher {
       .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
       .del(jsoned.postEntryId)
       .exec()) as any;
-    let viewCount = viewCountStr ?? Number.parseInt(viewCountStr);
-    LOGGER.info(`upvoteCountStr:${upvoteCountStr}`);
-    let upvoteCount = upvoteCountStr ?? Number.parseInt(upvoteCountStr);
+    let viewCount = Number.parseInt(viewCountStr ?? "0");
+    let upvoteCount = Number.parseInt(upvoteCountStr ?? "0");
     let totalViews = jsoned.views + viewCount;
     let totalUpvotes = jsoned.upvotes + upvoteCount;
     let expirationTimestamp =
       Date.parse(jsoned.expirationTimestamp) -
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
-    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${upvoteCount},${expirationTimestamp},${this.getNow()}`);      
+    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${upvoteCount},${expirationTimestamp},${this.getNow()}`);
     if (expirationTimestamp > this.getNow()) {
       let toBeUpdated = {
         postEntryId: jsoned.postEntryId,
