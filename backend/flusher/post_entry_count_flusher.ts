@@ -4,6 +4,8 @@ import { LOGGER } from "../common/logger";
 import { REDIS_CLIENTS } from "../common/redis_clients";
 import { POSTS_DATABASE, POST_ENTRY_TABLE } from "../common/spanner_database";
 import { Database, Table } from "@google-cloud/spanner";
+import { Json } from "@google-cloud/spanner/build/src/codec";
+import { Row } from "@google-cloud/spanner/build/src/partial-result-stream";
 
 export class PostEntryCounterFlusher {
   private static SHARDS_PER_REDIS_CLIENT = ["1", "2"];
@@ -71,36 +73,16 @@ export class PostEntryCounterFlusher {
     });
     let rowsToUpdate = new Array<object>();
     let idsToDelete = new Array<string>();
-    for (let row of rows) {
-      let jsoned = row.toJSON();
-      LOGGER.info(`row: ${JSON.stringify(row)}`);
-      let res = (await redisClient
-        .multi()
-        .hGet(jsoned.postEntryId, "views")
-        .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
-        .del(jsoned.postEntryId)
-        .exec()) as any;
-      LOGGER.info(`res: ${JSON.stringify(res)}`);
-      let [viewCountStr, upvoteCountStr] = res;
-      let viewCount = Number.parseInt(viewCountStr);
-      let upvoteCount = Number.parseInt(upvoteCountStr);
-      let totalViews = jsoned.views + viewCount;
-      let totalUpvotes = jsoned.upvotes + upvoteCount;
-      let expirationTimestamp =
-        Date.parse(jsoned.expirationTimestamp) -
-        viewCount * 60 * 1000 +
-        upvoteCount * 2 * 60 * 1000;
-      if (expirationTimestamp > this.getNow()) {
-        rowsToUpdate.push({
-          postEntryId: jsoned.postEntryId,
-          views: `${totalViews}`,
-          upvotes: `${totalUpvotes}`,
-          expirationTimestamp: new Date(expirationTimestamp).toISOString(),
-        });
-      } else {
-        idsToDelete.push(jsoned.postEntryId);
-      }
-    }
+    await Promise.all(
+      rows.map((row) =>
+        this.calculateToUpdateOrDelete(
+          row,
+          redisClient,
+          rowsToUpdate,
+          idsToDelete
+        )
+      )
+    );
     await Promise.all([
       this.postEntriesTable.update(rowsToUpdate),
       this.postEntriesTable.deleteRows(idsToDelete),
@@ -133,5 +115,39 @@ export class PostEntryCounterFlusher {
         },
       }),
     ]);
+  }
+
+  private async calculateToUpdateOrDelete(
+    row: Row | Json,
+    redisClient: redis.RedisClientType,
+    rowsToUpdate: Array<object>,
+    idsToDelete: Array<string>
+  ): Promise<void> {
+    let jsoned = row.toJSON();
+    LOGGER.info(`row: ${JSON.stringify(row)}`);
+    let [viewCountStr, upvoteCountStr] = (await redisClient
+      .multi()
+      .hGet(jsoned.postEntryId, "views")
+      .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
+      .del(jsoned.postEntryId)
+      .exec()) as any;
+    let viewCount = viewCountStr ?? Number.parseInt(viewCountStr);
+    let upvoteCount = upvoteCountStr ?? Number.parseInt(upvoteCountStr);
+    let totalViews = jsoned.views + viewCount;
+    let totalUpvotes = jsoned.upvotes + upvoteCount;
+    let expirationTimestamp =
+      Date.parse(jsoned.expirationTimestamp) -
+      viewCount * 60 * 1000 +
+      upvoteCount * 2 * 60 * 1000;
+    if (expirationTimestamp > this.getNow()) {
+      rowsToUpdate.push({
+        postEntryId: jsoned.postEntryId,
+        views: `${totalViews}`,
+        upvotes: `${totalUpvotes}`,
+        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
+      });
+    } else {
+      idsToDelete.push(jsoned.postEntryId);
+    }
   }
 }
