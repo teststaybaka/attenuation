@@ -92,6 +92,7 @@ export class PostEntryCounterFlusher {
         return;
       }
 
+      LOGGER.info(JSON.stringify(`rowsToUpdate2:${JSON.stringify(rowsToUpdate)}`));
       await Promise.all([
         ...rowsToUpdate.map((row) => {
           LOGGER.info(`updateRow:${JSON.stringify(row)}`);
