@@ -146,48 +146,48 @@ export class PostEntryCounterFlusher {
             },
           });
         }),
-        transaction.runUpdate({
-          sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
-          params: {
-            postEntryIds: idsToDelete,
-          },
-          types: {
-            postEntryIds: {
-              type: "array",
-              child: {
-                type: "string",
-              },
-            },
-          },
-        }),
-        transaction.runUpdate({
-          sql: `DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)`,
-          params: {
-            postEntryIds: idsToDelete,
-          },
-          types: {
-            postEntryIds: {
-              type: "array",
-              child: {
-                type: "string",
-              },
-            },
-          },
-        }),
-        transaction.runUpdate({
-          sql: `DELETE FROM PostEntryReacted WHERE postEntryId in UNNEST(@postEntryIds)`,
-          params: {
-            postEntryIds: idsToDelete,
-          },
-          types: {
-            postEntryIds: {
-              type: "array",
-              child: {
-                type: "string",
-              },
-            },
-          },
-        }),
+        // transaction.runUpdate({
+        //   sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
+        //   params: {
+        //     postEntryIds: idsToDelete,
+        //   },
+        //   types: {
+        //     postEntryIds: {
+        //       type: "array",
+        //       child: {
+        //         type: "string",
+        //       },
+        //     },
+        //   },
+        // }),
+        // transaction.runUpdate({
+        //   sql: `DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)`,
+        //   params: {
+        //     postEntryIds: idsToDelete,
+        //   },
+        //   types: {
+        //     postEntryIds: {
+        //       type: "array",
+        //       child: {
+        //         type: "string",
+        //       },
+        //     },
+        //   },
+        // }),
+        // transaction.runUpdate({
+        //   sql: `DELETE FROM PostEntryReacted WHERE postEntryId in UNNEST(@postEntryIds)`,
+        //   params: {
+        //     postEntryIds: idsToDelete,
+        //   },
+        //   types: {
+        //     postEntryIds: {
+        //       type: "array",
+        //       child: {
+        //         type: "string",
+        //       },
+        //     },
+        //   },
+        // }),
       ]);
       try {
         let response = await transaction.commit();
