@@ -92,7 +92,7 @@ export class PostEntryCounterFlusher {
         return;
       }
 
-      await transaction.runUpdate({
+      transaction.runUpdate({
         sql: `UPDATE PostEntry SET views = @views, upvotes = @upvotes, expirationTimestamp = @expirationTimestamp WHERE postEntryId = @postEntryId`,
         params: {
           views: 1,
