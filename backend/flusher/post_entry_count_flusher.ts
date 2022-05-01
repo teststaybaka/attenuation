@@ -119,6 +119,20 @@ export class PostEntryCounterFlusher {
           });
         }),
         transaction.runUpdate({
+          sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
+          params: {
+            postEntryIds: idsToDelete,
+          },
+          types: {
+            postEntryIds: {
+              type: "array",
+              child: {
+                type: "string",
+              },
+            },
+          },
+        }),
+        transaction.runUpdate({
           sql: `DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)`,
           params: {
             postEntryIds: idsToDelete,
@@ -173,6 +187,7 @@ export class PostEntryCounterFlusher {
       Date.parse(jsoned.expirationTimestamp) -
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
+    LOGGER.info(`timestamps:${Date.parse(jsoned.expirationTimestamp)},${viewCount},${expirationTimestamp},${this.getNow()}`);      
     if (expirationTimestamp > this.getNow()) {
       let toBeUpdated = {
         postEntryId: jsoned.postEntryId,
