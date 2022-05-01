@@ -90,7 +90,8 @@ export class PostEntryCounterFlusher {
         return;
       }
 
-      LOGGER.info(JSON.stringify(rowsToUpdate));
+      LOGGER.info(JSON.stringify(`rowsToUpdate:${rowsToUpdate}`));
+      LOGGER.info(JSON.stringify(`idsToDelete:${idsToDelete}`));
       await Promise.all([
         rowsToUpdate.map((row) => {
           transaction.runUpdate({
@@ -181,6 +182,6 @@ export class PostEntryCounterFlusher {
       });
     } else {
       idsToDelete.push(jsoned.postEntryId);
-    };
+    }
   }
 }
