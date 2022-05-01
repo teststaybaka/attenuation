@@ -204,8 +204,8 @@ export class PostEntryCounterFlusher {
         expirationTimestamp: new Date(expirationTimestamp).toISOString(),
       });
     } else {
-      idsToDelete.push(jsoned.postEntryId);
-      LOGGER.info(`toBeDeleted:${jsoned.postEntryId}`);
+      // idsToDelete.push(jsoned.postEntryId);
+      // LOGGER.info(`toBeDeleted:${jsoned.postEntryId}`);
     }
   }
 }
