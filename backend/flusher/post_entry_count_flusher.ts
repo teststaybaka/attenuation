@@ -174,8 +174,8 @@ export class PostEntryCounterFlusher {
     if (expirationTimestamp > this.getNow()) {
       rowsToUpdate.push({
         postEntryId: jsoned.postEntryId,
-        views: `${totalViews}`,
-        upvotes: `${totalUpvotes}`,
+        views: totalViews,
+        upvotes: totalUpvotes,
         expirationTimestamp: new Date(expirationTimestamp).toISOString(),
       });
     } else {
