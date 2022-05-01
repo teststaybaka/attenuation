@@ -93,7 +93,7 @@ export class PostEntryCounterFlusher {
       }
 
       await Promise.all([
-        rowsToUpdate.map((row) => {
+        rowsToUpdate.map((row) =>
           transaction.runUpdate({
             sql: `UPDATE PostEntry SET views = @views, upvotes = @upvotes, expirationTimestamp = @expirationTimestamp WHERE postEntryId = @postEntryId`,
             params: {
@@ -116,8 +116,8 @@ export class PostEntryCounterFlusher {
                 type: "string",
               },
             },
-          });
-        }),
+          })
+        ),
         transaction.runUpdate({
           sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
           params: {
@@ -161,8 +161,9 @@ export class PostEntryCounterFlusher {
           },
         }),
       ]);
-      try {      
-        await transaction.commit();
+      try {
+        let response = await transaction.commit();
+        LOGGER.info(JSON.stringify(response));
       } catch (e) {
         LOGGER.info(e.stack);
       }
