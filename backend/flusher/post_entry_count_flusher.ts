@@ -87,86 +87,8 @@ export class PostEntryCounterFlusher {
     LOGGER.info(JSON.stringify(`idsToDelete:${JSON.stringify(idsToDelete)}`));
 
     await Promise.all([
-      this.postsDatabase.runTransactionAsync(async (transaction) => {
-        LOGGER.info(
-          JSON.stringify(`rowsToUpdate2:${JSON.stringify(rowsToUpdate)}`)
-        );
-        await transaction.batchUpdate(
-          rowsToUpdate.map((row) => {
-            return {
-              sql: `UPDATE PostEntry SET views = @views, upvotes = @upvotes, expirationTimestamp = @expirationTimestamp WHERE postEntryId = @postEntryId`,
-              params: {
-                views: row.views,
-                upvotes: row.upvotes,
-                expirationTimestamp: row.expirationTimestamp,
-                postEntryId: row.postEntryId,
-              },
-              types: {
-                views: {
-                  type: "int64",
-                },
-                upvotes: {
-                  type: "int64",
-                },
-                expirationTimestamp: {
-                  type: "timestamp",
-                },
-                postEntryId: {
-                  type: "string",
-                },
-              },
-            };
-          })
-        );
-        await transaction.commit();
-      }),
-      this.postsDatabase.runTransactionAsync(async (transaction) => {
-        await transaction.batchUpdate([
-          {
-            sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
-            params: {
-              postEntryIds: idsToDelete,
-            },
-            types: {
-              postEntryIds: {
-                type: "array",
-                child: {
-                  type: "string",
-                },
-              },
-            },
-          },
-          {
-            sql: `DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)`,
-            params: {
-              postEntryIds: idsToDelete,
-            },
-            types: {
-              postEntryIds: {
-                type: "array",
-                child: {
-                  type: "string",
-                },
-              },
-            },
-          },
-          {
-            sql: `DELETE FROM PostEntryReacted WHERE postEntryId in UNNEST(@postEntryIds)`,
-            params: {
-              postEntryIds: idsToDelete,
-            },
-            types: {
-              postEntryIds: {
-                type: "array",
-                child: {
-                  type: "string",
-                },
-              },
-            },
-          },
-        ]);
-        await transaction.commit();
-      }),
+      this.updateRows(rowsToUpdate),
+      this.deleteRows(idsToDelete),
     ]);
   }
 
@@ -202,5 +124,99 @@ export class PostEntryCounterFlusher {
     } else {
       idsToDelete.push(jsoned.postEntryId);
     }
+  }
+
+  private async updateRows(rowsToUpdate: Array<any>): Promise<void> {
+    if (rowsToUpdate.length === 0) {
+      return;
+    }
+
+    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+      LOGGER.info(
+        JSON.stringify(`rowsToUpdate2:${JSON.stringify(rowsToUpdate)}`)
+      );
+      await transaction.batchUpdate(
+        rowsToUpdate.map((row) => {
+          return {
+            sql: `UPDATE PostEntry SET views = @views, upvotes = @upvotes, expirationTimestamp = @expirationTimestamp WHERE postEntryId = @postEntryId`,
+            params: {
+              views: row.views,
+              upvotes: row.upvotes,
+              expirationTimestamp: row.expirationTimestamp,
+              postEntryId: row.postEntryId,
+            },
+            types: {
+              views: {
+                type: "int64",
+              },
+              upvotes: {
+                type: "int64",
+              },
+              expirationTimestamp: {
+                type: "timestamp",
+              },
+              postEntryId: {
+                type: "string",
+              },
+            },
+          };
+        })
+      );
+      await transaction.commit();
+    });
+  }
+
+  private async deleteRows(idsToDelete: Array<string>): Promise<void> {
+    if (idsToDelete.length === 0) {
+      return;
+    }
+
+    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+      await transaction.batchUpdate([
+        {
+          sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,
+          params: {
+            postEntryIds: idsToDelete,
+          },
+          types: {
+            postEntryIds: {
+              type: "array",
+              child: {
+                type: "string",
+              },
+            },
+          },
+        },
+        {
+          sql: `DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)`,
+          params: {
+            postEntryIds: idsToDelete,
+          },
+          types: {
+            postEntryIds: {
+              type: "array",
+              child: {
+                type: "string",
+              },
+            },
+          },
+        },
+        {
+          sql: `DELETE FROM PostEntryReacted WHERE postEntryId in UNNEST(@postEntryIds)`,
+          params: {
+            postEntryIds: idsToDelete,
+          },
+          types: {
+            postEntryIds: {
+              type: "array",
+              child: {
+                type: "string",
+              },
+            },
+          },
+        },
+      ]);
+      await transaction.commit();
+    });
   }
 }
