@@ -9,7 +9,7 @@ import { Row } from "@google-cloud/spanner/build/src/partial-result-stream";
 
 export class PostEntryCounterFlusher {
   private static SHARDS_PER_REDIS_CLIENT = ["1", "2"];
-  private static CYCLE_INTERVAL = 1000; // ms
+  private static CYCLE_INTERVAL = 60000; // ms
 
   public constructor(
     private redisClients: Array<[string, redis.RedisClientType]>,
