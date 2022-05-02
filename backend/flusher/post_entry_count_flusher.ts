@@ -30,10 +30,7 @@ export class PostEntryCounterFlusher {
   }
 
   public init(): this {
-    this.setTimeout(
-      () => this.flushCounters(),
-      PostEntryCounterFlusher.CYCLE_INTERVAL
-    );
+    this.setTimeout(() => this.flushCounters(), 0);
     return this;
   }
 
