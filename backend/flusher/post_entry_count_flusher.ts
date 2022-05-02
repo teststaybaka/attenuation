@@ -41,7 +41,7 @@ export class PostEntryCounterFlusher {
     let flushPromises = new Array<Promise<void>>();
     for (let clientPair of this.redisClients) {
       for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
-        flushPromises.push(this.flushOneShard(clientPair[1], shard));
+        flushPromises.push(this.flushOneShard(clientPair, shard));
       }
     }
     try {
@@ -56,15 +56,18 @@ export class PostEntryCounterFlusher {
   }
 
   private async flushOneShard(
-    redisClient: redis.RedisClientType,
+    clientPair: [string, redis.RedisClientType],
     shard: string
   ): Promise<void> {
+    let [redisUrl, redisClient] = clientPair;
     let [postEntryIds] = (await redisClient
       .multi()
       .sMembers(shard)
       .del(shard)
       .exec()) as any;
-    LOGGER.info(`Flushing shard ${shard} with ${postEntryIds.length} ids.`);
+    LOGGER.info(
+      `Flushing client ${redisUrl} shard ${shard} with ${postEntryIds.length} ids.`
+    );
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
