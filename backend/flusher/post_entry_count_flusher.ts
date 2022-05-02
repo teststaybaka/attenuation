@@ -98,7 +98,6 @@ export class PostEntryCounterFlusher {
     idsToDelete: Array<string>
   ): Promise<void> {
     let jsoned = row.toJSON();
-    LOGGER.info(`row: ${JSON.stringify(row)}`);
     let [viewCountStr, upvoteCountStr] = (await redisClient
       .multi()
       .hGet(jsoned.postEntryId, "views")
