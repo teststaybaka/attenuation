@@ -38,7 +38,6 @@ export class PostEntryCounterFlusher {
   }
 
   private async flushCounters(): Promise<void> {
-    LOGGER.info("flushing");
     let flushPromises = new Array<Promise<void>>();
     for (let clientPair of this.redisClients) {
       for (let shard of PostEntryCounterFlusher.SHARDS_PER_REDIS_CLIENT) {
@@ -50,10 +49,10 @@ export class PostEntryCounterFlusher {
     } catch (e) {
       LOGGER.error(e.stack);
     }
-    // this.setTimeout(
-    //   () => this.flushCounters(),
-    //   PostEntryCounterFlusher.CYCLE_INTERVAL
-    // );
+    this.setTimeout(
+      () => this.flushCounters(),
+      PostEntryCounterFlusher.CYCLE_INTERVAL
+    );
   }
 
   private async flushOneShard(
@@ -65,7 +64,7 @@ export class PostEntryCounterFlusher {
       .sMembers(shard)
       .del(shard)
       .exec()) as any;
-    LOGGER.info(`shard:${shard};postEntryIds: ${JSON.stringify(postEntryIds)}`);
+    LOGGER.info(`Flushing shard ${shard} with ${postEntryIds.length} ids.`);
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
     let [rows] = await this.postEntriesTable.read({
       columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
@@ -83,9 +82,6 @@ export class PostEntryCounterFlusher {
         )
       )
     );
-    LOGGER.info(JSON.stringify(`rowsToUpdate:${JSON.stringify(rowsToUpdate)}`));
-    LOGGER.info(JSON.stringify(`idsToDelete:${JSON.stringify(idsToDelete)}`));
-
     await Promise.all([
       this.updateRows(rowsToUpdate),
       this.deleteRows(idsToDelete),
@@ -132,9 +128,6 @@ export class PostEntryCounterFlusher {
     }
 
     await this.postsDatabase.runTransactionAsync(async (transaction) => {
-      LOGGER.info(
-        JSON.stringify(`rowsToUpdate2:${JSON.stringify(rowsToUpdate)}`)
-      );
       await transaction.batchUpdate(
         rowsToUpdate.map((row) => {
           return {
