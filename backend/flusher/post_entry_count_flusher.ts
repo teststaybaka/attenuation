@@ -19,8 +19,8 @@ export class PostEntryCounterFlusher {
     private getNow: () => number
   ) {}
 
-  public static create(): PostEntryCounterFlusher {
-    return new PostEntryCounterFlusher(
+  public static create(): void {
+   new PostEntryCounterFlusher(
       REDIS_CLIENTS,
       POSTS_DATABASE,
       POST_ENTRY_TABLE,

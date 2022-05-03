@@ -1,6 +1,7 @@
 import express = require("express");
 import expressStaticGzip = require("express-static-gzip");
 import http = require("http");
+import { ExpiredPostEntryCleaner } from "./cleaner/expired_post_entry_cleaner";
 import { ConsoleLogger, LOGGER, RemoteLogger } from "./common/logger";
 import { PostEntryRedisCounter } from "./common/post_entry_redis_counter";
 import { createRedisClients } from "./common/redis_clients";
@@ -21,6 +22,7 @@ async function main(): Promise<void> {
     createRedisClients(`10.150.129.188:6379`);
     PostEntryRedisCounter.create();
     PostEntryCounterFlusher.create();
+    ExpiredPostEntryCleaner.create();
 
     let app = express();
     registerHandlers(app, "randomlocalkey");
