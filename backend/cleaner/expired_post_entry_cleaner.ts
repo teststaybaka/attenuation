@@ -68,9 +68,6 @@ export class ExpiredPostEntryCleaner {
           },
         },
       ]);
-      await transaction.commit();
-    });
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate({
         sql: `DELETE
               FROM
