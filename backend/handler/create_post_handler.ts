@@ -5,8 +5,9 @@ import {
   CreatePostResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
-import { POST_ENTRY_TABLE } from "../common/spanner_database";
-import { Table } from "@google-cloud/spanner";
+import { POSTS_DATABASE } from "../common/spanner_database";
+import { buildInsertNewPostEntryStatement } from "./posts_sql";
+import { Database } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,12 +19,12 @@ export class CreatePostHandler
   public serviceDescriptor = CREATE_POST;
 
   public constructor(
-    private postEntryTable: Table,
+    private postsDatabase: Database,
     private getNow: () => number
   ) {}
 
   public static create(): CreatePostHandler {
-    return new CreatePostHandler(POST_ENTRY_TABLE, () => Date.now());
+    return new CreatePostHandler(POSTS_DATABASE, () => Date.now());
   }
 
   public async handle(
@@ -41,17 +42,20 @@ export class CreatePostHandler
       createdTimestamp,
       expirationTimestamp,
     };
-    await this.postEntryTable.insert([
-      {
-        postEntryId: postEntry.postEntryId,
-        userId: postEntry.userId,
-        content: postEntry.content,
-        views: "0",
-        upvotes: "0",
-        createdTimestamp: new Date(createdTimestamp).toISOString(),
-        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
-      },
-    ]);
+    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+      await transaction.runUpdate(
+        buildInsertNewPostEntryStatement(
+          postEntry.postEntryId,
+          postEntry.userId,
+          postEntry.content,
+          postEntry.upvotes,
+          postEntry.views,
+          postEntry.createdTimestamp,
+          postEntry.expirationTimestamp
+        )
+      );
+      await transaction.commit();
+    });
     return {
       postEntry,
     };

@@ -1,7 +1,7 @@
 import {
-  REACT_TO_POST,
-  ReactToPostRequest,
-  ReactToPostResponse,
+  VIEW_POST,
+  ViewPostRequest,
+  ViewPostResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
 import {
@@ -9,42 +9,37 @@ import {
   PostEntryRedisCounter,
 } from "../common/post_entry_redis_counter";
 import { POSTS_DATABASE } from "../common/spanner_database";
-import { buildInsertPostEntryReactedStatement } from "./posts_sql";
+import { buildInsertPostEntryViewedStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
 
-export class ReactToPostHandler
+export class ViewPostHandler
   implements
-    AuthedServiceHandler<ReactToPostRequest, ReactToPostResponse, UserSession>
+    AuthedServiceHandler<ViewPostRequest, ViewPostResponse, UserSession>
 {
   public sessionDescriptor = USER_SESSION;
-  public serviceDescriptor = REACT_TO_POST;
+  public serviceDescriptor = VIEW_POST;
 
   public constructor(
     private postsDatabase: Database,
     private postEntryRedisCounter: PostEntryRedisCounter
   ) {}
 
-  public static create(): ReactToPostHandler {
-    return new ReactToPostHandler(POSTS_DATABASE, POST_ENTRY_REDIS_COUNTER);
+  public static create(): ViewPostHandler {
+    return new ViewPostHandler(POSTS_DATABASE, POST_ENTRY_REDIS_COUNTER);
   }
 
   public async handle(
-    request: ReactToPostRequest,
+    request: ViewPostRequest,
     session: UserSession
-  ): Promise<ReactToPostResponse> {
+  ): Promise<ViewPostResponse> {
     await this.postsDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
-        buildInsertPostEntryReactedStatement(
-          session.userId,
-          request.postEntryId,
-          request.reaction
-        )
+        buildInsertPostEntryViewedStatement(session.userId, request.postEntryId)
       );
       await transaction.commit();
     });
-
-    this.postEntryRedisCounter.incReact(request.postEntryId, request.reaction);
+    this.postEntryRedisCounter.incView(request.postEntryId);
     return {};
   }
 }

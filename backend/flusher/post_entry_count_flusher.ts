@@ -2,10 +2,13 @@ import redis = require("redis");
 import { Reaction } from "../../interface/post_entry";
 import { LOGGER } from "../common/logger";
 import { REDIS_CLIENTS } from "../common/redis_clients";
-import { POSTS_DATABASE, POST_ENTRY_TABLE } from "../common/spanner_database";
-import { Database, Table } from "@google-cloud/spanner";
-import { Json } from "@google-cloud/spanner/build/src/codec";
-import { Row } from "@google-cloud/spanner/build/src/partial-result-stream";
+import { POSTS_DATABASE } from "../common/spanner_database";
+import {
+  FetchPostEntriesRow,
+  buildFetchPostEntriesStatement,
+  parseFetchPostEntriesRow,
+} from "./posts_sql";
+import { Database } from "@google-cloud/spanner";
 
 export class PostEntryCounterFlusher {
   private static SHARDS_PER_REDIS_CLIENT = ["1", "2"];
@@ -14,18 +17,13 @@ export class PostEntryCounterFlusher {
   public constructor(
     private redisClients: Array<[string, redis.RedisClientType]>,
     private postsDatabase: Database,
-    private postEntriesTable: Table,
     private setTimeout: (handler: TimerHandler, timeout: number) => void,
     private getNow: () => number
   ) {}
 
   public static create(): void {
-   new PostEntryCounterFlusher(
-      REDIS_CLIENTS,
-      POSTS_DATABASE,
-      POST_ENTRY_TABLE,
-      setTimeout,
-      () => Date.now()
+    new PostEntryCounterFlusher(REDIS_CLIENTS, POSTS_DATABASE, setTimeout, () =>
+      Date.now()
     ).init();
   }
 
@@ -66,16 +64,15 @@ export class PostEntryCounterFlusher {
       `Flushing client ${redisUrl} shard ${shard} with ${postEntryIds.length} ids.`
     );
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
-    let [rows] = await this.postEntriesTable.read({
-      columns: ["postEntryId", "views", "upvotes", "expirationTimestamp"],
-      keys: postEntryIds,
-    });
-    let rowsToUpdate = new Array<any>();
+    let [rows] = await this.postsDatabase.run(
+      buildFetchPostEntriesStatement(postEntryIds)
+    );
+    let rowsToUpdate = new Array<FetchPostEntriesRow>();
     let idsToDelete = new Array<string>();
     await Promise.all(
       rows.map((row) =>
         this.calculateToUpdateOrDelete(
-          row,
+          parseFetchPostEntriesRow(row),
           redisClient,
           rowsToUpdate,
           idsToDelete
@@ -89,39 +86,40 @@ export class PostEntryCounterFlusher {
   }
 
   private async calculateToUpdateOrDelete(
-    row: Row | Json,
+    row: FetchPostEntriesRow,
     redisClient: redis.RedisClientType,
-    rowsToUpdate: Array<any>,
+    rowsToUpdate: Array<FetchPostEntriesRow>,
     idsToDelete: Array<string>
   ): Promise<void> {
-    let jsoned = row.toJSON();
     let [viewCountStr, upvoteCountStr] = (await redisClient
       .multi()
-      .hGet(jsoned.postEntryId, "views")
-      .hGet(jsoned.postEntryId, Reaction[Reaction.UPVOTE])
-      .del(jsoned.postEntryId)
+      .hGet(row.postEntryId, "views")
+      .hGet(row.postEntryId, Reaction[Reaction.UPVOTE])
+      .del(row.postEntryId)
       .exec()) as any;
     let viewCount = Number.parseInt(viewCountStr ?? "0");
     let upvoteCount = Number.parseInt(upvoteCountStr ?? "0");
-    let totalViews = jsoned.views + viewCount;
-    let totalUpvotes = jsoned.upvotes + upvoteCount;
+    let totalViews = row.views + viewCount;
+    let totalUpvotes = row.upvotes + upvoteCount;
     let expirationTimestamp =
-      Date.parse(jsoned.expirationTimestamp) -
+      row.expirationTimestamp -
       viewCount * 60 * 1000 +
       upvoteCount * 2 * 60 * 1000;
     if (expirationTimestamp > this.getNow()) {
       rowsToUpdate.push({
-        postEntryId: jsoned.postEntryId,
+        postEntryId: row.postEntryId,
         views: totalViews,
         upvotes: totalUpvotes,
-        expirationTimestamp: new Date(expirationTimestamp).toISOString(),
+        expirationTimestamp,
       });
     } else {
-      idsToDelete.push(jsoned.postEntryId);
+      idsToDelete.push(row.postEntryId);
     }
   }
 
-  private async updateRows(rowsToUpdate: Array<any>): Promise<void> {
+  private async updateRows(
+    rowsToUpdate: Array<FetchPostEntriesRow>
+  ): Promise<void> {
     if (rowsToUpdate.length === 0) {
       return;
     }

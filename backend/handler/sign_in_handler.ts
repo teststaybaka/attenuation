@@ -3,16 +3,15 @@ import {
   SignInRequest,
   SignInResponse,
 } from "../../interface/service";
-import { USER } from "../../interface/user";
 import { UserSession } from "../../interface/user_session";
 import { PasswordHasher } from "../common/password_hasher";
 import { USERS_DATABASE } from "../common/spanner_database";
+import { buildGetUserStatement, parseGetUserRow } from "./users_sql";
 import { Database } from "@google-cloud/spanner";
 import {
   newBadRequestError,
   newInternalServerErrorError,
 } from "@selfage/http_error";
-import { parseMessage } from "@selfage/message/parser";
 import { UnauthedServiceHandler } from "@selfage/service_handler";
 import { SessionBuilder } from "@selfage/service_handler/session_signer";
 
@@ -36,17 +35,9 @@ export class SignInHandler
   }
 
   public async handle(request: SignInRequest): Promise<SignInResponse> {
-    let [rows] = await this.usersDatabase.run({
-      sql: `SELECT userId, passwordHashV1 FROM User WHERE username = @username`,
-      params: {
-        username: request.username,
-      },
-      types: {
-        username: {
-          type: "string",
-        },
-      },
-    });
+    let [rows] = await this.usersDatabase.run(
+      buildGetUserStatement(request.username)
+    );
     if (rows.length === 0) {
       throw newBadRequestError(`Username or password is incorrect.`);
     }
@@ -56,12 +47,14 @@ export class SignInHandler
       );
     }
 
-    let user = parseMessage(rows[0].toJSON(), USER);
-    if (user.passwordHashV1 === this.passwordHasher.hash(request.password)) {
+    let getUserRow = parseGetUserRow(rows[0]);
+    if (
+      getUserRow.passwordHashV1 === this.passwordHasher.hash(request.password)
+    ) {
       throw newBadRequestError(`Username or password is incorrect.`);
     }
     let signedSession = this.sessionBuilder.build(
-      JSON.stringify({ userId: user.userId } as UserSession)
+      JSON.stringify({ userId: getUserRow.userId } as UserSession)
     );
     return {
       signedSession: signedSession,

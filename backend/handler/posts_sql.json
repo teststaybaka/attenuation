@@ -1,0 +1,89 @@
+[{
+  "name": "InsertNewPostEntry",
+  "spannerSql": {
+    "sql": "INSERT PostEntry (postEntryId, userId, content, upvotes, views, createdTimestamp, expirationTimestamp) VALUES (@postEntryId, @userId, @content, @upvotes, @views, @createdTimestamp, @expirationTimestamp)",
+    "params": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "content",
+      "type": "string"
+    }, {
+      "name": "upvotes",
+      "type": "int53"
+    }, {
+      "name": "views",
+      "type": "int53"
+    }, {
+      "name": "createdTimestamp",
+      "type": "timestamp"
+    }, {
+      "name": "expirationTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}, {
+  "name": "QueryNewPosts",
+  "spannerSql": {
+    "sql": "SELECT pe.* FROM PostEntry AS pe LEFT JOIN (SELECT postEntryId FROM PostEntryViewed WHERE viewerId = @viewerId) AS pev ON pe.postEntryId = pev.postEntryId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30",
+    "params": [{
+      "name": "viewerId",
+      "type": "string"
+    }],
+    "outputColumns": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "content",
+      "type": "string"
+    }, {
+      "name": "repliedEntryId",
+      "type": "string"
+    }, {
+      "name": "upvotes",
+      "type": "int53"
+    }, {
+      "name": "views",
+      "type": "int53"
+    }, {
+      "name": "createdTimestamp",
+      "type": "timestamp"
+    }, {
+      "name": "expirationTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}, {
+  "name": "InsertPostEntryViewed",
+  "spannerSql": {
+    "sql": "INSERT PostEntryViewed (viewerId, postEntryId, viewTimestamp) VALUES (@viewerId, @postEntryId, PENDING_COMMIT_TIMESTAMP())",
+    "params": [{
+      "name": "viewerId",
+      "type": "string"
+    }, {
+      "name": "postEntryId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "InsertPostEntryReacted",
+  "spannerSql": {
+    "sql": "INSERT PostEntryReacted (reactorId, postEntryId, reaction, reactedTimestamp) VALUES (@reactorId, @postEntryId, @reaction, PENDING_COMMIT_TIMESTAMP())",
+    "params": [{
+      "name": "reactorId",
+      "type": "string"
+    }, {
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "reaction",
+      "type": "int53"
+    }]
+  }
+}]

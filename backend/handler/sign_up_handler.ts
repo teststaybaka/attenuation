@@ -3,11 +3,11 @@ import {
   SignUpRequest,
   SignUpResponse,
 } from "../../interface/service";
-import { User } from "../../interface/user";
 import { UserSession } from "../../interface/user_session";
 import { PasswordHasher } from "../common/password_hasher";
-import { USER_TABLE } from "../common/spanner_database";
-import { Table } from "@google-cloud/spanner";
+import { USERS_DATABASE } from "../common/spanner_database";
+import { buildInsertNewUserStatement } from "./users_sql";
+import { Database } from "@google-cloud/spanner";
 import { UnauthedServiceHandler } from "@selfage/service_handler";
 import { SessionBuilder } from "@selfage/service_handler/session_signer";
 import { v4 as uuidv4 } from "uuid";
@@ -20,32 +20,32 @@ export class SignUpHandler
   public constructor(
     private passwordHasher: PasswordHasher,
     private sessionBuilder: SessionBuilder,
-    private userTable: Table
+    private usersDatabase: Database
   ) {}
 
   public static create(): SignUpHandler {
     return new SignUpHandler(
       PasswordHasher.create(),
       SessionBuilder.create(),
-      USER_TABLE
+      USERS_DATABASE
     );
   }
 
   public async handle(request: SignUpRequest): Promise<SignUpResponse> {
-    let user: User = {
-      userId: uuidv4(),
-      username: request.username,
-      passwordHashV1: this.passwordHasher.hash(request.password),
-    };
-    await this.userTable.insert([
-      {
-        ...user,
-        createdTimestamp: "spanner.commit_timestamp()",
-      },
-    ]);
+    let userId = uuidv4();
+    await this.usersDatabase.runTransactionAsync(async (transaction) => {
+      await transaction.runUpdate(
+        buildInsertNewUserStatement(
+          userId,
+          request.username,
+          this.passwordHasher.hash(request.password)
+        )
+      );
+      await transaction.commit();
+    });
 
     let signedSession = this.sessionBuilder.build(
-      JSON.stringify({ userId: user.userId } as UserSession)
+      JSON.stringify({ userId } as UserSession)
     );
     return {
       signedSession: signedSession,

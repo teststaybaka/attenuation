@@ -1,0 +1,32 @@
+[{
+  "name": "InsertNewUser",
+  "spannerSql": {
+    "sql": "INSERT User (userId, username, passwordHashV1, createdTimestamp) VALUES (@userId, @username, @passwordHashV1, PENDING_COMMIT_TIMESTAMP())",
+    "params": [{
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "passwordHashV1",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetUser",
+  "spannerSql": {
+    "sql": "SELECT userId, passwordHashV1 FROM User WHERE username = @username",
+    "params": [{
+      "name": "username",
+      "type": "string"
+    }],
+    "outputColumns": [{
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "passwordHashV1",
+      "type": "string"
+    }]
+  }
+}]

@@ -1,0 +1,28 @@
+[{
+  "name": "DeleteExpiredPostEntryViews",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntryViewed WHERE postEntryId IN (SELECT postEntryId FROM PostEntry WHERE expirationTimestamp < @nowTimestamp)",
+    "params": [{
+      "name": "nowTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}, {
+  "name": "DeleteExpiredPostEntryReactions",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntryReacted WHERE postEntryId IN (SELECT postEntryId FROM PostEntry WHERE expirationTimestamp < @nowTimestamp)",
+    "params": [{
+      "name": "nowTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}, {
+  "name": "DeleteExpiredPostEntries",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntry WHERE expirationTimestamp < @nowTimestamp",
+    "params": [{
+      "name": "nowTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}]

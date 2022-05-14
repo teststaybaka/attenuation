@@ -184,6 +184,47 @@ export let READ_POSTS: AuthedServiceDescriptor<ReadPostsRequest, ReadPostsRespon
   responseDescriptor: READ_POSTS_RESPONSE,
 };
 
+export interface ViewPostRequest {
+  signedSession?: string,
+  postEntryId?: string,
+}
+
+export let VIEW_POST_REQUEST: MessageDescriptor<ViewPostRequest> = {
+  name: 'ViewPostRequest',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+    {
+      name: 'signedSession',
+      primitiveType: PrimitiveType.STRING,
+    },
+    {
+      name: 'postEntryId',
+      primitiveType: PrimitiveType.STRING,
+    },
+  ]
+};
+
+export interface ViewPostResponse {
+}
+
+export let VIEW_POST_RESPONSE: MessageDescriptor<ViewPostResponse> = {
+  name: 'ViewPostResponse',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+  ]
+};
+
+export let VIEW_POST: AuthedServiceDescriptor<ViewPostRequest, ViewPostResponse> = {
+  name: "ViewPost",
+  path: "/ViewPost",
+  requestDescriptor: VIEW_POST_REQUEST,
+  responseDescriptor: VIEW_POST_RESPONSE,
+};
+
 export interface ReactToPostRequest {
   signedSession?: string,
   postEntryId?: string,

@@ -11,6 +11,7 @@ import { ReactToPostHandler } from "./handler/react_to_post_handler";
 import { ReadPostsHandler } from "./handler/read_posts_handler";
 import { SignInHandler } from "./handler/sign_in_handler";
 import { SignUpHandler } from "./handler/sign_up_handler";
+import { ViewPostHandler } from "./handler/view_post_handler";
 import { HandlerRegister } from "@selfage/service_handler/handler_register";
 import { SessionSigner } from "@selfage/service_handler/session_signer";
 import "../environment";
@@ -53,6 +54,7 @@ function registerHandlers(app: express.Express, sessionKey: string): void {
   register.registerUnauthed(SignUpHandler.create());
   register.registerAuthed(CreatePostHandler.create());
   register.registerAuthed(ReadPostsHandler.create());
+  register.registerAuthed(ViewPostHandler.create());
   register.registerAuthed(ReactToPostHandler.create());
 }
 

@@ -1,6 +1,6 @@
 [{
+  "name": "SignUpRequest",
   "message": {
-    "name": "SignUpRequest",
     "fields": [{
       "name": "username",
       "type": "string"
@@ -10,23 +10,23 @@
     }]
   }
 }, {
+  "name": "SignUpResponse",
   "message": {
-    "name": "SignUpResponse",
     "fields": [{
       "name": "signedSession",
       "type": "string"
     }]
   }
 }, {
+  "name": "SignUp",
   "service": {
-    "name": "SignUp",
     "path": "/SignUp",
     "request": "SignUpRequest",
     "response": "SignUpResponse"
   }
 }, {
+  "name": "SignInRequest",
   "message": {
-    "name": "SignInRequest",
     "fields": [{
       "name": "username",
       "type": "string"
@@ -36,23 +36,23 @@
     }]
   }
 }, {
+  "name": "SignInResponse",
   "message": {
-    "name": "SignInResponse",
     "fields": [{
       "name": "signedSession",
       "type": "string"
     }]
   }
 }, {
+  "name": "SignIn",
   "service": {
-    "name": "SignIn",
     "path": "/SignIn",
     "request": "SignInRequest",
     "response": "SignInResponse"
   }
 }, {
+  "name": "CreatePostRequest",
   "message": {
-    "name": "CreatePostRequest",
     "fields": [{
       "name": "signedSession",
       "type": "string"
@@ -62,8 +62,8 @@
     }]
   }
 }, {
+  "name": "CreatePostResponse",
   "message": {
-    "name": "CreatePostResponse",
     "fields": [{
       "name": "postEntry",
       "type": "PostEntry",
@@ -71,23 +71,23 @@
     }]
   }
 }, {
+  "name": "CreatePost",
   "service": {
-    "name": "CreatePost",
     "path": "/CreatePost",
     "request": "CreatePostRequest",
     "response": "CreatePostResponse"
   }
 }, {
+  "name": "ReadPostsRequest",
   "message": {
-    "name": "ReadPostsRequest",
     "fields": [{
       "name": "signedSession",
       "type": "string"
     }]
   }
 }, {
+  "name": "ReadPostsResponse",
   "message": {
-    "name": "ReadPostsResponse",
     "fields": [{
       "name": "postEntries",
       "type": "PostEntry",
@@ -96,15 +96,38 @@
     }]
   }
 }, {
+  "name": "ReadPosts",
   "service": {
-    "name": "ReadPosts",
     "path": "/ReadPosts",
     "request": "ReadPostsRequest",
     "response": "ReadPostsResponse"
   }
 }, {
+  "name": "ViewPostRequest",
   "message": {
-    "name": "ReactToPostRequest",
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }, {
+      "name": "postEntryId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "ViewPostResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "ViewPost",
+  "service": {
+    "path": "/ViewPost",
+    "request": "ViewPostRequest",
+    "response": "ViewPostResponse"
+  }
+}, {
+  "name": "ReactToPostRequest",
+  "message": {
     "fields": [{
       "name": "signedSession",
       "type": "string"
@@ -118,13 +141,13 @@
     }]
   }
 }, {
+  "name": "ReactToPostResponse",
   "message": {
-    "name": "ReactToPostResponse",
     "fields": []
   }
 }, {
+  "name": "ReactToPost",
   "service": {
-    "name": "ReactToPost",
     "path": "/ReactToPost",
     "request": "ReactToPostRequest",
     "response": "ReactToPostResponse"

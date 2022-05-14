@@ -1,0 +1,72 @@
+[{
+  "name": "FetchPostEntries",
+  "spannerSql": {
+    "sql": "SELECT postEntryId, views, upvotes, expirationTimestamp FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)",
+    "params": [{
+      "name": "postEntryIds",
+      "type": "string",
+      "isArray": true
+    }],
+    "outputColumns": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "views",
+      "type": "int53"
+    }, {
+      "name": "upvotes",
+      "type": "int53"
+    }, {
+      "name": "expirationTimestamp",
+      "type": "timestamp"
+    }]
+  }
+}, {
+  "name": "UpdateViewsAndReactions",
+  "spannerSql": {
+    "sql": "UPDATE PostEntry SET views = @views, upvotes = @upvotes, expirationTimestamp = @expirationTimestamp WHERE postEntryId = @postEntryId",
+    "params": [{
+      "name": "views",
+      "type": "int53"
+    }, {
+      "name": "upvotes",
+      "type": "int53"
+    }, {
+      "name": "expirationTimestamp",
+      "type": "timestamp"
+    }, {
+      "name": "postEntryId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "DeletePostEntries",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)",
+    "params": [{
+      "name": "postEntryIds",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}, {
+  "name": "DeletePostEntryViews",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntryViewed WHERE postEntryId in UNNEST(@postEntryIds)",
+    "params": [{
+      "name": "postEntryIds",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}, {
+  "name": "DeletePostEntryReactions",
+  "spannerSql": {
+    "sql": "DELETE FROM PostEntryReacted WHERE postEntryId in UNNEST(@postEntryIds)",
+    "params": [{
+      "name": "postEntryIds",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}]

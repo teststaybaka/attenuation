@@ -1,4 +1,9 @@
 import { POSTS_DATABASE } from "../common/spanner_database";
+import {
+  buildDeleteExpiredPostEntriesStatement,
+  buildDeleteExpiredPostEntryReactionsStatement,
+  buildDeleteExpiredPostEntryViewsStatement,
+} from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
 
 export class ExpiredPostEntryCleaner {
@@ -22,67 +27,15 @@ export class ExpiredPostEntryCleaner {
   }
 
   private async cleanExpiredEntries(): Promise<void> {
-    let nowTimestamp = new Date(this.getNow()).toISOString();
+    let nowTimestamp = this.getNow();
     await this.postsDatabase.runTransactionAsync(async (transaction) => {
       await transaction.batchUpdate([
-        {
-          sql: `DELETE
-              FROM
-                PostEntryViewed
-              WHERE
-                postEntryId IN (
-                SELECT
-                  postEntryId
-                FROM
-                  PostEntry
-                WHERE
-                  expirationTimestamp < @nowTimestamp);`,
-          params: {
-            nowTimestamp: nowTimestamp,
-          },
-          types: {
-            nowTimestamp: {
-              type: "timestamp",
-            },
-          },
-        },
-        {
-          sql: `DELETE
-              FROM
-                PostEntryReacted
-              WHERE
-                postEntryId IN (
-                SELECT
-                  postEntryId
-                FROM
-                  PostEntry
-                WHERE
-                  expirationTimestamp < @nowTimestamp);`,
-          params: {
-            nowTimestamp: nowTimestamp,
-          },
-          types: {
-            nowTimestamp: {
-              type: "timestamp",
-            },
-          },
-        },
+        buildDeleteExpiredPostEntryViewsStatement(nowTimestamp),
+        buildDeleteExpiredPostEntryReactionsStatement(nowTimestamp),
       ]);
-      await transaction.runUpdate({
-        sql: `DELETE
-              FROM
-              PostEntry
-              WHERE
-                  expirationTimestamp < @nowTimestamp;`,
-        params: {
-          nowTimestamp: nowTimestamp,
-        },
-        types: {
-          nowTimestamp: {
-            type: "timestamp",
-          },
-        },
-      });
+      await transaction.runUpdate(
+        buildDeleteExpiredPostEntriesStatement(nowTimestamp)
+      );
       await transaction.commit();
     });
     this.setTimeout(

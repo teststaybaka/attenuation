@@ -1,6 +1,6 @@
 [{
+  "name": "PostEntry",
   "message": {
-    "name": "PostEntry",
     "fields": [{
       "name": "postEntryId",
       "type": "string"
@@ -28,8 +28,8 @@
     }]
   }
 }, {
+  "name": "PostEntryViewed",
   "message": {
-    "name": "PostEntryViewed",
     "fields": [{
       "name": "postEntryId",
       "type": "string"
@@ -42,8 +42,8 @@
     }]
   }
 }, {
+  "name": "Reaction",
   "enum": {
-    "name": "Reaction",
     "values": [{
       "name": "UNKNOWN",
       "value": 0
@@ -53,8 +53,8 @@
     }]
   }
 }, {
+  "name": "PostEntryReacted",
   "message": {
-    "name": "PostEntryReacted",
     "fields": [{
       "name": "postEntryId",
       "type": "string"
