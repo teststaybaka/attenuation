@@ -1,6 +1,6 @@
 import { ORIGIN_DEV } from "../../constants";
-import { MainComponent } from "./main_component";
 import { MAIN_CONTENT_STATE } from "./main_content/main_content_state";
+import { MainController } from "./main_controller";
 import { SERVICE_CLIENT } from "./service_client";
 import { createLoaderAndUpdater } from "@selfage/stateful_navigator";
 import "../../environment";
@@ -27,7 +27,7 @@ async function main(): Promise<void> {
     MAIN_CONTENT_STATE,
     queryParamKeyForState
   );
-  document.body.appendChild(MainComponent.create(loader.state).body);
+  MainController.create(document.body, loader.state);
 }
 
 main();

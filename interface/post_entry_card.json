@@ -1,0 +1,30 @@
+[{
+  "name": "PostEntryCard",
+  "message": {
+    "fields": [{
+      "name": "postEntryId",
+      "type": "string"
+    }, {
+      "name": "repliedEntryId",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "userNatureName",
+      "type": "string"
+    }, {
+      "name": "userProfilePicture",
+      "type": "string"
+    }, {
+      "name": "content",
+      "type": "string"
+    }, {
+      "name": "createdTimestamp",
+      "type": "number"
+    }]
+  }
+}]

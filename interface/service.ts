@@ -1,6 +1,7 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 import { UnauthedServiceDescriptor, AuthedServiceDescriptor } from '@selfage/service_descriptor';
-import { PostEntry, POST_ENTRY, Reaction, REACTION } from './post_entry';
+import { PostEntryCard, POST_ENTRY_CARD } from './post_entry_card';
+import { PostEntryReaction, POST_ENTRY_REACTION } from './post_entry_reaction';
 
 export interface SignUpRequest {
   username?: string,
@@ -117,7 +118,7 @@ export let CREATE_POST_REQUEST: MessageDescriptor<CreatePostRequest> = {
 };
 
 export interface CreatePostResponse {
-  postEntry?: PostEntry,
+  postEntryCard?: PostEntryCard,
 }
 
 export let CREATE_POST_RESPONSE: MessageDescriptor<CreatePostResponse> = {
@@ -127,8 +128,8 @@ export let CREATE_POST_RESPONSE: MessageDescriptor<CreatePostResponse> = {
   },
   fields: [
     {
-      name: 'postEntry',
-      messageDescriptor: POST_ENTRY,
+      name: 'postEntryCard',
+      messageDescriptor: POST_ENTRY_CARD,
     },
   ]
 };
@@ -158,7 +159,7 @@ export let READ_POSTS_REQUEST: MessageDescriptor<ReadPostsRequest> = {
 };
 
 export interface ReadPostsResponse {
-  postEntries?: Array<PostEntry>,
+  postEntryCards?: Array<PostEntryCard>,
 }
 
 export let READ_POSTS_RESPONSE: MessageDescriptor<ReadPostsResponse> = {
@@ -168,8 +169,8 @@ export let READ_POSTS_RESPONSE: MessageDescriptor<ReadPostsResponse> = {
   },
   fields: [
     {
-      name: 'postEntries',
-      messageDescriptor: POST_ENTRY,
+      name: 'postEntryCards',
+      messageDescriptor: POST_ENTRY_CARD,
       arrayFactoryFn: () => {
         return new Array<any>();
       },
@@ -228,7 +229,7 @@ export let VIEW_POST: AuthedServiceDescriptor<ViewPostRequest, ViewPostResponse>
 export interface ReactToPostRequest {
   signedSession?: string,
   postEntryId?: string,
-  reaction?: Reaction,
+  reaction?: PostEntryReaction,
 }
 
 export let REACT_TO_POST_REQUEST: MessageDescriptor<ReactToPostRequest> = {
@@ -247,7 +248,7 @@ export let REACT_TO_POST_REQUEST: MessageDescriptor<ReactToPostRequest> = {
     },
     {
       name: 'reaction',
-      enumDescriptor: REACTION,
+      enumDescriptor: POST_ENTRY_REACTION,
     },
   ]
 };

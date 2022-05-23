@@ -65,9 +65,9 @@
   "name": "CreatePostResponse",
   "message": {
     "fields": [{
-      "name": "postEntry",
-      "type": "PostEntry",
-      "import": "./post_entry"
+      "name": "postEntryCard",
+      "type": "PostEntryCard",
+      "import": "./post_entry_card"
     }]
   }
 }, {
@@ -89,10 +89,10 @@
   "name": "ReadPostsResponse",
   "message": {
     "fields": [{
-      "name": "postEntries",
-      "type": "PostEntry",
+      "name": "postEntryCards",
+      "type": "PostEntryCard",
       "isArray": true,
-      "import": "./post_entry"
+      "import": "./post_entry_card"
     }]
   }
 }, {
@@ -136,8 +136,8 @@
       "type": "string"
     }, {
       "name": "reaction",
-      "type": "Reaction",
-      "import": "./post_entry"
+      "type": "PostEntryReaction",
+      "import": "./post_entry_reaction"
     }]
   }
 }, {

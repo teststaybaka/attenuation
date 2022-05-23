@@ -1,4 +1,4 @@
-import { PostEntry } from "../../interface/post_entry";
+import { PostEntryCard } from "../../interface/post_entry_card";
 import {
   READ_POSTS,
   ReadPostsRequest,
@@ -36,15 +36,15 @@ export class ReadPostsHandler
     let [rows] = await this.postsDatabase.run(
       buildQueryNewPostsStatement(session.userId)
     );
-    let postEntries = new Array<PostEntry>();
+    let postEntryCards = new Array<PostEntryCard>();
     for (let row of rows) {
-      let postEntry: PostEntry = parseQueryNewPostsRow(row);
-      if (postEntry.expirationTimestamp >= this.getNow()) {
-        postEntries.push(postEntry);
+      let postEntryRow = parseQueryNewPostsRow(row);
+      if (postEntryRow.expirationTimestamp >= this.getNow()) {
+        postEntryCards.push(postEntryRow);
       }
     }
     return {
-      postEntries,
+      postEntryCards,
     };
   }
 }

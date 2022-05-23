@@ -1,11 +1,11 @@
 import EventEmitter = require("events");
-import { PostEntry } from "../../../interface/post_entry";
+import { PostEntryCard } from "../../../interface/post_entry_card";
 import { CREATE_POST, READ_POSTS } from "../../../interface/service";
 import { FillButtonComponent } from "../../common/button_component";
-import { ColorScheme } from "../../common/color_scheme";
+import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../locales/localized_text";
 import { SERVICE_CLIENT } from "../service_client";
-import { PostEntryComponent } from "./post_entry/post_entry_component";
+import { PostEntryCardComponent } from "./post_entry/post_entry_card_component";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
 import { ServiceClient } from "@selfage/service_client";
@@ -22,9 +22,9 @@ export class MainContentComponent extends EventEmitter {
   public constructor(
     private sendButton: FillButtonComponent,
     private serivceClient: ServiceClient,
-    private postEntryComponentFactoryFn: (
-      postEntry: PostEntry
-    ) => PostEntryComponent
+    private postEntryCardComponentFactoryFn: (
+      postEntryCard: PostEntryCard
+    ) => PostEntryCardComponent
   ) {
     super();
     let postEntryListRef = new Ref<HTMLDivElement>();
@@ -45,7 +45,7 @@ export class MainContentComponent extends EventEmitter {
         },
         E.inputRef(postEntryContentInputRef, {
           class: "post-entry-content-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; flex: 0 0 auto; margin: 0 5rem; color: ${ColorScheme.SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${ColorScheme.SCHEME.inputBorder};`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; flex: 0 0 auto; margin: 0 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
         }),
         E.div(
           {
@@ -67,7 +67,7 @@ export class MainContentComponent extends EventEmitter {
         E.text(LOCALIZED_TEXT.sendPostEntryButtonLabel)
       ),
       SERVICE_CLIENT,
-      PostEntryComponent.create
+      PostEntryCardComponent.create
     ).init();
   }
 
@@ -82,15 +82,15 @@ export class MainContentComponent extends EventEmitter {
       CREATE_POST
     );
     this.postEntryList.appendChild(
-      this.postEntryComponentFactoryFn(response.postEntry).body
+      this.postEntryCardComponentFactoryFn(response.postEntryCard).body
     );
   }
 
   public async show(): Promise<void> {
     let response = await this.serivceClient.fetchAuthed({}, READ_POSTS);
-    for (let postEntry of response.postEntries) {
+    for (let postEntryCard of response.postEntryCards) {
       this.postEntryList.appendChild(
-        this.postEntryComponentFactoryFn(postEntry).body
+        this.postEntryCardComponentFactoryFn(postEntryCard).body
       );
     }
   }

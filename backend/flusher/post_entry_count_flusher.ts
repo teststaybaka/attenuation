@@ -1,5 +1,5 @@
 import redis = require("redis");
-import { Reaction } from "../../interface/post_entry";
+import { PostEntryReaction } from "../../interface/post_entry_reaction";
 import { LOGGER } from "../common/logger";
 import { REDIS_CLIENTS } from "../common/redis_clients";
 import { POSTS_DATABASE } from "../common/spanner_database";
@@ -94,7 +94,7 @@ export class PostEntryCounterFlusher {
     let [viewCountStr, upvoteCountStr] = (await redisClient
       .multi()
       .hGet(row.postEntryId, "views")
-      .hGet(row.postEntryId, Reaction[Reaction.UPVOTE])
+      .hGet(row.postEntryId, PostEntryReaction[PostEntryReaction.UPVOTE])
       .del(row.postEntryId)
       .exec()) as any;
     let viewCount = Number.parseInt(viewCountStr ?? "0");

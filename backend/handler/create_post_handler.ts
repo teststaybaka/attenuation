@@ -1,4 +1,3 @@
-import { PostEntry } from "../../interface/post_entry";
 import {
   CREATE_POST,
   CreatePostRequest,
@@ -33,31 +32,28 @@ export class CreatePostHandler
   ): Promise<CreatePostResponse> {
     let createdTimestamp = this.getNow();
     let expirationTimestamp = createdTimestamp + 24 * 60 * 60 * 1000;
-    let postEntry: PostEntry = {
-      postEntryId: uuidv4(),
-      userId: session.userId,
-      content: request.content,
-      views: 0,
-      upvotes: 0,
-      createdTimestamp,
-      expirationTimestamp,
-    };
+    let postEntryId = uuidv4();
     await this.postsDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertNewPostEntryStatement(
-          postEntry.postEntryId,
-          postEntry.userId,
-          postEntry.content,
-          postEntry.upvotes,
-          postEntry.views,
-          postEntry.createdTimestamp,
-          postEntry.expirationTimestamp
+          postEntryId,
+          session.userId,
+          request.content,
+          0,
+          0,
+          createdTimestamp,
+          expirationTimestamp
         )
       );
       await transaction.commit();
     });
     return {
-      postEntry,
+      postEntryCard: {
+        postEntryId,
+        userId: session.userId,
+        content: request.content,
+        createdTimestamp,
+      },
     };
   }
 }

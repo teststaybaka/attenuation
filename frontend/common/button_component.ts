@@ -1,5 +1,5 @@
 import EventEmitter = require("events");
-import { ColorScheme } from "./color_scheme";
+import { SCHEME } from "./color_scheme";
 import { ButtonController } from "@selfage/element/button_controller";
 import { E } from "@selfage/element/factory";
 
@@ -27,7 +27,7 @@ export class FillButtonComponent extends EventEmitter {
     this.body = E.button(
       {
         class: "fill-button",
-        style: `${COMMON_BUTTON_STYLE} color: ${ColorScheme.SCHEME.primaryButtonText};`,
+        style: `${COMMON_BUTTON_STYLE} color: ${SCHEME.primaryButtonText};`,
       },
       ...childNodes
     );
@@ -60,23 +60,19 @@ export class FillButtonComponent extends EventEmitter {
   }
 
   private handleEnable(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.primaryButtonBackground;
+    this.body.style.backgroundColor = SCHEME.primaryButtonBackground;
   }
 
   private handleDisable(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.primaryButtonBackgroundDisabled;
+    this.body.style.backgroundColor = SCHEME.primaryButtonBackgroundDisabled;
   }
 
   private down(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.primaryButtonBackgroundPressed;
+    this.body.style.backgroundColor = SCHEME.primaryButtonBackgroundPressed;
   }
 
   private up(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.primaryButtonBackground;
+    this.body.style.backgroundColor = SCHEME.primaryButtonBackground;
   }
 
   private async handleClick(): Promise<boolean> {
@@ -132,7 +128,7 @@ export class TextButtonComponent extends EventEmitter {
     this.body = E.button(
       {
         class: "text-button",
-        style: `${COMMON_BUTTON_STYLE}; color: ${ColorScheme.SCHEME.textButtonText};`,
+        style: `${COMMON_BUTTON_STYLE}; color: ${SCHEME.textButtonText};`,
       },
       ...childNodes
     );
@@ -166,21 +162,19 @@ export class TextButtonComponent extends EventEmitter {
   }
 
   private handleEnable(): void {
-    this.body.style.backgroundColor = ColorScheme.SCHEME.textButtonBackground;
+    this.body.style.backgroundColor = SCHEME.textButtonBackground;
   }
 
   private handleDisable(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.textButtonBackgroundDisabled;
+    this.body.style.backgroundColor = SCHEME.textButtonBackgroundDisabled;
   }
 
   private down(): void {
-    this.body.style.backgroundColor =
-      ColorScheme.SCHEME.textButtonBackgroundPressed;
+    this.body.style.backgroundColor = SCHEME.textButtonBackgroundPressed;
   }
 
   private up(): void {
-    this.body.style.backgroundColor = ColorScheme.SCHEME.textButtonBackground;
+    this.body.style.backgroundColor = SCHEME.textButtonBackground;
   }
 
   private async handleClick(): Promise<boolean> {

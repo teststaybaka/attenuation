@@ -1,6 +1,6 @@
 import crypto = require("crypto");
 import redis = require("redis");
-import { Reaction } from "../../interface/post_entry";
+import { PostEntryReaction } from "../../interface/post_entry_reaction";
 import { REDIS_CLIENTS } from "./redis_clients";
 
 export class PostEntryRedisCounter {
@@ -25,13 +25,13 @@ export class PostEntryRedisCounter {
 
   public async incReact(
     postEntryId: string,
-    reaction: Reaction
+    reaction: PostEntryReaction
   ): Promise<void> {
     let [client, shard] = this.getClientAndShard(postEntryId);
     await client
       .multi()
       .sAdd(shard, postEntryId)
-      .hIncrBy(postEntryId, Reaction[reaction], 1)
+      .hIncrBy(postEntryId, PostEntryReaction[reaction], 1)
       .exec();
   }
 

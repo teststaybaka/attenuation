@@ -1,0 +1,12 @@
+[{
+  "name": "PostEntryReaction",
+  "enum": {
+    "values": [{
+      "name": "UNKNOWN",
+      "value": 0
+    }, {
+      "name": "UPVOTE",
+      "value": 1
+    }]
+  }
+}]

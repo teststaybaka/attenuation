@@ -4,19 +4,18 @@ import { MainContentState } from "./main_content/main_content_state";
 import { SERVICE_CLIENT } from "./service_client";
 import { SignInComponent } from "./sign_in/sign_in_component";
 import { SignUpComponent } from "./sign_up/sign_up_component";
-import { E } from "@selfage/element/factory";
 import { ServiceClient } from "@selfage/service_client";
 import { LocalSessionStorage } from "@selfage/service_client/local_session_storage";
 import { TabsSwitcher } from "@selfage/tabs";
 
-export class MainComponent {
-  public body: HTMLDivElement;
+export class MainController {
   private pageSwitcher = TabsSwitcher.create();
   private signInComponent: SignInComponent;
   private signUpComponent: SignUpComponent;
   private mainContentComponent: MainContentComponent;
 
   public constructor(
+    private body: HTMLElement,
     private signInComponentFactoryFn: () => SignInComponent,
     private signUpComponentFactoryFn: () => SignUpComponent,
     private mainContentComponentFactoryFn: (
@@ -25,14 +24,14 @@ export class MainComponent {
     private mainContentState: MainContentState,
     private localSessionStorage: LocalSessionStorage,
     private serviceClient: ServiceClient
-  ) {
-    this.body = E.div({
-      class: "main",
-    });
-  }
+  ) {}
 
-  public static create(mainContentState: MainContentState): MainComponent {
-    return new MainComponent(
+  public static create(
+    body: HTMLElement,
+    mainContentState: MainContentState
+  ): MainController {
+    return new MainController(
+      body,
       SignInComponent.create,
       SignUpComponent.create,
       MainContentComponent.create,

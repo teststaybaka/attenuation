@@ -1,7 +1,7 @@
 import EventEmitter = require("events");
 import { SIGN_IN } from "../../../interface/service";
 import { FillButtonComponent } from "../../common/button_component";
-import { ColorScheme } from "../../common/color_scheme";
+import { SCHEME } from "../../common/color_scheme";
 import { LOCAL_SESSION_STORAGE } from "../local_session_storage";
 import { LOCALIZED_TEXT } from "../locales/localized_text";
 import { SERVICE_CLIENT } from "../service_client";
@@ -43,24 +43,24 @@ export class SignInComponent extends EventEmitter {
         E.div(
           {
             class: "sign-in-username-label",
-            style: `color: ${ColorScheme.SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
+            style: `color: ${SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
           },
           E.text(LOCALIZED_TEXT.usernameLabel)
         ),
         E.inputRef(usernameInputRef, {
           class: "sign-in-username-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${ColorScheme.SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${ColorScheme.SCHEME.inputBorder};`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
         }),
         E.div(
           {
             class: "sign-in-password-label",
-            style: `color: ${ColorScheme.SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
+            style: `color: ${SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
           },
           E.text(LOCALIZED_TEXT.passwordLabel)
         ),
         E.inputRef(passwordInputRef, {
           class: "sign-in-password-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${ColorScheme.SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${ColorScheme.SCHEME.inputBorder};`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
           type: "password",
           autocomplete: "current-password",
         }),
@@ -68,7 +68,7 @@ export class SignInComponent extends EventEmitter {
           switcherToSignUpButtonRef,
           {
             class: "sign-in-switch-to-sign-up",
-            style: `margin: 1rem 5rem; font-size: 1.4rem; color: ${ColorScheme.SCHEME.hintText}; cursor: pointer;`,
+            style: `margin: 1rem 5rem; font-size: 1.4rem; color: ${SCHEME.hintText}; cursor: pointer;`,
           },
           E.text(LOCALIZED_TEXT.switchToSignUpLink)
         ),
