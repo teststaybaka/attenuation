@@ -1,6 +1,6 @@
-import { PostEntryCard } from "../../../../interface/post_entry_card";
-import { AT_USER } from "../../../common/at_user";
-import { SCHEME } from "../../../common/color_scheme";
+import { PostEntryCard } from "../../../../../interface/post_entry_card";
+import { AT_USER } from "../../../../common/at_user";
+import { SCHEME } from "../../../../common/color_scheme";
 import { E } from "@selfage/element/factory";
 
 export class PostEntryCardComponent {
@@ -19,7 +19,7 @@ export class PostEntryCardComponent {
     this.body = E.div(
       {
         class: "post-entry",
-        style: `display: flex; flex-flow: column nowrap; width: 60rem; padding: 1.2rem; box-sizing: border-box; border-radius: .5rem; background-color: ${SCHEME.cardBackground};`,
+        style: `display: flex; flex-flow: column nowrap; width: 60rem; padding: .6rem 1.2rem; margin-left: auto; margin-right: auto; box-sizing: border-box; background-color: ${SCHEME.cardBackground};`,
       },
       E.div(
         {

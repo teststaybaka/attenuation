@@ -1,5 +1,6 @@
-import { normalizeBody } from "../../../common/normalize_body";
-import { PostEntryCardComponent } from "./post_entry_card_component";
+import path = require("path");
+import { normalizeBody } from "../../../../common/normalize_body";
+import { PostEntryCardComponent } from "./component";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { PUPPETEER_TEST_RUNNER } from "@selfage/test_runner";
 import "@selfage/puppeteer_test_executor_api";
@@ -7,7 +8,7 @@ import "@selfage/puppeteer_test_executor_api";
 normalizeBody();
 
 PUPPETEER_TEST_RUNNER.run({
-  name: "PostCardComponentTest",
+  name: "PostEntryCardComponentTest",
   cases: [
     {
       name: "Render",
@@ -15,7 +16,7 @@ PUPPETEER_TEST_RUNNER.run({
         // Prepare
         mockExactFile(
           "https://gcs/user_image.jpg",
-          __dirname + "/user_image.jpg"
+          path.join(__dirname, "../../common/user_image.jpg")
         );
 
         // Execute
@@ -31,9 +32,9 @@ PUPPETEER_TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/post_entry_card_component.png",
-          __dirname + "/golden/post_entry_card_component.png",
-          __dirname + "/post_entry_card_component_diff.png",
+          __dirname + "/render_component.png",
+          __dirname + "/golden/render_component.png",
+          __dirname + "/render_component_diff.png",
           { fullPage: true }
         );
       },

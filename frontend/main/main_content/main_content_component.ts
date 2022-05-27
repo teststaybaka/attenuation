@@ -5,7 +5,7 @@ import { FillButtonComponent } from "../../common/button_component";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../locales/localized_text";
 import { SERVICE_CLIENT } from "../service_client";
-import { PostEntryCardComponent } from "./post_entry/post_entry_card_component";
+import { PostEntryCardComponent } from "./post_entry_list/post_entry_card/component";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
 import { ServiceClient } from "@selfage/service_client";
