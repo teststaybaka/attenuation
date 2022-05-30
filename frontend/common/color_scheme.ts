@@ -4,6 +4,7 @@ let GREY = "rgb(200, 200, 200)";
 let DARK_GREY = "rgb(120, 120, 120)";
 let LIGHT_BLUE = "rgb(200, 247, 255)";
 let BLUE = "rgb(0, 174, 239)";
+let RED = "rgb(255, 0,0)";
 let WHITE = "white";
 
 export class LightScheme {
@@ -19,8 +20,14 @@ export class LightScheme {
   get hintText() {
     return DARK_GREY;
   }
+  get errorText() {
+    return RED;
+  }
   get inputBorder() {
     return GREY;
+  }
+  get errorInputBorder() {
+    return RED;
   }
   get primaryButtonBackground() {
     return BLUE;
