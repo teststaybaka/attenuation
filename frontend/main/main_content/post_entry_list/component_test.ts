@@ -1,6 +1,6 @@
 import path = require("path");
 import { PostEntryCard } from "../../../../interface/post_entry_card";
-import { normalizeBody } from "../../../common/normalize_body";
+import { normalizeBody } from "../../common/normalize_body";
 import { PostEntryListComponent } from "./component";
 import { PostEntryCardComponent } from "./post_entry_card/component";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
@@ -10,7 +10,7 @@ import "@selfage/puppeteer_test_executor_api";
 normalizeBody();
 
 let CARD_TEMPLATE = {
-  userProfilePicture: "https://gcs/user_image.jpg",
+  userProfilePicture: path.join(__dirname, "../common/user_image.jpg"),
   username: "some-name",
   userNatureName: "Some Name",
   content: "blahblahblahblah\nsomethingsomething",
@@ -34,10 +34,6 @@ PUPPETEER_TEST_RUNNER.run({
       name: "Render",
       execute: async () => {
         // Prepare
-        mockExactFile(
-          "https://gcs/user_image.jpg",
-          path.join(__dirname, "../common/user_image.jpg")
-        );
         document.body.style.width = "1000px";
         document.body.style.height = "600px";
 

@@ -1,5 +1,6 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 import { UnauthedServiceDescriptor, AuthedServiceDescriptor } from '@selfage/service_descriptor';
+import { BasicUserInfo, BASIC_USER_INFO } from './basic_user_info';
 import { PostEntryCard, POST_ENTRY_CARD } from './post_entry_card';
 import { PostEntryReaction, POST_ENTRY_REACTION } from './post_entry_reaction';
 
@@ -93,6 +94,47 @@ export let SIGN_IN: UnauthedServiceDescriptor<SignInRequest, SignInResponse> = {
   path: "/SignIn",
   requestDescriptor: SIGN_IN_REQUEST,
   responseDescriptor: SIGN_IN_RESPONSE,
+};
+
+export interface GetBasicUserInfoRequest {
+  signedSession?: string,
+}
+
+export let GET_BASIC_USER_INFO_REQUEST: MessageDescriptor<GetBasicUserInfoRequest> = {
+  name: 'GetBasicUserInfoRequest',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+    {
+      name: 'signedSession',
+      primitiveType: PrimitiveType.STRING,
+    },
+  ]
+};
+
+export interface GetBasicUserInfoResponse {
+  basicUserInfo?: BasicUserInfo,
+}
+
+export let GET_BASIC_USER_INFO_RESPONSE: MessageDescriptor<GetBasicUserInfoResponse> = {
+  name: 'GetBasicUserInfoResponse',
+  factoryFn: () => {
+    return new Object();
+  },
+  fields: [
+    {
+      name: 'basicUserInfo',
+      messageDescriptor: BASIC_USER_INFO,
+    },
+  ]
+};
+
+export let GET_BASIC_USER_INFO: AuthedServiceDescriptor<GetBasicUserInfoRequest, GetBasicUserInfoResponse> = {
+  name: "GetBasicUserInfo",
+  path: "/GetBasicUserInfo",
+  requestDescriptor: GET_BASIC_USER_INFO_REQUEST,
+  responseDescriptor: GET_BASIC_USER_INFO_RESPONSE,
 };
 
 export interface CreatePostRequest {

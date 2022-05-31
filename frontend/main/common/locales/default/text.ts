@@ -5,8 +5,17 @@ export default class Text {
   get usernameLabel() {
     return `Username`;
   }
+  get naturalNameLabel() {
+    return `Name`;
+  }
+  get emailLabel() {
+    return `Email`;
+  }
   get passwordLabel() {
     return `Password`;
+  }
+  get passwordRepeatLabel() {
+    return `Repeat password`;
   }
   get switchToSignUpLink() {
     return `Don't have an account?`;
@@ -22,5 +31,11 @@ export default class Text {
   }
   get sendPostEntryButtonLabel() {
     return `Send`;
+  }
+  get saveButtonLabel() {
+    return `Save`;
+  }
+  get cancelButtonLabel() {
+    return `Cancel`;
   }
 }

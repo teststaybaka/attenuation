@@ -1,9 +1,9 @@
 import { LOCAL_SESSION_STORAGE } from "./local_session_storage";
-import { MainContentComponent } from "./main_content/main_content_component";
-import { MainContentState } from "./main_content/main_content_state";
+import { MainContentComponent } from "./main_content/component";
+import { MainContentState } from "./main_content/state";
 import { SERVICE_CLIENT } from "./service_client";
-import { SignInComponent } from "./sign_in/sign_in_component";
-import { SignUpComponent } from "./sign_up/sign_up_component";
+import { SignInComponent } from "./sign_in/component";
+import { SignUpComponent } from "./sign_up/component";
 import { ServiceClient } from "@selfage/service_client";
 import { LocalSessionStorage } from "@selfage/service_client/local_session_storage";
 import { TabsSwitcher } from "@selfage/tabs";

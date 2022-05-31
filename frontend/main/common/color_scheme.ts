@@ -14,6 +14,9 @@ export class LightScheme {
   get cardBackground() {
     return WHITE;
   }
+  get barBackground() {
+    return WHITE;
+  }
   get normalText() {
     return LIGHT_BLACK;
   }

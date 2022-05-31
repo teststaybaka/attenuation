@@ -51,6 +51,30 @@
     "response": "SignInResponse"
   }
 }, {
+  "name": "GetBasicUserInfoRequest",
+  "message": {
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetBasicUserInfoResponse",
+  "message": {
+    "fields": [{
+      "name": "basicUserInfo",
+      "type": "BasicUserInfo",
+      "import": "./basic_user_info"
+    }]
+  }
+}, {
+  "name": "GetBasicUserInfo",
+  "service": {
+    "path": "/GetBasicUserInfo",
+    "request": "GetBasicUserInfoRequest",
+    "response": "GetBasicUserInfoResponse"
+  }
+}, {
   "name": "CreatePostRequest",
   "message": {
     "fields": [{

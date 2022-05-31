@@ -1,5 +1,5 @@
 import path = require("path");
-import { normalizeBody } from "../../../../common/normalize_body";
+import { normalizeBody } from "../../../common/normalize_body";
 import { PostEntryCardComponent } from "./component";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { PUPPETEER_TEST_RUNNER } from "@selfage/test_runner";

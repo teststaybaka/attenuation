@@ -1,6 +1,6 @@
 import { PostEntryCard } from "../../../../../interface/post_entry_card";
-import { AT_USER } from "../../../../common/at_user";
-import { SCHEME } from "../../../../common/color_scheme";
+import { AT_USER } from "../../../common/at_user";
+import { SCHEME } from "../../../common/color_scheme";
 import { E } from "@selfage/element/factory";
 
 export class PostEntryCardComponent {

@@ -37,11 +37,11 @@ export class TextInputComponent extends EventEmitter {
         },
         E.inputRef(inputRef, {
           class: "text-input-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; font-size: 1.4rem; font-family: initial; line-height: 2rem; color: ${SCHEME.normalText}; border-bottom: .1rem solid;`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; width: 100%; font-size: 1.4rem; font-family: initial; line-height: 2rem; color: ${SCHEME.normalText}; border-bottom: .1rem solid;`,
         }),
         E.divRef(errorMsgRef, {
           class: "text-input-error-label",
-          style: `font-size: 1.2rem; line-height: 1.9rem; color: ${SCHEME.errorText};`,
+          style: `width: 100%; font-size: 1.2rem; line-height: 1.9rem; color: ${SCHEME.errorText};`,
         })
       )
     );
@@ -72,5 +72,9 @@ export class TextInputComponent extends EventEmitter {
   public hideError(): void {
     this.errorMsg.textContent = "";
     this.input.style.borderColor = SCHEME.inputBorder;
+  }
+
+  public setValue(value: string): void {
+    this.input.value = value;
   }
 }

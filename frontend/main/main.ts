@@ -1,5 +1,5 @@
 import { ORIGIN_DEV } from "../../constants";
-import { MAIN_CONTENT_STATE } from "./main_content/main_content_state";
+import { MAIN_CONTENT_STATE } from "./main_content/state";
 import { MainController } from "./main_controller";
 import { SERVICE_CLIENT } from "./service_client";
 import { createLoaderAndUpdater } from "@selfage/stateful_navigator";

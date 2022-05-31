@@ -1,5 +1,5 @@
 import EventEmitter = require("events");
-import { SCHEME } from "./color_scheme";
+import { SCHEME } from "../color_scheme";
 import { ButtonController } from "@selfage/element/button_controller";
 import { E } from "@selfage/element/factory";
 
