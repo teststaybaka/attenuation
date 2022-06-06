@@ -14,7 +14,7 @@ PUPPETEER_TEST_RUNNER.run({
     {
       name: "Render",
       execute: async () => {
-        // Execute
+        // Prepare
         let component = new AccountComponent(
           new (class extends ServiceClient {
             public constructor() {
@@ -32,9 +32,12 @@ PUPPETEER_TEST_RUNNER.run({
             }
           })()
         ).init();
-        await component.load();
+
+        // Execute
+        await component.refresh();
         document.body.appendChild(component.body);
         document.body.style.width = "1000px";
+        component.show();
 
         // Verify
         await asyncAssertScreenshot(

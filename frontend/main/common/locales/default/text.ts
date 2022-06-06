@@ -38,4 +38,19 @@ export default class Text {
   get cancelButtonLabel() {
     return `Cancel`;
   }
+  get writePostLabel() {
+    return `Write a post`;
+  }
+  get refreshPostsLabel() {
+    return `Refresh with new posts`;
+  }
+  get accountLabel() {
+    return `Account`;
+  }
+  get homeLabel() {
+    return `Home`;
+  }
+  get refreshLabel() {
+    return `Refresh`;
+  }
 }

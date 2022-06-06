@@ -1,47 +1,20 @@
 [{
-  "message": {
-    "name": "TopicState",
-    "fields": [{
-      "name": "postEntryId",
-      "type": "string"
-    }, {
-      "name": "topic",
-      "type": "string"
-    }],
-    "isObservable": true
-  }
-}, {
+  "name": "MainContentPage",
   "enum": {
-    "name": "MainContentPage",
     "values": [{
       "name": "HOME",
       "value": 1
     }, {
-      "name": "TOPIC",
+      "name": "ACCOUNT",
       "value": 2
-    }, {
-      "name": "PROFILE",
-      "value": 3
-    }, {
-      "name": "MANAGE_TOPICS",
-      "value": 4
-    }, {
-      "name": "FOLLOWERS",
-      "value": 5
-    }, {
-      "name": "FOLLOWING",
-      "value": 6
     }]
   }
 }, {
+  "name": "MainContentState",
   "message": {
-    "name": "MainContentState",
     "fields": [{
       "name": "page",
       "type": "MainContentPage"
-    }, {
-      "name": "topicState",
-      "type": "TopicState"
     }],
     "isObservable": true
   }

@@ -27,7 +27,7 @@ export class AccountComponent {
     this.body = E.div(
       {
         class: "account-basic",
-        style: `display: flex; flex-flow: row nowrap; justify-content: center; height: 100%; width: 100%;`,
+        style: `flex-flow: row nowrap; justify-content: center; height: 100%; width: 100%;`,
       },
       E.divRef(
         cardRef,
@@ -119,7 +119,7 @@ export class AccountComponent {
     }
   }
 
-  public async load(): Promise<void> {
+  public async refresh(): Promise<void> {
     let user = (await this.serviceClient.fetchAuthed({}, GET_BASIC_USER_INFO))
       .basicUserInfo;
     this.usernameValue.textContent = user.username;

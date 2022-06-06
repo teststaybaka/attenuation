@@ -4,10 +4,17 @@ let GREY = "rgb(200, 200, 200)";
 let DARK_GREY = "rgb(120, 120, 120)";
 let LIGHT_BLUE = "rgb(200, 247, 255)";
 let BLUE = "rgb(0, 174, 239)";
+let ORANGE = "rgb(255, 180, 80)";
 let RED = "rgb(255, 0,0)";
 let WHITE = "white";
 
 export class LightScheme {
+  get logoOrange() {
+    return ORANGE;
+  }
+  get logoBlue() {
+    return BLUE;
+  }
   get bodyBackground() {
     return LIGHT_GREY;
   }
@@ -31,6 +38,18 @@ export class LightScheme {
   }
   get errorInputBorder() {
     return RED;
+  }
+  get menuPrimaryIcon() {
+    return BLUE;
+  }
+  get menuIcon() {
+    return LIGHT_BLACK;
+  }
+  get menuText() {
+    return LIGHT_BLACK;
+  }
+  get menuHighlightBackground() {
+    return LIGHT_BLUE;
   }
   get primaryButtonBackground() {
     return BLUE;

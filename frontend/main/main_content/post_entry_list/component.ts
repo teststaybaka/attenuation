@@ -1,6 +1,9 @@
 import { PostEntryCard } from "../../../../interface/post_entry_card";
+import { READ_POSTS } from "../../../../interface/service";
+import { SERVICE_CLIENT } from "../../service_client";
 import { PostEntryCardComponent } from "./post_entry_card/component";
 import { E } from "@selfage/element/factory";
+import { ServiceClient } from "@selfage/service_client";
 
 export class PostEntryListComponent {
   public body: HTMLDivElement;
@@ -13,16 +16,20 @@ export class PostEntryListComponent {
   public constructor(
     private postEntryCardComponentFactoryFn: (
       postEntryCard: PostEntryCard
-    ) => PostEntryCardComponent
+    ) => PostEntryCardComponent,
+    private serivceClient: ServiceClient
   ) {
     this.body = E.div({
       class: "post-entry-list",
-      style: `display: flex; flex-flow: column wrap; height: 100%; width: 100%; overflow: hidden;`,
+      style: `flex-flow: column wrap; height: 100%; width: 100%; overflow: hidden;`,
     });
   }
 
   public static create(): PostEntryListComponent {
-    return new PostEntryListComponent(PostEntryCardComponent.create).init();
+    return new PostEntryListComponent(
+      PostEntryCardComponent.create,
+      SERVICE_CLIENT
+    ).init();
   }
 
   public init(): this {
@@ -46,7 +53,20 @@ export class PostEntryListComponent {
     }
   }
 
-  public addEntries(postEntryCards: Array<PostEntryCard>): void {
+  public async refresh(): Promise<void> {
+    let response = await this.serivceClient.fetchAuthed({}, READ_POSTS);
+    this.removeAllEntries();
+    this.addEntries(response.postEntryCards);
+  }
+
+  private removeAllEntries(): void {
+    for (let entry of this.postEntryCardComponents.entries()) {
+      entry[1][0].remove();
+    }
+    this.postEntryCardComponents.clear();
+  }
+
+  private addEntries(postEntryCards: Array<PostEntryCard>): void {
     for (let postEntryCard of postEntryCards) {
       if (this.postEntryCardComponents.has(postEntryCard.postEntryId)) {
         continue;
@@ -67,5 +87,13 @@ export class PostEntryListComponent {
         postEntryCardComponent,
       ]);
     }
+  }
+
+  public show(): void {
+    this.body.style.display = "flex";
+  }
+
+  public hide(): void {
+    this.body.style.display = "none";
   }
 }

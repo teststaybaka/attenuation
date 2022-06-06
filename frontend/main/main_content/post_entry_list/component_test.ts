@@ -3,7 +3,9 @@ import { PostEntryCard } from "../../../../interface/post_entry_card";
 import { normalizeBody } from "../../common/normalize_body";
 import { PostEntryListComponent } from "./component";
 import { PostEntryCardComponent } from "./post_entry_card/component";
+import { Counter } from "@selfage/counter";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
+import { ServiceClient } from "@selfage/service_client";
 import { PUPPETEER_TEST_RUNNER } from "@selfage/test_runner";
 import "@selfage/puppeteer_test_executor_api";
 
@@ -36,13 +38,42 @@ PUPPETEER_TEST_RUNNER.run({
         // Prepare
         document.body.style.width = "1000px";
         document.body.style.height = "600px";
+        let component = new PostEntryListComponent(
+          (postEntryCard) => {
+            return new PostEntryCardComponent(postEntryCard);
+          },
+          new (class extends ServiceClient {
+            public counter = new Counter<string>();
+            public constructor() {
+              super(undefined, undefined);
+            }
+            public async fetchAuthed<T>(): Promise<any> {
+              switch (this.counter.increment("fetchAuthed")) {
+                case 1:
+                  return {
+                    postEntryCards: generateCards(7),
+                  };
+                case 2:
+                  return {
+                    postEntryCards: [
+                      // 10 should be a duplicated id.
+                      { postEntryId: "10", ...CARD_TEMPLATE },
+                      ...generateCards(14),
+                      // 12 should be a duplicated id.
+                      { postEntryId: "12", ...CARD_TEMPLATE },
+                    ],
+                  };
+                default:
+                  throw new Error("Fix test setup.");
+              }
+            }
+          })()
+        ).init();
+        component.show();
 
         // Execute
-        let component = new PostEntryListComponent((postEntryCard) => {
-          return new PostEntryCardComponent(postEntryCard);
-        }).init();
         document.body.appendChild(component.body);
-        component.addEntries(generateCards(7));
+        component.refresh();
 
         // Verify
         await asyncAssertScreenshot(
@@ -64,11 +95,7 @@ PUPPETEER_TEST_RUNNER.run({
         );
 
         // Execute
-        component.addEntries([
-          { postEntryId: "2", ...CARD_TEMPLATE },
-          { postEntryId: "5", ...CARD_TEMPLATE },
-          ...generateCards(7),
-        ]);
+        component.refresh();
         document.body.style.width = "2000px";
 
         // Verify
