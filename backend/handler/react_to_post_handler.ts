@@ -8,7 +8,7 @@ import {
   POST_ENTRY_REDIS_COUNTER,
   PostEntryRedisCounter,
 } from "../common/post_entry_redis_counter";
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import { buildInsertPostEntryReactedStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
@@ -21,19 +21,19 @@ export class ReactToPostHandler
   public serviceDescriptor = REACT_TO_POST;
 
   public constructor(
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private postEntryRedisCounter: PostEntryRedisCounter
   ) {}
 
   public static create(): ReactToPostHandler {
-    return new ReactToPostHandler(POSTS_DATABASE, POST_ENTRY_REDIS_COUNTER);
+    return new ReactToPostHandler(CORE_DATABASE, POST_ENTRY_REDIS_COUNTER);
   }
 
   public async handle(
     request: ReactToPostRequest,
     session: UserSession
   ): Promise<ReactToPostResponse> {
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertPostEntryReactedStatement(
           session.userId,

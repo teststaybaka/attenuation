@@ -2,7 +2,7 @@ import redis = require("redis");
 import { PostEntryReaction } from "../../interface/post_entry_reaction";
 import { LOGGER } from "../common/logger";
 import { REDIS_CLIENTS } from "../common/redis_clients";
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import {
   FetchPostEntriesRow,
   buildFetchPostEntriesStatement,
@@ -16,13 +16,13 @@ export class PostEntryCounterFlusher {
 
   public constructor(
     private redisClients: Array<[string, redis.RedisClientType]>,
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private setTimeout: (handler: TimerHandler, timeout: number) => void,
     private getNow: () => number
   ) {}
 
   public static create(): void {
-    new PostEntryCounterFlusher(REDIS_CLIENTS, POSTS_DATABASE, setTimeout, () =>
+    new PostEntryCounterFlusher(REDIS_CLIENTS, CORE_DATABASE, setTimeout, () =>
       Date.now()
     ).init();
   }
@@ -64,7 +64,7 @@ export class PostEntryCounterFlusher {
       `Flushing client ${redisUrl} shard ${shard} with ${postEntryIds.length} ids.`
     );
     // TODO: Log/Monitor postEntryIds.length to make sure each shard doesn't contain too many entries.
-    let [rows] = await this.postsDatabase.run(
+    let [rows] = await this.coreDatabase.run(
       buildFetchPostEntriesStatement(postEntryIds)
     );
     let rowsToUpdate = new Array<FetchPostEntriesRow>();
@@ -124,7 +124,7 @@ export class PostEntryCounterFlusher {
       return;
     }
 
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.batchUpdate(
         rowsToUpdate.map((row) => {
           return {
@@ -161,7 +161,7 @@ export class PostEntryCounterFlusher {
       return;
     }
 
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.batchUpdate([
         {
           sql: `DELETE FROM PostEntry WHERE postEntryId in UNNEST(@postEntryIds)`,

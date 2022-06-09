@@ -5,7 +5,7 @@ import {
   ReadPostsResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import {
   buildQueryNewPostsStatement,
   parseQueryNewPostsRow,
@@ -21,26 +21,35 @@ export class ReadPostsHandler
   public serviceDescriptor = READ_POSTS;
 
   public constructor(
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private getNow: () => number
   ) {}
 
   public static create(): ReadPostsHandler {
-    return new ReadPostsHandler(POSTS_DATABASE, () => Date.now());
+    return new ReadPostsHandler(CORE_DATABASE, () => Date.now());
   }
 
   public async handle(
     request: ReadPostsRequest,
     session: UserSession
   ): Promise<ReadPostsResponse> {
-    let [rows] = await this.postsDatabase.run(
+    let [rows] = await this.coreDatabase.run(
       buildQueryNewPostsStatement(session.userId)
     );
     let postEntryCards = new Array<PostEntryCard>();
     for (let row of rows) {
       let postEntryRow = parseQueryNewPostsRow(row);
       if (postEntryRow.expirationTimestamp >= this.getNow()) {
-        postEntryCards.push(postEntryRow);
+        postEntryCards.push({
+          postEntryId: postEntryRow.postEntryId,
+          repliedEntryId: postEntryRow.repliedEntryId,
+          userId: postEntryRow.userId,
+          username: postEntryRow.username,
+          userNatureName: postEntryRow.naturalName,
+          userPictureUrl: postEntryRow.pictureUrl,
+          content: postEntryRow.content,
+          createdTimestamp: postEntryRow.createdTimestamp,
+        });
       }
     }
     return {

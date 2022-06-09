@@ -8,7 +8,7 @@ import {
   POST_ENTRY_REDIS_COUNTER,
   PostEntryRedisCounter,
 } from "../common/post_entry_redis_counter";
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import { buildInsertPostEntryViewedStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
@@ -21,19 +21,19 @@ export class ViewPostHandler
   public serviceDescriptor = VIEW_POST;
 
   public constructor(
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private postEntryRedisCounter: PostEntryRedisCounter
   ) {}
 
   public static create(): ViewPostHandler {
-    return new ViewPostHandler(POSTS_DATABASE, POST_ENTRY_REDIS_COUNTER);
+    return new ViewPostHandler(CORE_DATABASE, POST_ENTRY_REDIS_COUNTER);
   }
 
   public async handle(
     request: ViewPostRequest,
     session: UserSession
   ): Promise<ViewPostResponse> {
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertPostEntryViewedStatement(session.userId, request.postEntryId)
       );

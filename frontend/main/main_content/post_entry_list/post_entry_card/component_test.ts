@@ -22,7 +22,7 @@ PUPPETEER_TEST_RUNNER.run({
         // Execute
         document.body.appendChild(
           new PostEntryCardComponent({
-            userProfilePicture: "https://gcs/user_image.jpg",
+            userPictureUrl: "https://gcs/user_image.jpg",
             username: "some-name",
             userNatureName: "Some Name",
             content: "blahblahblahblah\nsomethingsomething",

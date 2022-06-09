@@ -31,7 +31,7 @@ export class PostEntryCardComponent {
           class: "post-entry-user-picture",
           style:
             "width: 4.8rem; height: 4.8rem; border-radius: 4.8rem; margin-right: 1rem;",
-          src: postEntryCard.userProfilePicture,
+          src: postEntryCard.userPictureUrl,
         }),
         E.div(
           {

@@ -1,4 +1,4 @@
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import {
   buildDeleteExpiredPostEntriesStatement,
   buildDeleteExpiredPostEntryReactionsStatement,
@@ -10,13 +10,13 @@ export class ExpiredPostEntryCleaner {
   private static CYCLE_INTERVAL = 600000; // ms
 
   public constructor(
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private setTimeout: (handler: TimerHandler, timeout: number) => void,
     private getNow: () => number
   ) {}
 
   public static create(): void {
-    new ExpiredPostEntryCleaner(POSTS_DATABASE, setTimeout, () =>
+    new ExpiredPostEntryCleaner(CORE_DATABASE, setTimeout, () =>
       Date.now()
     ).init();
   }
@@ -28,7 +28,7 @@ export class ExpiredPostEntryCleaner {
 
   private async cleanExpiredEntries(): Promise<void> {
     let nowTimestamp = this.getNow();
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.batchUpdate([
         buildDeleteExpiredPostEntryViewsStatement(nowTimestamp),
         buildDeleteExpiredPostEntryReactionsStatement(nowTimestamp),

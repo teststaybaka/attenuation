@@ -5,7 +5,7 @@ import {
 } from "../../interface/service";
 import { UserSession } from "../../interface/user_session";
 import { PasswordHasher } from "../common/password_hasher";
-import { USERS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import { buildInsertNewUserStatement } from "./users_sql";
 import { Database } from "@google-cloud/spanner";
 import { UnauthedServiceHandler } from "@selfage/service_handler";
@@ -18,27 +18,34 @@ export class SignUpHandler
   public serviceDescriptor = SIGN_UP;
 
   public constructor(
+    private bucketName: string,
     private passwordHasher: PasswordHasher,
     private sessionBuilder: SessionBuilder,
-    private usersDatabase: Database
+    private coreDatabase: Database,
+    private randomFn: () => number
   ) {}
 
-  public static create(): SignUpHandler {
+  public static create(bucketName: string): SignUpHandler {
     return new SignUpHandler(
+      bucketName,
       PasswordHasher.create(),
       SessionBuilder.create(),
-      USERS_DATABASE
+      CORE_DATABASE,
+      () => Math.random()
     );
   }
 
   public async handle(request: SignUpRequest): Promise<SignUpResponse> {
     let userId = uuidv4();
-    await this.usersDatabase.runTransactionAsync(async (transaction) => {
+    let pictureIndex = Math.floor(this.randomFn() * 2);
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertNewUserStatement(
           userId,
           request.username,
-          this.passwordHasher.hash(request.password)
+          request.naturalName,
+          this.passwordHasher.hash(request.password),
+          `https://storage.googleapis.com/${this.bucketName}/default${pictureIndex}.jpg`
         )
       );
       await transaction.commit();

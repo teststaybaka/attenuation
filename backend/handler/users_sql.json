@@ -1,7 +1,7 @@
 [{
   "name": "InsertNewUser",
   "spannerSql": {
-    "sql": "INSERT User (userId, username, passwordHashV1, createdTimestamp) VALUES (@userId, @username, @passwordHashV1, PENDING_COMMIT_TIMESTAMP())",
+    "sql": "INSERT User (userId, username, naturalName, passwordHashV1, pictureUrl, createdTimestamp) VALUES (@userId, @username, @naturalName, @passwordHashV1, @pictureUrl, PENDING_COMMIT_TIMESTAMP())",
     "params": [{
       "name": "userId",
       "type": "string"
@@ -9,12 +9,18 @@
       "name": "username",
       "type": "string"
     }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
       "name": "passwordHashV1",
+      "type": "string"
+    }, {
+      "name": "pictureUrl",
       "type": "string"
     }]
   }
 }, {
-  "name": "GetUser",
+  "name": "LookupUser",
   "spannerSql": {
     "sql": "SELECT userId, passwordHashV1 FROM User WHERE username = @username",
     "params": [{
@@ -26,6 +32,25 @@
       "type": "string"
     }, {
       "name": "passwordHashV1",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetUserInfo",
+  "spannerSql": {
+    "sql": "SELECT username, naturalName, pictureUrl FROM User where userId = @userId",
+    "params": [{
+      "name": "userId",
+      "type": "string"
+    }],
+    "outputColumns": [{
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
+      "name": "pictureUrl",
       "type": "string"
     }]
   }

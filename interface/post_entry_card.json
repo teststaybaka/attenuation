@@ -17,7 +17,7 @@
       "name": "userNatureName",
       "type": "string"
     }, {
-      "name": "userProfilePicture",
+      "name": "userPictureUrl",
       "type": "string"
     }, {
       "name": "content",

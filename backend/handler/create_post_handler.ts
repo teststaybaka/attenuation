@@ -4,7 +4,7 @@ import {
   CreatePostResponse,
 } from "../../interface/service";
 import { USER_SESSION, UserSession } from "../../interface/user_session";
-import { POSTS_DATABASE } from "../common/spanner_database";
+import { CORE_DATABASE } from "../common/spanner_database";
 import { buildInsertNewPostEntryStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
 import { AuthedServiceHandler } from "@selfage/service_handler";
@@ -18,12 +18,12 @@ export class CreatePostHandler
   public serviceDescriptor = CREATE_POST;
 
   public constructor(
-    private postsDatabase: Database,
+    private coreDatabase: Database,
     private getNow: () => number
   ) {}
 
   public static create(): CreatePostHandler {
-    return new CreatePostHandler(POSTS_DATABASE, () => Date.now());
+    return new CreatePostHandler(CORE_DATABASE, () => Date.now());
   }
 
   public async handle(
@@ -33,7 +33,7 @@ export class CreatePostHandler
     let createdTimestamp = this.getNow();
     let expirationTimestamp = createdTimestamp + 24 * 60 * 60 * 1000;
     let postEntryId = uuidv4();
-    await this.postsDatabase.runTransactionAsync(async (transaction) => {
+    await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertNewPostEntryStatement(
           postEntryId,

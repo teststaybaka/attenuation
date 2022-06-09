@@ -22,12 +22,10 @@ PUPPETEER_TEST_RUNNER.run({
             }
             public fetchAuthed() {
               return {
-                basicUserInfo: {
-                  username: "some-name",
-                  naturalName: "Some Name",
-                  email: "somename@something.com",
-                  profileUrl: path.join(__dirname, "../common/user_image.jpg"),
-                },
+                username: "some-name",
+                naturalName: "Some Name",
+                email: "somename@something.com",
+                pictureUrl: path.join(__dirname, "../common/user_image.jpg"),
               } as any;
             }
           })()

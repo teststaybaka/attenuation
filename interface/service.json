@@ -5,6 +5,9 @@
       "name": "username",
       "type": "string"
     }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
       "name": "password",
       "type": "string"
     }]
@@ -51,7 +54,7 @@
     "response": "SignInResponse"
   }
 }, {
-  "name": "GetBasicUserInfoRequest",
+  "name": "GetUserInfoRequest",
   "message": {
     "fields": [{
       "name": "signedSession",
@@ -59,20 +62,28 @@
     }]
   }
 }, {
-  "name": "GetBasicUserInfoResponse",
+  "name": "GetUserInfoResponse",
   "message": {
     "fields": [{
-      "name": "basicUserInfo",
-      "type": "BasicUserInfo",
-      "import": "./basic_user_info"
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
+      "name": "email",
+      "type": "string"
+    }, {
+      "name": "pictureUrl",
+      "type": "string"
     }]
   }
 }, {
-  "name": "GetBasicUserInfo",
+  "name": "GetUserInfo",
   "service": {
-    "path": "/GetBasicUserInfo",
-    "request": "GetBasicUserInfoRequest",
-    "response": "GetBasicUserInfoResponse"
+    "path": "/GetUserInfo",
+    "request": "GetUserInfoRequest",
+    "response": "GetUserInfoResponse"
   }
 }, {
   "name": "CreatePostRequest",

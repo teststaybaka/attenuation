@@ -7,6 +7,7 @@ import { PostEntryRedisCounter } from "./common/post_entry_redis_counter";
 import { createRedisClients } from "./common/redis_clients";
 import { PostEntryCounterFlusher } from "./flusher/post_entry_count_flusher";
 import { CreatePostHandler } from "./handler/create_post_handler";
+import { GetUserInfoHandler } from "./handler/get_user_info_handler";
 import { ReactToPostHandler } from "./handler/react_to_post_handler";
 import { ReadPostsHandler } from "./handler/read_posts_handler";
 import { SignInHandler } from "./handler/sign_in_handler";
@@ -51,7 +52,10 @@ function registerHandlers(app: express.Express, sessionKey: string): void {
   let register = new HandlerRegister(app, LOGGER);
   register.registerCorsAllowedPreflightHandler();
   register.registerUnauthed(SignInHandler.create());
-  register.registerUnauthed(SignUpHandler.create());
+  register.registerUnauthed(
+    SignUpHandler.create("attenuation-profile-pictures")
+  );
+  register.registerAuthed(GetUserInfoHandler.create());
   register.registerAuthed(CreatePostHandler.create());
   register.registerAuthed(ReadPostsHandler.create());
   register.registerAuthed(ViewPostHandler.create());

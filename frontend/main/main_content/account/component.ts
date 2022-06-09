@@ -1,4 +1,4 @@
-import { GET_BASIC_USER_INFO } from "../../../../interface/service";
+import { GET_USER_INFO } from "../../../../interface/service";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { SERVICE_CLIENT } from "../../service_client";
@@ -120,12 +120,11 @@ export class AccountComponent {
   }
 
   public async refresh(): Promise<void> {
-    let user = (await this.serviceClient.fetchAuthed({}, GET_BASIC_USER_INFO))
-      .basicUserInfo;
-    this.usernameValue.textContent = user.username;
-    this.naturalNameValue.textContent = user.naturalName;
-    this.emailValue.textContent = user.email;
-    this.profileImage.src = user.profileUrl;
+    let response = await this.serviceClient.fetchAuthed({}, GET_USER_INFO);
+    this.usernameValue.textContent = response.username;
+    this.naturalNameValue.textContent = response.naturalName;
+    this.emailValue.textContent = response.email;
+    this.profileImage.src = response.pictureUrl;
   }
 
   public show(): void {

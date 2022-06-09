@@ -5,8 +5,8 @@ import {
 } from "../../interface/service";
 import { UserSession } from "../../interface/user_session";
 import { PasswordHasher } from "../common/password_hasher";
-import { USERS_DATABASE } from "../common/spanner_database";
-import { buildGetUserStatement, parseGetUserRow } from "./users_sql";
+import { CORE_DATABASE } from "../common/spanner_database";
+import { buildLookupUserStatement, parseLookupUserRow } from "./users_sql";
 import { Database } from "@google-cloud/spanner";
 import {
   newBadRequestError,
@@ -23,20 +23,20 @@ export class SignInHandler
   public constructor(
     private passwordHasher: PasswordHasher,
     private sessionBuilder: SessionBuilder,
-    private usersDatabase: Database
+    private coreDatabase: Database
   ) {}
 
   public static create(): SignInHandler {
     return new SignInHandler(
       PasswordHasher.create(),
       SessionBuilder.create(),
-      USERS_DATABASE
+      CORE_DATABASE
     );
   }
 
   public async handle(request: SignInRequest): Promise<SignInResponse> {
-    let [rows] = await this.usersDatabase.run(
-      buildGetUserStatement(request.username)
+    let [rows] = await this.coreDatabase.run(
+      buildLookupUserStatement(request.username)
     );
     if (rows.length === 0) {
       throw newBadRequestError(`Username or password is incorrect.`);
@@ -47,14 +47,15 @@ export class SignInHandler
       );
     }
 
-    let getUserRow = parseGetUserRow(rows[0]);
+    let lookupUserRow = parseLookupUserRow(rows[0]);
     if (
-      getUserRow.passwordHashV1 === this.passwordHasher.hash(request.password)
+      lookupUserRow.passwordHashV1 ===
+      this.passwordHasher.hash(request.password)
     ) {
       throw newBadRequestError(`Username or password is incorrect.`);
     }
     let signedSession = this.sessionBuilder.build(
-      JSON.stringify({ userId: getUserRow.userId } as UserSession)
+      JSON.stringify({ userId: lookupUserRow.userId } as UserSession)
     );
     return {
       signedSession: signedSession,
