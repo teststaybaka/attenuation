@@ -1,38 +1,31 @@
-import {
-  GET_USER_INFO,
-  GetUserInfoRequest,
-  GetUserInfoResponse,
-} from "../../interface/service";
-import { USER_SESSION, UserSession } from "../../interface/user_session";
+import { GetUserInfoResponse } from "../../interface/service";
 import { CORE_DATABASE } from "../common/spanner_database";
+import {
+  GetUserInfoHandlerInterface,
+  GetUserInfoHandlerRequest,
+} from "./interfaces";
 import { buildGetUserInfoStatement, parseGetUserInfoRow } from "./users_sql";
 import { Database } from "@google-cloud/spanner";
 import { newInternalServerErrorError } from "@selfage/http_error";
-import { AuthedServiceHandler } from "@selfage/service_handler";
 
-export class GetUserInfoHandler
-  implements
-    AuthedServiceHandler<GetUserInfoRequest, GetUserInfoResponse, UserSession>
-{
-  public sessionDescriptor = USER_SESSION;
-  public serviceDescriptor = GET_USER_INFO;
-
-  public constructor(private coreDatabase: Database) {}
+export class GetUserInfoHandler extends GetUserInfoHandlerInterface {
+  public constructor(private coreDatabase: Database) {
+    super();
+  }
 
   public static create(): GetUserInfoHandler {
     return new GetUserInfoHandler(CORE_DATABASE);
   }
 
   public async handle(
-    request: GetUserInfoRequest,
-    session: UserSession
+    request: GetUserInfoHandlerRequest
   ): Promise<GetUserInfoResponse> {
     let [rows] = await this.coreDatabase.run(
-      buildGetUserInfoStatement(session.userId)
+      buildGetUserInfoStatement(request.userSession.userId)
     );
     if (rows.length !== 1) {
       throw newInternalServerErrorError(
-        `The number of users find by the id ${session.userId}: ${rows.length}.`
+        `The number of users find by the id ${request.userSession.userId}: ${rows.length}.`
       );
     }
 

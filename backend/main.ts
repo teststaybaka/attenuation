@@ -6,14 +6,15 @@ import { ConsoleLogger, LOGGER, RemoteLogger } from "./common/logger";
 import { PostEntryRedisCounter } from "./common/post_entry_redis_counter";
 import { createRedisClients } from "./common/redis_clients";
 import { PostEntryCounterFlusher } from "./flusher/post_entry_count_flusher";
-import { CreatePostHandler } from "./handler/create_post_handler";
-import { GetUserInfoHandler } from "./handler/get_user_info_handler";
-import { ReactToPostHandler } from "./handler/react_to_post_handler";
-import { ReadPostsHandler } from "./handler/read_posts_handler";
-import { SignInHandler } from "./handler/sign_in_handler";
-import { SignUpHandler } from "./handler/sign_up_handler";
-import { ViewPostHandler } from "./handler/view_post_handler";
-import { HandlerRegister } from "@selfage/service_handler/handler_register";
+import { CreatePostHandler } from "./handler/create_post";
+import { GetUserInfoHandler } from "./handler/get_user_info";
+import { ReactToPostHandler } from "./handler/react_to_post";
+import { ReadPostsHandler } from "./handler/read_posts";
+import { SignInHandler } from "./handler/sign_in";
+import { SignUpHandler } from "./handler/sign_up";
+import { UploadAvatarHandler } from "./handler/upload_avatar";
+import { ViewPostHandler } from "./handler/view_post";
+import { HandlerRegister } from "@selfage/service_handler";
 import { SessionSigner } from "@selfage/service_handler/session_signer";
 import "../environment";
 import "@selfage/web_app_base_dir";
@@ -27,7 +28,7 @@ async function main(): Promise<void> {
     ExpiredPostEntryCleaner.create();
 
     let app = express();
-    registerHandlers(app, "randomlocalkey");
+    registerHandlers(app, "randomlocalkey", "attenuation-avatars");
     registerWebApps(app);
     let httpServer = http.createServer(app);
     httpServer.listen(80, () => {
@@ -47,19 +48,22 @@ async function main(): Promise<void> {
   }
 }
 
-function registerHandlers(app: express.Express, sessionKey: string): void {
+function registerHandlers(
+  app: express.Express,
+  sessionKey: string,
+  avatarBucketName: string
+): void {
   SessionSigner.SECRET_KEY = sessionKey;
   let register = new HandlerRegister(app, LOGGER);
-  register.registerCorsAllowedPreflightHandler();
-  register.registerUnauthed(SignInHandler.create());
-  register.registerUnauthed(
-    SignUpHandler.create("attenuation-profile-pictures")
-  );
-  register.registerAuthed(GetUserInfoHandler.create());
-  register.registerAuthed(CreatePostHandler.create());
-  register.registerAuthed(ReadPostsHandler.create());
-  register.registerAuthed(ViewPostHandler.create());
-  register.registerAuthed(ReactToPostHandler.create());
+  register.registerCorsAllowedPrelightHandler();
+  register.register(SignInHandler.create());
+  register.register(SignUpHandler.create());
+  register.register(GetUserInfoHandler.create());
+  register.register(CreatePostHandler.create());
+  register.register(ReadPostsHandler.create());
+  register.register(ViewPostHandler.create());
+  register.register(ReactToPostHandler.create());
+  register.register(UploadAvatarHandler.create(avatarBucketName));
 }
 
 function registerWebApps(app: express.Express): void {

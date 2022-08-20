@@ -1,45 +1,38 @@
-import {
-  VIEW_POST,
-  ViewPostRequest,
-  ViewPostResponse,
-} from "../../interface/service";
-import { USER_SESSION, UserSession } from "../../interface/user_session";
+import { ViewPostResponse } from "../../interface/service";
 import {
   POST_ENTRY_REDIS_COUNTER,
   PostEntryRedisCounter,
 } from "../common/post_entry_redis_counter";
 import { CORE_DATABASE } from "../common/spanner_database";
+import { ViewPostHandlerInterface, ViewPostHandlerRequest } from "./interfaces";
 import { buildInsertPostEntryViewedStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
-import { AuthedServiceHandler } from "@selfage/service_handler";
 
-export class ViewPostHandler
-  implements
-    AuthedServiceHandler<ViewPostRequest, ViewPostResponse, UserSession>
-{
-  public sessionDescriptor = USER_SESSION;
-  public serviceDescriptor = VIEW_POST;
-
+export class ViewPostHandler extends ViewPostHandlerInterface {
   public constructor(
     private coreDatabase: Database,
     private postEntryRedisCounter: PostEntryRedisCounter
-  ) {}
+  ) {
+    super();
+  }
 
   public static create(): ViewPostHandler {
     return new ViewPostHandler(CORE_DATABASE, POST_ENTRY_REDIS_COUNTER);
   }
 
   public async handle(
-    request: ViewPostRequest,
-    session: UserSession
+    request: ViewPostHandlerRequest
   ): Promise<ViewPostResponse> {
     await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
-        buildInsertPostEntryViewedStatement(session.userId, request.postEntryId)
+        buildInsertPostEntryViewedStatement(
+          request.userSession.userId,
+          request.body.postEntryId
+        )
       );
       await transaction.commit();
     });
-    this.postEntryRedisCounter.incView(request.postEntryId);
+    this.postEntryRedisCounter.incView(request.body.postEntryId);
     return {};
   }
 }

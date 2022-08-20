@@ -1,19 +1,17 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
-import { UnauthedServiceDescriptor, AuthedServiceDescriptor } from '@selfage/service_descriptor';
+import { ServiceDescriptor, PrimitveTypeForBody } from '@selfage/service_descriptor';
+import { USER_SESSION } from './user_session';
 import { PostEntryCard, POST_ENTRY_CARD } from './post_entry_card';
 import { PostEntryReaction, POST_ENTRY_REACTION } from './post_entry_reaction';
 
-export interface SignUpRequest {
+export interface SignUpRequestBody {
   username?: string,
   naturalName?: string,
   password?: string,
 }
 
-export let SIGN_UP_REQUEST: MessageDescriptor<SignUpRequest> = {
-  name: 'SignUpRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export let SIGN_UP_REQUEST_BODY: MessageDescriptor<SignUpRequestBody> = {
+  name: 'SignUpRequestBody',
   fields: [
     {
       name: 'username',
@@ -36,9 +34,6 @@ export interface SignUpResponse {
 
 export let SIGN_UP_RESPONSE: MessageDescriptor<SignUpResponse> = {
   name: 'SignUpResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'signedSession',
@@ -47,23 +42,24 @@ export let SIGN_UP_RESPONSE: MessageDescriptor<SignUpResponse> = {
   ]
 };
 
-export let SIGN_UP: UnauthedServiceDescriptor<SignUpRequest, SignUpResponse> = {
+export let SIGN_UP: ServiceDescriptor = {
   name: "SignUp",
   path: "/SignUp",
-  requestDescriptor: SIGN_UP_REQUEST,
-  responseDescriptor: SIGN_UP_RESPONSE,
-};
+  body: {
+    messageType: SIGN_UP_REQUEST_BODY,
+  },
+  response: {
+    messageType: SIGN_UP_RESPONSE,
+  },
+}
 
-export interface SignInRequest {
+export interface SignInRequestBody {
   username?: string,
   password?: string,
 }
 
-export let SIGN_IN_REQUEST: MessageDescriptor<SignInRequest> = {
-  name: 'SignInRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export let SIGN_IN_REQUEST_BODY: MessageDescriptor<SignInRequestBody> = {
+  name: 'SignInRequestBody',
   fields: [
     {
       name: 'username',
@@ -82,9 +78,6 @@ export interface SignInResponse {
 
 export let SIGN_IN_RESPONSE: MessageDescriptor<SignInResponse> = {
   name: 'SignInResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'signedSession',
@@ -93,27 +86,23 @@ export let SIGN_IN_RESPONSE: MessageDescriptor<SignInResponse> = {
   ]
 };
 
-export let SIGN_IN: UnauthedServiceDescriptor<SignInRequest, SignInResponse> = {
+export let SIGN_IN: ServiceDescriptor = {
   name: "SignIn",
   path: "/SignIn",
-  requestDescriptor: SIGN_IN_REQUEST,
-  responseDescriptor: SIGN_IN_RESPONSE,
-};
-
-export interface GetUserInfoRequest {
-  signedSession?: string,
+  body: {
+    messageType: SIGN_IN_REQUEST_BODY,
+  },
+  response: {
+    messageType: SIGN_IN_RESPONSE,
+  },
 }
 
-export let GET_USER_INFO_REQUEST: MessageDescriptor<GetUserInfoRequest> = {
-  name: 'GetUserInfoRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export interface GetUserInfoRequestBody {
+}
+
+export let GET_USER_INFO_REQUEST_BODY: MessageDescriptor<GetUserInfoRequestBody> = {
+  name: 'GetUserInfoRequestBody',
   fields: [
-    {
-      name: 'signedSession',
-      primitiveType: PrimitiveType.STRING,
-    },
   ]
 };
 
@@ -126,9 +115,6 @@ export interface GetUserInfoResponse {
 
 export let GET_USER_INFO_RESPONSE: MessageDescriptor<GetUserInfoResponse> = {
   name: 'GetUserInfoResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'username',
@@ -149,28 +135,28 @@ export let GET_USER_INFO_RESPONSE: MessageDescriptor<GetUserInfoResponse> = {
   ]
 };
 
-export let GET_USER_INFO: AuthedServiceDescriptor<GetUserInfoRequest, GetUserInfoResponse> = {
+export let GET_USER_INFO: ServiceDescriptor = {
   name: "GetUserInfo",
   path: "/GetUserInfo",
-  requestDescriptor: GET_USER_INFO_REQUEST,
-  responseDescriptor: GET_USER_INFO_RESPONSE,
-};
+  body: {
+    messageType: GET_USER_INFO_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: GET_USER_INFO_RESPONSE,
+  },
+}
 
-export interface CreatePostRequest {
-  signedSession?: string,
+export interface CreatePostRequestBody {
   content?: string,
 }
 
-export let CREATE_POST_REQUEST: MessageDescriptor<CreatePostRequest> = {
-  name: 'CreatePostRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export let CREATE_POST_REQUEST_BODY: MessageDescriptor<CreatePostRequestBody> = {
+  name: 'CreatePostRequestBody',
   fields: [
-    {
-      name: 'signedSession',
-      primitiveType: PrimitiveType.STRING,
-    },
     {
       name: 'content',
       primitiveType: PrimitiveType.STRING,
@@ -184,38 +170,35 @@ export interface CreatePostResponse {
 
 export let CREATE_POST_RESPONSE: MessageDescriptor<CreatePostResponse> = {
   name: 'CreatePostResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'postEntryCard',
-      messageDescriptor: POST_ENTRY_CARD,
+      messageType: POST_ENTRY_CARD,
     },
   ]
 };
 
-export let CREATE_POST: AuthedServiceDescriptor<CreatePostRequest, CreatePostResponse> = {
+export let CREATE_POST: ServiceDescriptor = {
   name: "CreatePost",
   path: "/CreatePost",
-  requestDescriptor: CREATE_POST_REQUEST,
-  responseDescriptor: CREATE_POST_RESPONSE,
-};
-
-export interface ReadPostsRequest {
-  signedSession?: string,
+  body: {
+    messageType: CREATE_POST_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: CREATE_POST_RESPONSE,
+  },
 }
 
-export let READ_POSTS_REQUEST: MessageDescriptor<ReadPostsRequest> = {
-  name: 'ReadPostsRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export interface ReadPostsRequestBody {
+}
+
+export let READ_POSTS_REQUEST_BODY: MessageDescriptor<ReadPostsRequestBody> = {
+  name: 'ReadPostsRequestBody',
   fields: [
-    {
-      name: 'signedSession',
-      primitiveType: PrimitiveType.STRING,
-    },
   ]
 };
 
@@ -225,42 +208,37 @@ export interface ReadPostsResponse {
 
 export let READ_POSTS_RESPONSE: MessageDescriptor<ReadPostsResponse> = {
   name: 'ReadPostsResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'postEntryCards',
-      messageDescriptor: POST_ENTRY_CARD,
-      arrayFactoryFn: () => {
-        return new Array<any>();
-      },
+      messageType: POST_ENTRY_CARD,
+      isArray: true,
     },
   ]
 };
 
-export let READ_POSTS: AuthedServiceDescriptor<ReadPostsRequest, ReadPostsResponse> = {
+export let READ_POSTS: ServiceDescriptor = {
   name: "ReadPosts",
   path: "/ReadPosts",
-  requestDescriptor: READ_POSTS_REQUEST,
-  responseDescriptor: READ_POSTS_RESPONSE,
-};
+  body: {
+    messageType: READ_POSTS_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: READ_POSTS_RESPONSE,
+  },
+}
 
-export interface ViewPostRequest {
-  signedSession?: string,
+export interface ViewPostRequestBody {
   postEntryId?: string,
 }
 
-export let VIEW_POST_REQUEST: MessageDescriptor<ViewPostRequest> = {
-  name: 'ViewPostRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export let VIEW_POST_REQUEST_BODY: MessageDescriptor<ViewPostRequestBody> = {
+  name: 'ViewPostRequestBody',
   fields: [
-    {
-      name: 'signedSession',
-      primitiveType: PrimitiveType.STRING,
-    },
     {
       name: 'postEntryId',
       primitiveType: PrimitiveType.STRING,
@@ -273,43 +251,40 @@ export interface ViewPostResponse {
 
 export let VIEW_POST_RESPONSE: MessageDescriptor<ViewPostResponse> = {
   name: 'ViewPostResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
   ]
 };
 
-export let VIEW_POST: AuthedServiceDescriptor<ViewPostRequest, ViewPostResponse> = {
+export let VIEW_POST: ServiceDescriptor = {
   name: "ViewPost",
   path: "/ViewPost",
-  requestDescriptor: VIEW_POST_REQUEST,
-  responseDescriptor: VIEW_POST_RESPONSE,
-};
+  body: {
+    messageType: VIEW_POST_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: VIEW_POST_RESPONSE,
+  },
+}
 
-export interface ReactToPostRequest {
-  signedSession?: string,
+export interface ReactToPostRequestBody {
   postEntryId?: string,
   reaction?: PostEntryReaction,
 }
 
-export let REACT_TO_POST_REQUEST: MessageDescriptor<ReactToPostRequest> = {
-  name: 'ReactToPostRequest',
-  factoryFn: () => {
-    return new Object();
-  },
+export let REACT_TO_POST_REQUEST_BODY: MessageDescriptor<ReactToPostRequestBody> = {
+  name: 'ReactToPostRequestBody',
   fields: [
-    {
-      name: 'signedSession',
-      primitiveType: PrimitiveType.STRING,
-    },
     {
       name: 'postEntryId',
       primitiveType: PrimitiveType.STRING,
     },
     {
       name: 'reaction',
-      enumDescriptor: POST_ENTRY_REACTION,
+      enumType: POST_ENTRY_REACTION,
     },
   ]
 };
@@ -319,16 +294,45 @@ export interface ReactToPostResponse {
 
 export let REACT_TO_POST_RESPONSE: MessageDescriptor<ReactToPostResponse> = {
   name: 'ReactToPostResponse',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
   ]
 };
 
-export let REACT_TO_POST: AuthedServiceDescriptor<ReactToPostRequest, ReactToPostResponse> = {
+export let REACT_TO_POST: ServiceDescriptor = {
   name: "ReactToPost",
   path: "/ReactToPost",
-  requestDescriptor: REACT_TO_POST_REQUEST,
-  responseDescriptor: REACT_TO_POST_RESPONSE,
+  body: {
+    messageType: REACT_TO_POST_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: REACT_TO_POST_RESPONSE,
+  },
+}
+
+export interface UploadAvatarResponse {
+}
+
+export let UPLOAD_AVATAR_RESPONSE: MessageDescriptor<UploadAvatarResponse> = {
+  name: 'UploadAvatarResponse',
+  fields: [
+  ]
 };
+
+export let UPLOAD_AVATAR: ServiceDescriptor = {
+  name: "UploadAvatar",
+  path: "/UploadAvatar",
+  body: {
+    primitiveType: PrimitveTypeForBody.BYTES,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: UPLOAD_AVATAR_RESPONSE,
+  },
+}

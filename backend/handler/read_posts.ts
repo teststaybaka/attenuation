@@ -1,40 +1,33 @@
 import { PostEntryCard } from "../../interface/post_entry_card";
-import {
-  READ_POSTS,
-  ReadPostsRequest,
-  ReadPostsResponse,
-} from "../../interface/service";
-import { USER_SESSION, UserSession } from "../../interface/user_session";
+import { ReadPostsResponse } from "../../interface/service";
 import { CORE_DATABASE } from "../common/spanner_database";
+import {
+  ReadPostsHandlerInterface,
+  ReadPostsHandlerRequest,
+} from "./interfaces";
 import {
   buildQueryNewPostsStatement,
   parseQueryNewPostsRow,
 } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
-import { AuthedServiceHandler } from "@selfage/service_handler";
 
-export class ReadPostsHandler
-  implements
-    AuthedServiceHandler<ReadPostsRequest, ReadPostsResponse, UserSession>
-{
-  public sessionDescriptor = USER_SESSION;
-  public serviceDescriptor = READ_POSTS;
-
+export class ReadPostsHandler extends ReadPostsHandlerInterface {
   public constructor(
     private coreDatabase: Database,
     private getNow: () => number
-  ) {}
+  ) {
+    super();
+  }
 
   public static create(): ReadPostsHandler {
     return new ReadPostsHandler(CORE_DATABASE, () => Date.now());
   }
 
   public async handle(
-    request: ReadPostsRequest,
-    session: UserSession
+    request: ReadPostsHandlerRequest
   ): Promise<ReadPostsResponse> {
     let [rows] = await this.coreDatabase.run(
-      buildQueryNewPostsStatement(session.userId)
+      buildQueryNewPostsStatement(request.userSession.userId)
     );
     let postEntryCards = new Array<PostEntryCard>();
     for (let row of rows) {

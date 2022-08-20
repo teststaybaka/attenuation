@@ -1,33 +1,25 @@
-import {
-  SIGN_UP,
-  SignUpRequest,
-  SignUpResponse,
-} from "../../interface/service";
+import { SignUpResponse } from "../../interface/service";
 import { UserSession } from "../../interface/user_session";
 import { PasswordHasher } from "../common/password_hasher";
 import { CORE_DATABASE } from "../common/spanner_database";
+import { SignUpHandlerInterface, SignUpHandlerRequest } from "./interfaces";
 import { buildInsertNewUserStatement } from "./users_sql";
 import { Database } from "@google-cloud/spanner";
-import { UnauthedServiceHandler } from "@selfage/service_handler";
 import { SessionBuilder } from "@selfage/service_handler/session_signer";
 import { v4 as uuidv4 } from "uuid";
 
-export class SignUpHandler
-  implements UnauthedServiceHandler<SignUpRequest, SignUpResponse>
-{
-  public serviceDescriptor = SIGN_UP;
-
+export class SignUpHandler extends SignUpHandlerInterface {
   public constructor(
-    private bucketName: string,
     private passwordHasher: PasswordHasher,
     private sessionBuilder: SessionBuilder,
     private coreDatabase: Database,
     private randomFn: () => number
-  ) {}
+  ) {
+    super();
+  }
 
-  public static create(bucketName: string): SignUpHandler {
+  public static create(): SignUpHandler {
     return new SignUpHandler(
-      bucketName,
       PasswordHasher.create(),
       SessionBuilder.create(),
       CORE_DATABASE,
@@ -35,17 +27,18 @@ export class SignUpHandler
     );
   }
 
-  public async handle(request: SignUpRequest): Promise<SignUpResponse> {
+  public async handle(request: SignUpHandlerRequest): Promise<SignUpResponse> {
     let userId = uuidv4();
     let pictureIndex = Math.floor(this.randomFn() * 2);
     await this.coreDatabase.runTransactionAsync(async (transaction) => {
       await transaction.runUpdate(
         buildInsertNewUserStatement(
           userId,
-          request.username,
-          request.naturalName,
-          this.passwordHasher.hash(request.password),
-          `https://storage.googleapis.com/${this.bucketName}/default${pictureIndex}.jpg`
+          request.body.username,
+          request.body.naturalName,
+          this.passwordHasher.hash(request.body.password),
+          `default${pictureIndex}.jpg`,
+          `default${pictureIndex}.jpg`
         )
       );
       await transaction.commit();

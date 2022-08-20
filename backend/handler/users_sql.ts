@@ -5,16 +5,18 @@ export function buildInsertNewUserStatement(
   username: string,
   naturalName: string,
   passwordHashV1: string,
-  pictureUrl: string,
+  avatarLargePath: string,
+  avatarSmallPath: string,
 ): Statement {
   return {
-    sql: "INSERT User (userId, username, naturalName, passwordHashV1, pictureUrl, createdTimestamp) VALUES (@userId, @username, @naturalName, @passwordHashV1, @pictureUrl, PENDING_COMMIT_TIMESTAMP())",
+    sql: "INSERT User (userId, username, naturalName, passwordHashV1, avatarLargePath, avatarSmallPath, createdTimestamp) VALUES (@userId, @username, @naturalName, @passwordHashV1, @avatarLargePath, @avatarSmallPath, PENDING_COMMIT_TIMESTAMP())",
     params: {
       userId,
       username,
       naturalName,
       passwordHashV1,
-      pictureUrl,
+      avatarLargePath,
+      avatarSmallPath,
     },
     types: {
       userId: {
@@ -29,14 +31,17 @@ export function buildInsertNewUserStatement(
       passwordHashV1: {
         type: "string"
       },
-      pictureUrl: {
+      avatarLargePath: {
+        type: "string"
+      },
+      avatarSmallPath: {
         type: "string"
       },
     }
   }
 }
 
-export function buildLookupUserStatement(
+export function buildLookupUserByUsernameStatement(
   username: string,
 ): Statement {
   return {
@@ -52,12 +57,12 @@ export function buildLookupUserStatement(
   }
 }
 
-export interface LookupUserRow {
+export interface LookupUserByUsernameRow {
   userId: string;
   passwordHashV1: string;
 }
 
-export function parseLookupUserRow(row: any): LookupUserRow {
+export function parseLookupUserByUsernameRow(row: any): LookupUserByUsernameRow {
   // No need to wrap number until we want to support int64 as bigint.
   let obj = row.toJSON();
   return obj;
@@ -89,4 +94,30 @@ export function parseGetUserInfoRow(row: any): GetUserInfoRow {
   // No need to wrap number until we want to support int64 as bigint.
   let obj = row.toJSON();
   return obj;
+}
+
+export function buildUpdateUserAvatarStatement(
+  avatarLargePath: string,
+  avatarSmallPath: string,
+  userId: string,
+): Statement {
+  return {
+    sql: "UPDATE User SET avatarLargePath = @avatarLargePath, avatarSmallPath = @avatarSmallPath WHERE userId = @userId",
+    params: {
+      avatarLargePath,
+      avatarSmallPath,
+      userId,
+    },
+    types: {
+      avatarLargePath: {
+        type: "string"
+      },
+      avatarSmallPath: {
+        type: "string"
+      },
+      userId: {
+        type: "string"
+      },
+    }
+  }
 }

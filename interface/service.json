@@ -1,5 +1,5 @@
 [{
-  "name": "SignUpRequest",
+  "name": "SignUpRequestBody",
   "message": {
     "fields": [{
       "name": "username",
@@ -24,11 +24,13 @@
   "name": "SignUp",
   "service": {
     "path": "/SignUp",
-    "request": "SignUpRequest",
-    "response": "SignUpResponse"
+    "body": "SignUpRequestBody",
+    "response": "SignUpResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "SignInRequest",
+  "name": "SignInRequestBody",
   "message": {
     "fields": [{
       "name": "username",
@@ -50,16 +52,15 @@
   "name": "SignIn",
   "service": {
     "path": "/SignIn",
-    "request": "SignInRequest",
-    "response": "SignInResponse"
+    "body": "SignInRequestBody",
+    "response": "SignInResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "GetUserInfoRequest",
+  "name": "GetUserInfoRequestBody",
   "message": {
-    "fields": [{
-      "name": "signedSession",
-      "type": "string"
-    }]
+    "fields": []
   }
 }, {
   "name": "GetUserInfoResponse",
@@ -82,16 +83,20 @@
   "name": "GetUserInfo",
   "service": {
     "path": "/GetUserInfo",
-    "request": "GetUserInfoRequest",
-    "response": "GetUserInfoResponse"
+    "body": "GetUserInfoRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "GetUserInfoResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "CreatePostRequest",
+  "name": "CreatePostRequestBody",
   "message": {
     "fields": [{
-      "name": "signedSession",
-      "type": "string"
-    }, {
       "name": "content",
       "type": "string"
     }]
@@ -109,16 +114,20 @@
   "name": "CreatePost",
   "service": {
     "path": "/CreatePost",
-    "request": "CreatePostRequest",
-    "response": "CreatePostResponse"
+    "body": "CreatePostRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "CreatePostResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "ReadPostsRequest",
+  "name": "ReadPostsRequestBody",
   "message": {
-    "fields": [{
-      "name": "signedSession",
-      "type": "string"
-    }]
+    "fields": []
   }
 }, {
   "name": "ReadPostsResponse",
@@ -134,16 +143,20 @@
   "name": "ReadPosts",
   "service": {
     "path": "/ReadPosts",
-    "request": "ReadPostsRequest",
-    "response": "ReadPostsResponse"
+    "body": "ReadPostsRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "ReadPostsResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "ViewPostRequest",
+  "name": "ViewPostRequestBody",
   "message": {
     "fields": [{
-      "name": "signedSession",
-      "type": "string"
-    }, {
       "name": "postEntryId",
       "type": "string"
     }]
@@ -157,16 +170,20 @@
   "name": "ViewPost",
   "service": {
     "path": "/ViewPost",
-    "request": "ViewPostRequest",
-    "response": "ViewPostResponse"
+    "body": "ViewPostRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "ViewPostResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }, {
-  "name": "ReactToPostRequest",
+  "name": "ReactToPostRequestBody",
   "message": {
     "fields": [{
-      "name": "signedSession",
-      "type": "string"
-    }, {
       "name": "postEntryId",
       "type": "string"
     }, {
@@ -184,7 +201,33 @@
   "name": "ReactToPost",
   "service": {
     "path": "/ReactToPost",
-    "request": "ReactToPostRequest",
-    "response": "ReactToPostResponse"
+    "body": "ReactToPostRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "ReactToPostResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
+  }
+}, {
+  "name": "UploadAvatarResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "UploadAvatar",
+  "service": {
+    "path": "/UploadAvatar",
+    "body": "bytes",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "UploadAvatarResponse",
+    "outputWebClient": "../frontend/common/client_requests",
+    "outputHandler": "../backend/handler/interfaces"
   }
 }]

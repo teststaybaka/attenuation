@@ -1,0 +1,49 @@
+CREATE TABLE User (
+  userId STRING(1024) NOT NULL,
+  username STRING(1024) NOT NULL,
+  passwordHashV1 STRING(1024) NOT NULL,
+  naturalName STRING(1024) NOT NULL,
+  avatarLargePath STRING(1024) NOT NULL, // Relative to common directory
+  avatarSmallPath STRING(1024) NOT NULL, // Relative to common directory
+  createdTimestamp TIMESTAMP NOT NULL OPTIONS (
+    allow_commit_timestamp = true
+  ),
+) PRIMARY KEY(userId);
+
+CREATE UNIQUE INDEX UserLookupByUsername ON User(username);
+
+CREATE TABLE PostEntry (
+  postEntryId STRING(1024) NOT NULL,
+  userId STRING(1024) NOT NULL,
+  content STRING(MAX),
+  upvotes INT64,
+  createdTimestamp TIMESTAMP,
+  expirationTimestamp TIMESTAMP,
+  repliedEntryId STRING(1024),
+  views INT64,
+) PRIMARY KEY(postEntryId);
+
+CREATE INDEX PostEntryDescending ON PostEntry(createdTimestamp DESC);
+
+CREATE TABLE PostEntryReacted (
+  postEntryId STRING(1024) NOT NULL,
+  reactorId STRING(1024) NOT NULL,
+  reaction INT64,
+  reactedTimestamp TIMESTAMP OPTIONS (
+    allow_commit_timestamp = true
+  ),
+) PRIMARY KEY(reactorId, postEntryId);
+
+CREATE INDEX PostEntryReactedByEntryId ON PostEntryReacted(postEntryId);
+
+CREATE TABLE PostEntryViewed (
+  postEntryId STRING(1024) NOT NULL,
+  viewerId STRING(1024) NOT NULL,
+  viewTimestamp TIMESTAMP OPTIONS (
+    allow_commit_timestamp = true
+  ),
+) PRIMARY KEY(viewerId, postEntryId);
+
+CREATE INDEX PostEntryViewedByEntryId ON PostEntryViewed(postEntryId);
+
+CREATE INDEX PostEntryViewedDescending ON PostEntryViewed(viewerId, viewTimestamp DESC);

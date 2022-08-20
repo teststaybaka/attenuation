@@ -1,34 +1,27 @@
-import {
-  CREATE_POST,
-  CreatePostRequest,
-  CreatePostResponse,
-} from "../../interface/service";
-import { USER_SESSION, UserSession } from "../../interface/user_session";
+import { CreatePostResponse } from "../../interface/service";
 import { CORE_DATABASE } from "../common/spanner_database";
+import {
+  CreatePostHandlerInterface,
+  CreatePostHandlerRequest,
+} from "./interfaces";
 import { buildInsertNewPostEntryStatement } from "./posts_sql";
 import { Database } from "@google-cloud/spanner";
-import { AuthedServiceHandler } from "@selfage/service_handler";
 import { v4 as uuidv4 } from "uuid";
 
-export class CreatePostHandler
-  implements
-    AuthedServiceHandler<CreatePostRequest, CreatePostResponse, UserSession>
-{
-  public sessionDescriptor = USER_SESSION;
-  public serviceDescriptor = CREATE_POST;
-
+export class CreatePostHandler extends CreatePostHandlerInterface {
   public constructor(
     private coreDatabase: Database,
     private getNow: () => number
-  ) {}
+  ) {
+    super();
+  }
 
   public static create(): CreatePostHandler {
     return new CreatePostHandler(CORE_DATABASE, () => Date.now());
   }
 
   public async handle(
-    request: CreatePostRequest,
-    session: UserSession
+    request: CreatePostHandlerRequest
   ): Promise<CreatePostResponse> {
     let createdTimestamp = this.getNow();
     let expirationTimestamp = createdTimestamp + 24 * 60 * 60 * 1000;
@@ -37,8 +30,8 @@ export class CreatePostHandler
       await transaction.runUpdate(
         buildInsertNewPostEntryStatement(
           postEntryId,
-          session.userId,
-          request.content,
+          request.userSession.userId,
+          request.body.content,
           0,
           0,
           createdTimestamp,
@@ -50,8 +43,8 @@ export class CreatePostHandler
     return {
       postEntryCard: {
         postEntryId,
-        userId: session.userId,
-        content: request.content,
+        userId: request.userSession.userId,
+        content: request.body.content,
         createdTimestamp,
       },
     };

@@ -13,9 +13,6 @@ export interface PostEntryCard {
 
 export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
   name: 'PostEntryCard',
-  factoryFn: () => {
-    return new Object();
-  },
   fields: [
     {
       name: 'postEntryId',

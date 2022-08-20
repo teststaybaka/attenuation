@@ -1,7 +1,7 @@
 [{
   "name": "InsertNewUser",
   "spannerSql": {
-    "sql": "INSERT User (userId, username, naturalName, passwordHashV1, pictureUrl, createdTimestamp) VALUES (@userId, @username, @naturalName, @passwordHashV1, @pictureUrl, PENDING_COMMIT_TIMESTAMP())",
+    "sql": "INSERT User (userId, username, naturalName, passwordHashV1, avatarLargePath, avatarSmallPath, createdTimestamp) VALUES (@userId, @username, @naturalName, @passwordHashV1, @avatarLargePath, @avatarSmallPath, PENDING_COMMIT_TIMESTAMP())",
     "params": [{
       "name": "userId",
       "type": "string"
@@ -15,12 +15,15 @@
       "name": "passwordHashV1",
       "type": "string"
     }, {
-      "name": "pictureUrl",
+      "name": "avatarLargePath",
+      "type": "string"
+    }, {
+      "name": "avatarSmallPath",
       "type": "string"
     }]
   }
 }, {
-  "name": "LookupUser",
+  "name": "LookupUserByUsername",
   "spannerSql": {
     "sql": "SELECT userId, passwordHashV1 FROM User WHERE username = @username",
     "params": [{
@@ -51,6 +54,21 @@
       "type": "string"
     }, {
       "name": "pictureUrl",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "UpdateUserAvatar",
+  "spannerSql": {
+    "sql": "UPDATE User SET avatarLargePath = @avatarLargePath, avatarSmallPath = @avatarSmallPath WHERE userId = @userId",
+    "params": [{
+      "name": "avatarLargePath",
+      "type": "string"
+    }, {
+      "name": "avatarSmallPath",
+      "type": "string"
+    }, {
+      "name": "userId",
       "type": "string"
     }]
   }
