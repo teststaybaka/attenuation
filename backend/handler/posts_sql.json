@@ -28,7 +28,7 @@
 }, {
   "name": "QueryNewPosts",
   "spannerSql": {
-    "sql": "SELECT pe.postEntryId, pe.repliedEntryId, pe.userId, u.username, u.naturalName, u.pictureUrl, pe.content, pe.createdTimestamp, pe.expirationTimestamp, FROM PostEntry AS pe LEFT JOIN (SELECT postEntryId FROM PostEntryViewed WHERE viewerId = @viewerId) AS pev ON pe.postEntryId = pev.postEntryId JOIN User AS u ON pe.userId = u.userId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30",
+    "sql": "SELECT pe.postEntryId, pe.repliedEntryId, pe.userId, u.username, u.naturalName, u.avatarSmallPath, pe.content, pe.createdTimestamp, pe.expirationTimestamp, FROM PostEntry AS pe LEFT JOIN (SELECT postEntryId FROM PostEntryViewed WHERE viewerId = @viewerId) AS pev ON pe.postEntryId = pev.postEntryId JOIN User AS u ON pe.userId = u.userId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30",
     "params": [{
       "name": "viewerId",
       "type": "string"
@@ -49,7 +49,7 @@
       "name": "naturalName",
       "type": "string"
     }, {
-      "name": "pictureUrl",
+      "name": "avatarSmallPath",
       "type": "string"
     }, {
       "name": "content",

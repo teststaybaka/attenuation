@@ -6,7 +6,7 @@ export interface PostEntryCard {
   userId?: string,
   username?: string,
   userNatureName?: string,
-  userPictureUrl?: string,
+  avatarSmallPath?: string,
   content?: string,
   createdTimestamp?: number,
 }
@@ -35,7 +35,7 @@ export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'userPictureUrl',
+      name: 'avatarSmallPath',
       primitiveType: PrimitiveType.STRING,
     },
     {

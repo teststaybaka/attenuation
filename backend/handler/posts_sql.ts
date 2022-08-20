@@ -50,7 +50,7 @@ export function buildQueryNewPostsStatement(
   viewerId: string,
 ): Statement {
   return {
-    sql: "SELECT pe.postEntryId, pe.repliedEntryId, pe.userId, u.username, u.naturalName, u.pictureUrl, pe.content, pe.createdTimestamp, pe.expirationTimestamp, FROM PostEntry AS pe LEFT JOIN (SELECT postEntryId FROM PostEntryViewed WHERE viewerId = @viewerId) AS pev ON pe.postEntryId = pev.postEntryId JOIN User AS u ON pe.userId = u.userId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30",
+    sql: "SELECT pe.postEntryId, pe.repliedEntryId, pe.userId, u.username, u.naturalName, u.avatarSmallPath, pe.content, pe.createdTimestamp, pe.expirationTimestamp, FROM PostEntry AS pe LEFT JOIN (SELECT postEntryId FROM PostEntryViewed WHERE viewerId = @viewerId) AS pev ON pe.postEntryId = pev.postEntryId JOIN User AS u ON pe.userId = u.userId WHERE pev.postEntryId IS NULL ORDER BY pe.createdTimestamp DESC LIMIT 30",
     params: {
       viewerId,
     },
@@ -68,7 +68,7 @@ export interface QueryNewPostsRow {
   userId: string;
   username: string;
   naturalName: string;
-  pictureUrl: string;
+  avatarSmallPath: string;
   content: string;
   createdTimestamp: number;
   expirationTimestamp: number;

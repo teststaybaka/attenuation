@@ -39,7 +39,7 @@ export class ReadPostsHandler extends ReadPostsHandlerInterface {
           userId: postEntryRow.userId,
           username: postEntryRow.username,
           userNatureName: postEntryRow.naturalName,
-          userPictureUrl: postEntryRow.pictureUrl,
+          avatarSmallPath: postEntryRow.avatarSmallPath,
           content: postEntryRow.content,
           createdTimestamp: postEntryRow.createdTimestamp,
         });
