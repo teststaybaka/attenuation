@@ -72,7 +72,7 @@ export function buildGetUserInfoStatement(
   userId: string,
 ): Statement {
   return {
-    sql: "SELECT username, naturalName, pictureUrl FROM User where userId = @userId",
+    sql: "SELECT username, naturalName, avatarLargePath FROM User where userId = @userId",
     params: {
       userId,
     },
@@ -87,7 +87,7 @@ export function buildGetUserInfoStatement(
 export interface GetUserInfoRow {
   username: string;
   naturalName: string;
-  pictureUrl: string;
+  avatarLargePath: string;
 }
 
 export function parseGetUserInfoRow(row: any): GetUserInfoRow {

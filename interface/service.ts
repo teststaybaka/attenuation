@@ -110,7 +110,7 @@ export interface GetUserInfoResponse {
   username?: string,
   naturalName?: string,
   email?: string,
-  pictureUrl?: string,
+  avatarLargePath?: string,
 }
 
 export let GET_USER_INFO_RESPONSE: MessageDescriptor<GetUserInfoResponse> = {
@@ -129,7 +129,7 @@ export let GET_USER_INFO_RESPONSE: MessageDescriptor<GetUserInfoResponse> = {
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'pictureUrl',
+      name: 'avatarLargePath',
       primitiveType: PrimitiveType.STRING,
     },
   ]

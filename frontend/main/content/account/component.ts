@@ -1,10 +1,11 @@
-import { GET_USER_INFO } from "../../../../interface/service";
+import { AVATAR_URL_COMPOSER } from "../../../common/avatar_url_composer";
+import { newGetUserInfoServiceRequest } from "../../../common/client_requests";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
-import { SERVICE_CLIENT } from "../../service_client";
+import { WEB_SERVICE_CLIENT } from "../../web_service_client";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
-import { ServiceClient } from "@selfage/service_client";
+import { WebServiceClient } from "@selfage/web_service_client";
 
 let INPUT_LINE_STYLE = `display: flex; flex-flow: row nowrap; box-sizing: border-box; width: 100%; padding: 0 10% 2.5rem; line-height: 2rem;`;
 let LABEL_STYLE = `flex: 0 0 12rem; font-size: 1.4rem; color: ${SCHEME.normalText};`;
@@ -18,7 +19,7 @@ export class AccountComponent {
   private naturalNameValue: HTMLDivElement;
   private emailValue: HTMLDivElement;
 
-  public constructor(private serviceClient: ServiceClient) {
+  public constructor(private webServiceClient: WebServiceClient) {
     let cardRef = new Ref<HTMLDivElement>();
     let profileImageRef = new Ref<HTMLImageElement>();
     let usernameValueRef = new Ref<HTMLDivElement>();
@@ -100,7 +101,7 @@ export class AccountComponent {
   }
 
   public static create(): AccountComponent {
-    return new AccountComponent(SERVICE_CLIENT).init();
+    return new AccountComponent(WEB_SERVICE_CLIENT).init();
   }
 
   public init(): this {
@@ -120,11 +121,15 @@ export class AccountComponent {
   }
 
   public async refresh(): Promise<void> {
-    let response = await this.serviceClient.fetchAuthed({}, GET_USER_INFO);
+    let response = await this.webServiceClient.send(
+      newGetUserInfoServiceRequest({ body: {} })
+    );
     this.usernameValue.textContent = response.username;
     this.naturalNameValue.textContent = response.naturalName;
     this.emailValue.textContent = response.email;
-    this.profileImage.src = response.pictureUrl;
+    this.profileImage.src = AVATAR_URL_COMPOSER.compose(
+      response.avatarLargePath
+    );
   }
 
   public show(): void {

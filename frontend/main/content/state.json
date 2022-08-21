@@ -1,5 +1,5 @@
 [{
-  "name": "MainContentPage",
+  "name": "ContentPage",
   "enum": {
     "values": [{
       "name": "HOME",
@@ -10,12 +10,11 @@
     }]
   }
 }, {
-  "name": "MainContentState",
-  "message": {
+  "name": "ContentState",
+  "observable": {
     "fields": [{
       "name": "page",
-      "type": "MainContentPage"
-    }],
-    "isObservable": true
+      "type": "ContentPage"
+    }]
   }
 }]

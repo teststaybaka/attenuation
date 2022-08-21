@@ -5,8 +5,9 @@ import { PostEntryListComponent } from "./component";
 import { PostEntryCardComponent } from "./post_entry_card/component";
 import { Counter } from "@selfage/counter";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
-import { ServiceClient } from "@selfage/service_client";
-import { PUPPETEER_TEST_RUNNER } from "@selfage/test_runner";
+import { WebServiceRequest } from "@selfage/service_descriptor";
+import { TEST_RUNNER } from "@selfage/test_runner";
+import { WebServiceClient } from "@selfage/web_service_client";
 import "@selfage/puppeteer_test_executor_api";
 
 normalizeBody();
@@ -29,7 +30,7 @@ function generateCards(num: number): Array<PostEntryCard> {
   return cards;
 }
 
-PUPPETEER_TEST_RUNNER.run({
+TEST_RUNNER.run({
   name: "PostEntryListComponentTest",
   cases: [
     {
@@ -42,13 +43,15 @@ PUPPETEER_TEST_RUNNER.run({
           (postEntryCard) => {
             return new PostEntryCardComponent(postEntryCard);
           },
-          new (class extends ServiceClient {
+          new (class extends WebServiceClient {
             public counter = new Counter<string>();
             public constructor() {
               super(undefined, undefined);
             }
-            public async fetchAuthed<T>(): Promise<any> {
-              switch (this.counter.increment("fetchAuthed")) {
+            public async send(
+              serviceRequest: WebServiceRequest<any, any>
+            ): Promise<any> {
+              switch (this.counter.increment("send")) {
                 case 1:
                   return {
                     postEntryCards: generateCards(7),

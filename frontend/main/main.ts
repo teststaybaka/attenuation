@@ -1,7 +1,7 @@
 import { ORIGIN_DEV } from "../../constants";
-import { MAIN_CONTENT_STATE } from "./main_content/state";
-import { MainController } from "./main_controller";
-import { SERVICE_CLIENT } from "./service_client";
+import { BodyController } from "./body_controller";
+import { CONTENT_STATE } from "./content/state";
+import { WEB_SERVICE_CLIENT } from "./web_service_client";
 import { createLoaderAndUpdater } from "@selfage/stateful_navigator";
 import "../../environment";
 
@@ -15,19 +15,16 @@ async function main(): Promise<void> {
   document.head.appendChild(viewPortMeta);
 
   if (globalThis.ENVIRONMENT === "dev") {
-    SERVICE_CLIENT.origin = ORIGIN_DEV;
+    WEB_SERVICE_CLIENT.origin = ORIGIN_DEV;
   } else if (globalThis.ENVIRONMENT === "local") {
-    SERVICE_CLIENT.origin = ORIGIN_DEV;
+    WEB_SERVICE_CLIENT.origin = ORIGIN_DEV;
   } else {
     throw new Error(`Not supported environment ${globalThis.ENVIRONMENT}.`);
   }
 
   let queryParamKeyForState = "q";
-  let [loader] = createLoaderAndUpdater(
-    MAIN_CONTENT_STATE,
-    queryParamKeyForState
-  );
-  MainController.create(document.body, loader.state);
+  let [loader] = createLoaderAndUpdater(CONTENT_STATE, queryParamKeyForState);
+  BodyController.create(document.body, loader.state);
 }
 
 main();

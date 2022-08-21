@@ -33,7 +33,7 @@ export class GetUserInfoHandler extends GetUserInfoHandlerInterface {
     return {
       username: getUserInfoRow.username,
       naturalName: getUserInfoRow.naturalName,
-      pictureUrl: getUserInfoRow.pictureUrl,
+      avatarLargePath: getUserInfoRow.avatarLargePath,
     };
   }
 }

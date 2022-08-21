@@ -1,13 +1,14 @@
-import { EnumDescriptor, MessageDescriptor } from '@selfage/message/descriptor';
+import { EnumDescriptor } from '@selfage/message/descriptor';
 import { EventEmitter } from 'events';
+import { ObservableDescriptor } from '@selfage/observable/descriptor';
 
-export enum MainContentPage {
+export enum ContentPage {
   HOME = 1,
   ACCOUNT = 2,
 }
 
-export let MAIN_CONTENT_PAGE: EnumDescriptor<MainContentPage> = {
-  name: 'MainContentPage',
+export let CONTENT_PAGE: EnumDescriptor<ContentPage> = {
+  name: 'ContentPage',
   values: [
     {
       name: 'HOME',
@@ -20,17 +21,17 @@ export let MAIN_CONTENT_PAGE: EnumDescriptor<MainContentPage> = {
   ]
 }
 
-export interface MainContentState {
-  on(event: 'page', listener: (newValue: MainContentPage, oldValue: MainContentPage) => void): this;
+export interface ContentState {
+  on(event: 'page', listener: (newValue: ContentPage, oldValue: ContentPage) => void): this;
   on(event: 'init', listener: () => void): this;
 }
 
-export class MainContentState extends EventEmitter {
-  private page_?: MainContentPage;
-  get page(): MainContentPage {
+export class ContentState extends EventEmitter {
+  private page_?: ContentPage;
+  get page(): ContentPage {
     return this.page_;
   }
-  set page(value: MainContentPage) {
+  set page(value: ContentPage) {
     let oldValue = this.page_;
     if (value === oldValue) {
       return;
@@ -53,15 +54,13 @@ export class MainContentState extends EventEmitter {
   }
 }
 
-export let MAIN_CONTENT_STATE: MessageDescriptor<MainContentState> = {
-  name: 'MainContentState',
-  factoryFn: () => {
-    return new MainContentState();
-  },
+export let CONTENT_STATE: ObservableDescriptor<ContentState> = {
+  name: 'ContentState',
+  constructor: ContentState,
   fields: [
     {
       name: 'page',
-      enumDescriptor: MAIN_CONTENT_PAGE,
+      enumType: CONTENT_PAGE,
     },
   ]
 };

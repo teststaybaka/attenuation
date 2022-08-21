@@ -5,17 +5,17 @@ import { AccountMenuComponent } from "./account_menu/component";
 import { MenuContainer } from "./common/menu_container";
 import { HomeMenuComponent } from "./home_menu/component";
 import { PostEntryListComponent } from "./post_entry_list/component";
-import { MainContentPage, MainContentState } from "./state";
+import { ContentPage, ContentState } from "./state";
 import { E } from "@selfage/element/factory";
 import { LazyInstance } from "@selfage/once/lazy_instance";
 import { Ref } from "@selfage/ref";
 import { TabsSwitcher } from "@selfage/tabs";
 
-export interface MainContentComponent {
+export interface ContentComponent {
   on(event: "signOut", listener: () => void): this;
 }
 
-export class MainContentComponent extends EventEmitter {
+export class ContentComponent extends EventEmitter {
   public body: HTMLDivElement;
   private logo: HTMLDivElement;
   private lazyAccountComponent: LazyInstance<AccountComponent>;
@@ -29,19 +29,19 @@ export class MainContentComponent extends EventEmitter {
     private accountMenuComponent: AccountMenuComponent,
     private accountComponentFactoryFn: () => AccountComponent,
     private postEntryListComponentFactoryFn: () => PostEntryListComponent,
-    private state: MainContentState
+    private state: ContentState
   ) {
     super();
     let logoRef = new Ref<HTMLDivElement>();
     let pageContainerRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
-        class: "main-content",
+        class: "content",
         style: `flex-flow: row nowrap; width: 100vw; height: 100vh;`,
       },
       E.div(
         {
-          class: "main-content-left-bar",
+          class: "content-left-bar",
           style: `flex: 0 0 5rem; background-color: ${SCHEME.barBackground};`,
         },
         E.div(
@@ -84,8 +84,8 @@ export class MainContentComponent extends EventEmitter {
     this.pageContainer = pageContainerRef.val;
   }
 
-  public static create(state: MainContentState): MainContentComponent {
-    return new MainContentComponent(
+  public static create(state: ContentState): ContentComponent {
+    return new ContentComponent(
       HomeMenuComponent.create(),
       AccountMenuComponent.create(),
       AccountComponent.create,
@@ -102,12 +102,10 @@ export class MainContentComponent extends EventEmitter {
     this.body.addEventListener("mouseover", () => this.expandMenu());
     this.body.addEventListener("mouseout", () => this.collapseMenu());
     this.homeMenuComponent.on("account", () =>
-      this.gotoPage(MainContentPage.ACCOUNT)
+      this.gotoPage(ContentPage.ACCOUNT)
     );
     this.homeMenuComponent.on("refresh", () => this.refreshNewPosts());
-    this.accountMenuComponent.on("home", () =>
-      this.gotoPage(MainContentPage.HOME)
-    );
+    this.accountMenuComponent.on("home", () => this.gotoPage(ContentPage.HOME));
     this.accountMenuComponent.on("refresh", () =>
       this.refreshAccountComponent()
     );
@@ -145,7 +143,7 @@ export class MainContentComponent extends EventEmitter {
     this.menuContainer.collapse();
   }
 
-  private gotoPage(page: MainContentPage): void {
+  private gotoPage(page: ContentPage): void {
     this.state.page = page;
   }
 
@@ -157,8 +155,8 @@ export class MainContentComponent extends EventEmitter {
     await this.lazyAccountComponent.get().refresh();
   }
 
-  private showPage(page: MainContentPage): void {
-    if (!page || page === MainContentPage.HOME) {
+  private showPage(page: ContentPage): void {
+    if (!page || page === ContentPage.HOME) {
       this.pageSwitcher.show(
         () => {
           this.menuContainer = this.homeMenuComponent;
@@ -169,7 +167,7 @@ export class MainContentComponent extends EventEmitter {
           this.lazyAccountComponent.get().hide();
         }
       );
-    } else if (page === MainContentPage.ACCOUNT) {
+    } else if (page === ContentPage.ACCOUNT) {
       this.pageSwitcher.show(
         () => {
           this.menuContainer = this.accountMenuComponent;

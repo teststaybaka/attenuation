@@ -2,13 +2,13 @@ import path = require("path");
 import { normalizeBody } from "../../common/normalize_body";
 import { AccountComponent } from "./component";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
-import { ServiceClient } from "@selfage/service_client";
-import { PUPPETEER_TEST_RUNNER } from "@selfage/test_runner";
+import { WebServiceClient } from "@selfage/web_service_client";
+import { TEST_RUNNER } from "@selfage/test_runner";
 import "@selfage/puppeteer_test_executor_api";
 
 normalizeBody();
 
-PUPPETEER_TEST_RUNNER.run({
+TEST_RUNNER.run({
   name: "AccountComponentTest",
   cases: [
     {
@@ -16,16 +16,16 @@ PUPPETEER_TEST_RUNNER.run({
       execute: async () => {
         // Prepare
         let component = new AccountComponent(
-          new (class extends ServiceClient {
+          new (class extends WebServiceClient {
             public constructor() {
               super(undefined, undefined);
             }
-            public fetchAuthed() {
+            public send() {
               return {
                 username: "some-name",
                 naturalName: "Some Name",
                 email: "somename@something.com",
-                pictureUrl: path.join(__dirname, "../common/user_image.jpg"),
+                avatarLargePath: path.join(__dirname, "../common/user_image.jpg"),
               } as any;
             }
           })()

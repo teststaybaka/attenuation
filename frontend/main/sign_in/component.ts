@@ -1,14 +1,14 @@
 import EventEmitter = require("events");
-import { SIGN_IN } from "../../../interface/service";
+import { newSignInServiceRequest } from "../../common/client_requests";
 import { FillButtonComponent } from "../common/button/component";
 import { SCHEME } from "../common/color_scheme";
 import { LOCALIZED_TEXT } from "../common/locales/localized_text";
 import { LOCAL_SESSION_STORAGE } from "../local_session_storage";
-import { SERVICE_CLIENT } from "../service_client";
+import { WEB_SERVICE_CLIENT } from "../web_service_client";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
-import { ServiceClient } from "@selfage/service_client";
-import { LocalSessionStorage } from "@selfage/service_client/local_session_storage";
+import { WebServiceClient } from "@selfage/web_service_client";
+import { LocalSessionStorage } from "@selfage/web_service_client/local_session_storage";
 
 export interface SignInComponent {
   on(event: "signUp", listener: () => void): this;
@@ -24,7 +24,7 @@ export class SignInComponent extends EventEmitter {
   public constructor(
     private submitButton: FillButtonComponent,
     private localSessionStorage: LocalSessionStorage,
-    private serviceClient: ServiceClient
+    private webServiceClient: WebServiceClient
   ) {
     super();
     let usernameInputRef = new Ref<HTMLInputElement>();
@@ -33,7 +33,7 @@ export class SignInComponent extends EventEmitter {
     this.body = E.div(
       {
         class: "sign-in",
-        style: `display: flex; flex-flow: column nowrap; justify-content: center; align-items: center; width: 100vw; min-height: 100vh;`,
+        style: `flex-flow: column nowrap; justify-content: center; align-items: center; width: 100vw; min-height: 100vh;`,
       },
       E.div(
         {
@@ -93,7 +93,7 @@ export class SignInComponent extends EventEmitter {
         E.text(LOCALIZED_TEXT.signInButtonLabel)
       ),
       LOCAL_SESSION_STORAGE,
-      SERVICE_CLIENT
+      WEB_SERVICE_CLIENT
     ).init();
   }
 
@@ -106,12 +106,13 @@ export class SignInComponent extends EventEmitter {
   }
 
   private async signIn(): Promise<void> {
-    let response = await this.serviceClient.fetchUnauthed(
-      {
-        username: this.usernameInput.value,
-        password: this.passwordInput.value,
-      },
-      SIGN_IN
+    let response = await this.webServiceClient.send(
+      newSignInServiceRequest({
+        body: {
+          username: this.usernameInput.value,
+          password: this.passwordInput.value,
+        },
+      })
     );
     this.localSessionStorage.save(response.signedSession);
     this.emit("signedIn");
@@ -121,7 +122,11 @@ export class SignInComponent extends EventEmitter {
     this.emit("signUp");
   }
 
-  public remove(): void {
-    this.body.remove();
+  public show(): void {
+    this.body.style.display = "flex";
+  }
+
+  public hide(): void {
+    this.body.style.display = "none";
   }
 }

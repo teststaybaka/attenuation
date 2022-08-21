@@ -20,7 +20,7 @@ export function createHomeMenuIcon(): SVGSVGElement {
 export function createHomeMenuItemComponent(): MenuItemComponent {
   return MenuItemComponent.create(
     createHomeMenuIcon(),
-    LOCALIZED_TEXT.writePostLabel
+    LOCALIZED_TEXT.homeLabel
   );
 }
 

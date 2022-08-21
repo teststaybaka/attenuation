@@ -41,7 +41,7 @@
 }, {
   "name": "GetUserInfo",
   "spannerSql": {
-    "sql": "SELECT username, naturalName, pictureUrl FROM User where userId = @userId",
+    "sql": "SELECT username, naturalName, avatarLargePath FROM User where userId = @userId",
     "params": [{
       "name": "userId",
       "type": "string"
@@ -53,7 +53,7 @@
       "name": "naturalName",
       "type": "string"
     }, {
-      "name": "pictureUrl",
+      "name": "avatarLargePath",
       "type": "string"
     }]
   }

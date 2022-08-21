@@ -1,9 +1,9 @@
 import { PostEntryCard } from "../../../../interface/post_entry_card";
-import { READ_POSTS } from "../../../../interface/service";
-import { SERVICE_CLIENT } from "../../service_client";
+import { newReadPostsServiceRequest } from "../../../common/client_requests";
+import { WEB_SERVICE_CLIENT } from "../../web_service_client";
 import { PostEntryCardComponent } from "./post_entry_card/component";
 import { E } from "@selfage/element/factory";
-import { ServiceClient } from "@selfage/service_client";
+import { WebServiceClient } from "@selfage/web_service_client";
 
 export class PostEntryListComponent {
   public body: HTMLDivElement;
@@ -14,10 +14,11 @@ export class PostEntryListComponent {
   >();
 
   public constructor(
+    
     private postEntryCardComponentFactoryFn: (
       postEntryCard: PostEntryCard
     ) => PostEntryCardComponent,
-    private serivceClient: ServiceClient
+    private webSerivceClient: WebServiceClient
   ) {
     this.body = E.div({
       class: "post-entry-list",
@@ -28,7 +29,7 @@ export class PostEntryListComponent {
   public static create(): PostEntryListComponent {
     return new PostEntryListComponent(
       PostEntryCardComponent.create,
-      SERVICE_CLIENT
+      WEB_SERVICE_CLIENT
     ).init();
   }
 
@@ -54,7 +55,9 @@ export class PostEntryListComponent {
   }
 
   public async refresh(): Promise<void> {
-    let response = await this.serivceClient.fetchAuthed({}, READ_POSTS);
+    let response = await this.webSerivceClient.send(
+      newReadPostsServiceRequest({ body: {} })
+    );
     this.removeAllEntries();
     this.addEntries(response.postEntryCards);
   }
