@@ -102,10 +102,10 @@ export class ContentComponent extends EventEmitter {
     this.body.addEventListener("mouseover", () => this.expandMenu());
     this.body.addEventListener("mouseout", () => this.collapseMenu());
     this.homeMenuComponent.on("account", () =>
-      this.gotoPage(ContentPage.ACCOUNT)
+      this.setPage(ContentPage.ACCOUNT)
     );
     this.homeMenuComponent.on("refresh", () => this.refreshNewPosts());
-    this.accountMenuComponent.on("home", () => this.gotoPage(ContentPage.HOME));
+    this.accountMenuComponent.on("home", () => this.setPage(ContentPage.HOME));
     this.accountMenuComponent.on("refresh", () =>
       this.refreshAccountComponent()
     );
@@ -143,7 +143,7 @@ export class ContentComponent extends EventEmitter {
     this.menuContainer.collapse();
   }
 
-  private gotoPage(page: ContentPage): void {
+  private setPage(page: ContentPage): void {
     this.state.page = page;
   }
 

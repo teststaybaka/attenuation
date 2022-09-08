@@ -14,14 +14,18 @@ let VALUE_TEXT_STYLE = `flex: 1 0 0; font-size: 1.4rem; color: ${SCHEME.normalTe
 export class AccountComponent {
   public body: HTMLDivElement;
   private card: HTMLDivElement;
-  private profileImage: HTMLImageElement;
+  private avatarContainer: HTMLDivElement;
+  private avatarImage: HTMLImageElement;
+  private avatarChangeHint: HTMLDivElement;
   private usernameValue: HTMLDivElement;
   private naturalNameValue: HTMLDivElement;
   private emailValue: HTMLDivElement;
 
   public constructor(private webServiceClient: WebServiceClient) {
     let cardRef = new Ref<HTMLDivElement>();
-    let profileImageRef = new Ref<HTMLImageElement>();
+    let avatarContainerRef = new Ref<HTMLDivElement>();
+    let avatarImagePef = new Ref<HTMLImageElement>();
+    let avatarChangeHintRef = new Ref<HTMLDivElement>();
     let usernameValueRef = new Ref<HTMLDivElement>();
     let naturalNameValueRef = new Ref<HTMLDivElement>();
     let emailValueRef = new Ref<HTMLDivElement>();
@@ -36,10 +40,60 @@ export class AccountComponent {
           class: "account-basic-card",
           style: `display: flex; flex-flow: column nowrap; align-items: center; flex: 0 0; height: 100%; background-color: ${SCHEME.cardBackground}; overflow-y: auto;`,
         },
-        E.imageRef(profileImageRef, {
-          class: "account-basic-profile",
-          style: `height: 10rem; width: 10rem; border-radius: 10rem; margin: 5rem;`,
-        }),
+        E.divRef(
+          avatarContainerRef,
+          {
+            class: "account-basic-avatar",
+            style: `position: relative; height: 10rem; width: 10rem; border-radius: 10rem; margin: 5rem;`,
+          },
+          E.imageRef(avatarImagePef, {
+            class: "account-basic-avatar-image",
+            style: `height: 100%; width: 100%;`,
+          }),
+          E.divRef(
+            avatarChangeHintRef,
+            {
+              class: "account-basic-avatar-change-hint-background",
+              style: `position: absolute; flex-flow: row nowrap; justify-content: center; align-items: center; top: 0; left: 0; height: 100%; width: 100%; background-color: ${SCHEME.shadowCover};`,
+            },
+            E.div(
+              {
+                class: `account-basic-avatar-change-hint-label`,
+                style: `color: ${SCHEME.shadowText};`,
+              },
+              E.text(LOCALIZED_TEXT.changeAvatarLabel)
+            )
+          )
+        ),
+        E.div(
+          {
+            class: "account-basic-change-avatar-container",
+          },
+          E.div(
+            {
+              class: "account-basic-change-avatar-canvas",
+              style: `position: relative;`,
+            },
+            E.div(
+              {
+                class: "account-basic-change-avatar-placeholder",
+                style: `height: 100%; width: 100%;`
+              },
+              E.text(LOCALIZED_TEXT.uploadAvatarLabel)
+            )
+          ),
+          E.div(
+            {
+              class: "account-basic-change-avatar-previews",
+            },
+            E.div({
+              class: "account-basic-change-avatar-preview-small",
+            }),
+            E.div({
+              class: "account-basic-change-avatar-preview-large",
+            })
+          )
+        ),
         E.div(
           {
             class: "account-basic-username",
@@ -94,7 +148,9 @@ export class AccountComponent {
       )
     );
     this.card = cardRef.val;
-    this.profileImage = profileImageRef.val;
+    this.avatarContainer = avatarContainerRef.val;
+    this.avatarImage = avatarImagePef.val;
+    this.avatarChangeHint = avatarChangeHintRef.val;
     this.usernameValue = usernameValueRef.val;
     this.naturalNameValue = naturalNameValueRef.val;
     this.emailValue = emailValueRef.val;
@@ -109,6 +165,16 @@ export class AccountComponent {
       this.resize(entries[0]);
     });
     observer.observe(this.body);
+
+    this.avatarContainer.addEventListener("mouseenter", () =>
+      this.showChangeAvatarHint()
+    );
+    this.avatarContainer.addEventListener("mouseleave", () =>
+      this.hideChangeAvatarHint()
+    );
+    this.avatarContainer.addEventListener("click", () =>
+      this.showChangeAvatarInput()
+    );
     return this;
   }
 
@@ -120,6 +186,16 @@ export class AccountComponent {
     }
   }
 
+  private showChangeAvatarHint(): void {
+    this.avatarChangeHint.style.display = "flex";
+  }
+
+  private hideChangeAvatarHint(): void {
+    this.avatarChangeHint.style.display = "none";
+  }
+
+  private showChangeAvatarInput(): void {}
+
   public async refresh(): Promise<void> {
     let response = await this.webServiceClient.send(
       newGetUserInfoServiceRequest({ body: {} })
@@ -127,7 +203,7 @@ export class AccountComponent {
     this.usernameValue.textContent = response.username;
     this.naturalNameValue.textContent = response.naturalName;
     this.emailValue.textContent = response.email;
-    this.profileImage.src = AVATAR_URL_COMPOSER.compose(
+    this.avatarImage.src = AVATAR_URL_COMPOSER.compose(
       response.avatarLargePath
     );
   }

@@ -53,4 +53,10 @@ export default class Text {
   get refreshLabel() {
     return `Refresh`;
   }
+  get changeAvatarLabel() {
+    return `Change avatar`
+  }
+  get uploadAvatarLabel() {
+    return `Choose an image to upload`;
+  }
 }
