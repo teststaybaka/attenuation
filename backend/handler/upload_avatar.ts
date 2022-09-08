@@ -85,9 +85,11 @@ export class UploadAvatarHandler extends UploadAvatarHandlerInterface {
     outputFile: string
   ): Promise<void> {
     await pipeline(
-      sharp(body).resize(width, height, { fit: "contain" }).jpeg({
-        quality: 90,
-        mozjpeg: true,
+      sharp(body).resize(width, height, { fit: "contain" }).png({
+        progressive: true,
+        compressionLevel: 9,
+        palette: true,
+        effort: 10,
       }),
       this.cloudStorage
         .bucket(this.bucketName)
