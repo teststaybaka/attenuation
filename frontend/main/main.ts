@@ -1,14 +1,13 @@
 import { ORIGIN_DEV } from "../../constants";
 import { BodyController } from "./body_controller";
+import { normalizeBody } from "./common/normalize_body";
 import { CONTENT_STATE } from "./content/state";
 import { WEB_SERVICE_CLIENT } from "./web_service_client";
 import { createLoaderAndUpdater } from "@selfage/stateful_navigator";
 import "../../environment";
 
 async function main(): Promise<void> {
-  document.documentElement.style.fontSize = "62.5%";
-  document.body.style.margin = "0";
-  document.body.style.fontSize = "0";
+  normalizeBody();
   let viewPortMeta = document.createElement("meta");
   viewPortMeta.name = "viewport";
   viewPortMeta.content = "width=device-width, initial-scale=1";

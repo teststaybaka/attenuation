@@ -26,7 +26,7 @@
     "path": "/SignUp",
     "body": "SignUpRequestBody",
     "response": "SignUpResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -54,7 +54,7 @@
     "path": "/SignIn",
     "body": "SignInRequestBody",
     "response": "SignInResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -90,7 +90,7 @@
       "import": "./user_session"
     },
     "response": "GetUserInfoResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -121,7 +121,7 @@
       "import": "./user_session"
     },
     "response": "CreatePostResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -150,7 +150,7 @@
       "import": "./user_session"
     },
     "response": "ReadPostsResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -177,7 +177,7 @@
       "import": "./user_session"
     },
     "response": "ViewPostResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -208,7 +208,7 @@
       "import": "./user_session"
     },
     "response": "ReactToPostResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }, {
@@ -227,7 +227,7 @@
       "import": "./user_session"
     },
     "response": "UploadAvatarResponse",
-    "outputWebClient": "../frontend/common/client_requests",
+    "outputWebClient": "../frontend/main/common/client_requests",
     "outputHandler": "../backend/handler/interfaces"
   }
 }]

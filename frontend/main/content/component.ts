@@ -1,7 +1,7 @@
 import EventEmitter = require("events");
 import { SCHEME } from "../common/color_scheme";
-import { AccountComponent } from "./account/component";
-import { AccountMenuComponent } from "./account_menu/component";
+import { AccountComponent } from "./account/account_basic/component";
+import { AccountMenuComponent } from "./account/account_menu/component";
 import { MenuContainer } from "./common/menu_container";
 import { HomeMenuComponent } from "./home_menu/component";
 import { PostEntryListComponent } from "./post_entry_list/component";
@@ -37,12 +37,12 @@ export class ContentComponent extends EventEmitter {
     this.body = E.div(
       {
         class: "content",
-        style: `flex-flow: row nowrap; width: 100vw; height: 100vh;`,
+        style: `flex-flow: row nowrap; width: 100vw; background-color: ${SCHEME.bodyBackground};`,
       },
       E.div(
         {
           class: "content-left-bar",
-          style: `flex: 0 0 5rem; background-color: ${SCHEME.barBackground};`,
+          style: `flex: 0 0 5rem;`,
         },
         E.div(
           {
@@ -77,7 +77,7 @@ export class ContentComponent extends EventEmitter {
       ),
       E.divRef(pageContainerRef, {
         class: "main-content-right-container",
-        style: `flex: 1 0 0; height: 100%; background-color: ${SCHEME.bodyBackground};`,
+        style: `flex: 1 0 0;`,
       })
     );
     this.logo = logoRef.val;
@@ -95,24 +95,22 @@ export class ContentComponent extends EventEmitter {
   }
 
   public init(): this {
+    this.hide();
+
     this.logo.addEventListener("mouseover", () => this.highlightLogo());
     this.logo.addEventListener("mouseout", () => this.lowlightLogo());
+    this.logo.addEventListener("mouseover", () => this.expandMenu());
+    this.logo.addEventListener("mouseout", () => this.collapseMenu());
     this.lowlightLogo();
 
-    this.body.addEventListener("mouseover", () => this.expandMenu());
-    this.body.addEventListener("mouseout", () => this.collapseMenu());
     this.homeMenuComponent.on("account", () =>
       this.setPage(ContentPage.ACCOUNT)
     );
     this.homeMenuComponent.on("refresh", () => this.refreshNewPosts());
     this.accountMenuComponent.on("home", () => this.setPage(ContentPage.HOME));
-    this.accountMenuComponent.on("refresh", () =>
-      this.refreshAccountComponent()
-    );
 
     this.lazyAccountComponent = new LazyInstance(() => {
       let component = this.accountComponentFactoryFn();
-      component.refresh();
       this.pageContainer.appendChild(component.body);
       return component;
     });
@@ -149,10 +147,6 @@ export class ContentComponent extends EventEmitter {
 
   private async refreshNewPosts(): Promise<void> {
     await this.lazyPostEntryListComponent.get().refresh();
-  }
-
-  private async refreshAccountComponent(): Promise<void> {
-    await this.lazyAccountComponent.get().refresh();
   }
 
   private showPage(page: ContentPage): void {

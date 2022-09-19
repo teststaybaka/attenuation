@@ -1,6 +1,6 @@
 import { PostEntryCard } from "../../../../../interface/post_entry_card";
-import { AVATAR_URL_COMPOSER } from "../../../../common/avatar_url_composer";
 import { AT_USER } from "../../../common/at_user";
+import { AvatarUrlComposer } from "../../../common/avatar_url_composer";
 import { SCHEME } from "../../../common/color_scheme";
 import { E } from "@selfage/element/factory";
 
@@ -32,7 +32,7 @@ export class PostEntryCardComponent {
           class: "post-entry-user-picture",
           style:
             "width: 4.8rem; height: 4.8rem; border-radius: 4.8rem; margin-right: 1rem;",
-          src: AVATAR_URL_COMPOSER.compose(postEntryCard.avatarSmallPath),
+          src: AvatarUrlComposer.compose(postEntryCard.avatarSmallPath),
         }),
         E.div(
           {

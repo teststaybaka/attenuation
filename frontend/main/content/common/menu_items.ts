@@ -1,6 +1,6 @@
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
-import { MenuItemComponent } from "./menu_item/component";
+import { MenuItem } from "./menu_item/component";
 import { E } from "@selfage/element/factory";
 
 export function createHomeMenuIcon(): SVGSVGElement {
@@ -17,11 +17,8 @@ export function createHomeMenuIcon(): SVGSVGElement {
   );
 }
 
-export function createHomeMenuItemComponent(): MenuItemComponent {
-  return MenuItemComponent.create(
-    createHomeMenuIcon(),
-    LOCALIZED_TEXT.homeLabel
-  );
+export function createHomeMenuItem(): MenuItem {
+  return MenuItem.create(createHomeMenuIcon(), LOCALIZED_TEXT.homeLabel);
 }
 
 export function createRefreshMenuIcon(): SVGSVGElement {
@@ -38,11 +35,8 @@ export function createRefreshMenuIcon(): SVGSVGElement {
   );
 }
 
-export function createRefreshMenuItemComponent(): MenuItemComponent {
-  return MenuItemComponent.create(
-    createRefreshMenuIcon(),
-    LOCALIZED_TEXT.refreshLabel
-  );
+export function createRefreshMenuItem(): MenuItem {
+  return MenuItem.create(createRefreshMenuIcon(), LOCALIZED_TEXT.refreshLabel);
 }
 
 export function createWritePostMenuIcon(): SVGSVGElement {
@@ -59,31 +53,10 @@ export function createWritePostMenuIcon(): SVGSVGElement {
   );
 }
 
-export function createWritePostMenuItemComponent(): MenuItemComponent {
-  return MenuItemComponent.create(
+export function createWritePostMenuItem(): MenuItem {
+  return MenuItem.create(
     createWritePostMenuIcon(),
     LOCALIZED_TEXT.writePostLabel
-  );
-}
-
-export function createRefershPostsMenuIcon(): SVGSVGElement {
-  return E.svg(
-    {
-      class: "menu-refresh-posts-icon",
-      style: `height: 100%;`,
-      viewBox: "0 0 48 48",
-      fill: SCHEME.menuIcon,
-    },
-    E.path({
-      d: `M35.3 12.7c-2.89-2.9-6.88-4.7-11.3-4.7-8.84 0-15.98 7.16-15.98 16s7.14 16 15.98 16c7.45 0 13.69-5.1 15.46-12h-4.16c-1.65 4.66-6.07 8-11.3 8-6.63 0-12-5.37-12-12s5.37-12 12-12c3.31 0 6.28 1.38 8.45 3.55l-6.45 6.45h14v-14l-4.7 4.7z`,
-    })
-  );
-}
-
-export function createRefershPostsMenuItemComponent(): MenuItemComponent {
-  return MenuItemComponent.create(
-    createRefershPostsMenuIcon(),
-    LOCALIZED_TEXT.refreshPostsLabel
   );
 }
 
@@ -101,9 +74,24 @@ export function createAccountMenuIcon(): SVGSVGElement {
   );
 }
 
-export function createAccountMenuItemComponent(): MenuItemComponent {
-  return MenuItemComponent.create(
-    createAccountMenuIcon(),
-    LOCALIZED_TEXT.accountLabel
+export function createAccountMenuItem(): MenuItem {
+  return MenuItem.create(createAccountMenuIcon(), LOCALIZED_TEXT.accountLabel);
+}
+
+export function createBackMenuIcon(): SVGSVGElement {
+  return E.svg(
+    {
+      class: "menu-account-icon",
+      style: `height: 100%;`,
+      viewBox: "-50 -50 300 300",
+      fill: SCHEME.menuIcon,
+    },
+    E.path({
+      d: `M100 0 A100 100 0 1 1 99.9 0 z  M100 15 A85 85 0 1 0 100.1 15 z  M115 40 L55 100 L115 160 L130 145 L85 100 L130 55 z`,
+    })
   );
+}
+
+export function createBackMenuItem(): MenuItem {
+  return MenuItem.create(createBackMenuIcon(), LOCALIZED_TEXT.backLabel);
 }

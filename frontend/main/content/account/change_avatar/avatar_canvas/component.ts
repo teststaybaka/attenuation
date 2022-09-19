@@ -1,19 +1,19 @@
 import EventEmitter = require("events");
-import { SCHEME } from "../../../common/color_scheme";
+import { SCHEME } from "../../../../common/color_scheme";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
 
 export interface AvatarCanvasComponent {
-  on(
-    event: "change",
-    listener: (sx: number, sy: number, sWidth: number, sHeight: number) => void
-  ): void;
-  on(event: string, listener: () => void): this;
+  on(event: "change", listener: () => void): this;
 }
 
 export class AvatarCanvasComponent extends EventEmitter {
   public body: HTMLDivElement;
   public canvas: HTMLCanvasElement;
+  public sx: number;
+  public sy: number;
+  public sWidth: number;
+  public sHeight: number;
   private leftColumn: HTMLDivElement;
   private midColumn: HTMLDivElement;
   private rightColumn: HTMLDivElement;
@@ -117,6 +117,10 @@ export class AvatarCanvasComponent extends EventEmitter {
     this.resizePointBottmRight = resizePointBottmRightRef.val;
   }
 
+  public static create(): AvatarCanvasComponent {
+    return new AvatarCanvasComponent().init();
+  }
+
   public init(): this {
     this.resizePointTopLeft.addEventListener(
       "mousedown",
@@ -159,13 +163,15 @@ export class AvatarCanvasComponent extends EventEmitter {
     this.leftColumn.style.flex = `0 0 ${
       midMidBlockRect.right - length - bodyRect.left
     }px`;
-    this.emitChangeEvent(bodyRect, midMidBlockRect);
+    this.saveSize(bodyRect, midMidBlockRect);
+    this.emit("change");
   };
 
-  private emitChangeEvent(bodyRect: DOMRect, midMidBlockRect: DOMRect): void {
-    let sx = midMidBlockRect.left - bodyRect.left;
-    let sy = midMidBlockRect.top - bodyRect.top;
-    this.emit("change", sx, sy, midMidBlockRect.width, midMidBlockRect.height);
+  private saveSize(bodyRect: DOMRect, midMidBlockRect: DOMRect): void {
+    this.sx = midMidBlockRect.left - bodyRect.left;
+    this.sy = midMidBlockRect.top - bodyRect.top;
+    this.sWidth = midMidBlockRect.width;
+    this.sHeight = midMidBlockRect.height;
   }
 
   private stopResizingFromTopLeft = (event: MouseEvent): void => {
@@ -197,7 +203,8 @@ export class AvatarCanvasComponent extends EventEmitter {
     this.rightColumn.style.flex = `0 0 ${
       bodyRect.right - length - midMidBlockRect.left
     }px`;
-    this.emitChangeEvent(bodyRect, midMidBlockRect);
+    this.saveSize(bodyRect, midMidBlockRect);
+    this.emit("change");
   };
 
   private stopResizingFromTopRight = (event: MouseEvent): void => {
@@ -229,7 +236,8 @@ export class AvatarCanvasComponent extends EventEmitter {
     this.rightColumn.style.flex = `0 0 ${
       bodyRect.right - length - midMidBlockRect.left
     }px`;
-    this.emitChangeEvent(bodyRect, midMidBlockRect);
+    this.saveSize(bodyRect, midMidBlockRect);
+    this.emit("change");
   };
 
   private stopResizingFromBottomRight = (event: MouseEvent): void => {
@@ -264,7 +272,8 @@ export class AvatarCanvasComponent extends EventEmitter {
     this.leftColumn.style.flex = `0 0 ${
       midMidBlockRect.right - length - bodyRect.left
     }px`;
-    this.emitChangeEvent(bodyRect, midMidBlockRect);
+    this.saveSize(bodyRect, midMidBlockRect);
+    this.emit("change");
   };
 
   private stopResizingFromBottomLeft = (event: MouseEvent): void => {
@@ -283,7 +292,6 @@ export class AvatarCanvasComponent extends EventEmitter {
       .clearRect(0, 0, this.canvas.width, this.canvas.height);
     await new Promise<void>((resolve, reject) => {
       let fileReader = new FileReader();
-      fileReader.readAsDataURL(imageFile);
       fileReader.onload = () => {
         let image = new Image();
         image.onload = () => {
@@ -317,6 +325,12 @@ export class AvatarCanvasComponent extends EventEmitter {
           this.canvas
             .getContext("2d")
             .drawImage(image, dx, dy, dWidth, dHeight);
+
+          this.saveSize(
+            this.body.getBoundingClientRect(),
+            this.midMidBlock.getBoundingClientRect()
+          );
+          this.emit("change");
           resolve();
         };
         image.onerror = () => {
@@ -327,29 +341,29 @@ export class AvatarCanvasComponent extends EventEmitter {
       fileReader.onerror = (err) => {
         reject(new Error("Failed to read image file."));
       };
+      fileReader.readAsDataURL(imageFile);
     });
   }
 
-  public save(): Promise<Blob> {
+  public export(): Promise<Blob> {
     let bodyRect = this.body.getBoundingClientRect();
     let midMidBlockRect = this.midMidBlock.getBoundingClientRect();
-    let sx = midMidBlockRect.left - bodyRect.left;
-    let sy = midMidBlockRect.top - bodyRect.top;
+    this.saveSize(bodyRect, midMidBlockRect);
     let resultCanvas = document.createElement("canvas");
-    resultCanvas.width = midMidBlockRect.width;
-    resultCanvas.height = midMidBlockRect.height;
+    resultCanvas.width = this.sWidth;
+    resultCanvas.height = this.sHeight;
     resultCanvas
       .getContext("2d")
       .drawImage(
         this.canvas,
-        sx,
-        sy,
-        resultCanvas.width,
-        resultCanvas.height,
+        this.sx,
+        this.sy,
+        this.sWidth,
+        this.sHeight,
         0,
         0,
-        resultCanvas.width,
-        resultCanvas.height
+        this.sWidth,
+        this.sHeight
       );
     return new Promise<Blob>((resovle) => {
       resultCanvas.toBlob((blob) => {

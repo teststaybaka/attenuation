@@ -1,66 +1,84 @@
 import path = require("path");
+import { AvatarUrlComposer } from "../../common/avatar_url_composer";
 import { normalizeBody } from "../../common/normalize_body";
+import { createBackMenuItem, createHomeMenuItem } from "../common/menu_items";
+import { AccountBasicComponentMock } from "./account_basic/mock";
+import { ChangeAvatarComponentMock } from "./change_avatar/mock";
 import { AccountComponent } from "./component";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
-import { WebServiceClient } from "@selfage/web_service_client";
-import { TEST_RUNNER } from "@selfage/test_runner";
-import "@selfage/puppeteer_test_executor_api";
+import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 
 normalizeBody();
 
 TEST_RUNNER.run({
-  name: "AccountComponentTest",
+  name: "AccountComponent",
   cases: [
-    {
-      name: "Render",
-      execute: async () => {
+    new (class implements TestCase {
+      public name = "Render";
+      private container: HTMLDivElement;
+      public async execute() {
         // Prepare
+        let accountBasicMock = new (class extends AccountBasicComponentMock {
+          public async show() {
+            this.body.style.display = "flex";
+            this.usernameValue.textContent = "some user name";
+            this.naturalNameValue.textContent = "Mr. Your Name";
+            this.emailValue.textContent = "xxxxx@gmail.com";
+            this.avatarImage.src = AvatarUrlComposer.compose(
+              path.join(__dirname, "../common/user_image.jpg")
+            );
+          }
+        })();
         let component = new AccountComponent(
-          new (class extends WebServiceClient {
-            public constructor() {
-              super(undefined, undefined);
-            }
-            public send() {
-              return {
-                username: "some-name",
-                naturalName: "Some Name",
-                email: "somename@something.com",
-                avatarLargePath: path.join(__dirname, "../common/user_image.jpg"),
-              } as any;
-            }
-          })()
+          accountBasicMock,
+          new ChangeAvatarComponentMock(),
+          createHomeMenuItem(),
+          createBackMenuItem()
         ).init();
+        this.container = E.div(
+          {},
+          E.div(
+            {
+              style: `position: fixed;`,
+            },
+            component.menuBody,
+            component.backMenuBody
+          ),
+          E.div(
+            {
+              style: `width: 1000px;`,
+            },
+            component.body
+          )
+        );
+        document.body.append(this.container);
 
         // Execute
-        await component.refresh();
-        document.body.appendChild(component.body);
-        document.body.style.width = "1000px";
-        component.show();
+        await component.show();
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_component_narrow.png",
-          __dirname + "/golden/render_component_narrow.png",
-          __dirname + "/render_component_narrow_diff.png",
+          __dirname + "/render.png",
+          __dirname + "/golden/render.png",
+          __dirname + "/render_diff.png",
           { fullPage: true }
         );
 
         // Execute
-        document.body.style.width = "1300px";
+        accountBasicMock.emit("changeAvatar");
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_component_wide.png",
-          __dirname + "/golden/render_component_wide.png",
-          __dirname + "/render_component_wide_diff.png",
+          __dirname + "/render_change_avatar.png",
+          __dirname + "/golden/render_change_avatar.png",
+          __dirname + "/render_change_avatar_diff.png",
           { fullPage: true }
         );
-      },
-      tearDown: () => {
-        if (document.body.lastChild) {
-          document.body.removeChild(document.body.lastChild);
-        }
-      },
-    },
+      }
+      public tearDown() {
+        this.container.remove();
+      }
+    })(),
   ],
 });

@@ -1,4 +1,4 @@
-import { SignUpRequestBody, SignUpResponse, SIGN_UP, SignInRequestBody, SignInResponse, SIGN_IN, GetUserInfoRequestBody, GetUserInfoResponse, GET_USER_INFO, CreatePostRequestBody, CreatePostResponse, CREATE_POST, ReadPostsRequestBody, ReadPostsResponse, READ_POSTS, ViewPostRequestBody, ViewPostResponse, VIEW_POST, ReactToPostRequestBody, ReactToPostResponse, REACT_TO_POST, UploadAvatarResponse, UPLOAD_AVATAR } from '../../interface/service';
+import { SignUpRequestBody, SignUpResponse, SIGN_UP, SignInRequestBody, SignInResponse, SIGN_IN, GetUserInfoRequestBody, GetUserInfoResponse, GET_USER_INFO, CreatePostRequestBody, CreatePostResponse, CREATE_POST, ReadPostsRequestBody, ReadPostsResponse, READ_POSTS, ViewPostRequestBody, ViewPostResponse, VIEW_POST, ReactToPostRequestBody, ReactToPostResponse, REACT_TO_POST, UploadAvatarResponse, UPLOAD_AVATAR } from '../../../interface/service';
 import { WebServiceRequest } from '@selfage/service_descriptor';
 
 export interface SignUpClientRequest {

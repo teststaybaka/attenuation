@@ -54,9 +54,27 @@ export default class Text {
     return `Refresh`;
   }
   get changeAvatarLabel() {
-    return `Change avatar`
+    return `Update`;
+  }
+  get chooseAvatarLabel() {
+    return `Choose an image file`;
+  }
+  get loadImageError() {
+    return `There is an issue when loading the image file. Please try again or choose a different one.`;
+  }
+  get previewAvatarLabel() {
+    return `Previews`;
   }
   get uploadAvatarLabel() {
-    return `Choose an image to upload`;
+    return `Upload`;
+  }
+  get uploadAvatarError() {
+    return `There is an issue when uploading your avatar. Please try again later.`;
+  }
+  get uploadAvatarSuccess() {
+    return `Upload completed! You will see the updated avatar soon.`;
+  }
+  get backLabel() {
+    return `Back`;
   }
 }

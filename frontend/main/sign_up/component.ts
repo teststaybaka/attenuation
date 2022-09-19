@@ -1,6 +1,6 @@
 import EventEmitter = require("events");
-import { newSignUpServiceRequest } from "../../common/client_requests";
 import { FillButtonComponent } from "../common/button/component";
+import { newSignUpServiceRequest } from "../common/client_requests";
 import { SCHEME } from "../common/color_scheme";
 import { LOCALIZED_TEXT } from "../common/locales/localized_text";
 import { LOCAL_SESSION_STORAGE } from "../local_session_storage";
@@ -49,7 +49,8 @@ export class SignUpComponent extends EventEmitter {
         ),
         E.inputRef(usernameInputRef, {
           class: "sign-up-username-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
+          autocomplete: "username",
         }),
         E.div(
           {
@@ -60,9 +61,9 @@ export class SignUpComponent extends EventEmitter {
         ),
         E.inputRef(passwordInputRef, {
           class: "sign-up-password-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
+          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
           type: "password",
-          autocomplete: "current-password",
+          autocomplete: "new-password",
         }),
         E.divRef(
           switcherToSignInButtonRef,
@@ -97,7 +98,9 @@ export class SignUpComponent extends EventEmitter {
     ).init();
   }
 
-  private init(): this {
+  public init(): this {
+    this.hide();
+
     this.submitButton.on("click", () => this.signUp());
     this.switcherToSignInButton.addEventListener("click", () =>
       this.switchToSignIn()

@@ -1,4 +1,4 @@
-import { normalizeBody } from "../../../common/normalize_body";
+import { normalizeBody } from "../../../../common/normalize_body";
 import { AvatarCanvasComponent } from "./component";
 import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
@@ -265,7 +265,7 @@ TEST_RUNNER.run({
       }
     })(),
     new (class implements TestCase {
-      public name = "Save";
+      public name = "Export";
       private component: AvatarCanvasComponent;
       public async execute() {
         // Prepare
@@ -291,7 +291,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let fileBlob = await this.component.save();
+        let fileBlob = await this.component.export();
 
         // Verify
         let fileData = await new Promise<string>((resolve) => {

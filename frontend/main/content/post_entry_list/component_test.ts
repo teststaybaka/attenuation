@@ -6,14 +6,14 @@ import { PostEntryCardComponent } from "./post_entry_card/component";
 import { Counter } from "@selfage/counter";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { WebServiceRequest } from "@selfage/service_descriptor";
-import { TEST_RUNNER } from "@selfage/test_runner";
+import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 import { WebServiceClient } from "@selfage/web_service_client";
 import "@selfage/puppeteer_test_executor_api";
 
 normalizeBody();
 
-let CARD_TEMPLATE = {
-  userProfilePicture: path.join(__dirname, "../common/user_image.jpg"),
+let CARD_TEMPLATE: PostEntryCard = {
+  avatarSmallPath: path.join(__dirname, "../common/user_image.jpg"),
   username: "some-name",
   userNatureName: "Some Name",
   content: "blahblahblahblah\nsomethingsomething",
@@ -33,13 +33,14 @@ function generateCards(num: number): Array<PostEntryCard> {
 TEST_RUNNER.run({
   name: "PostEntryListComponentTest",
   cases: [
-    {
-      name: "Render",
-      execute: async () => {
+    new (class implements TestCase {
+      public name = "Render";
+      private component: PostEntryListComponent;
+      public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
-        document.body.style.height = "600px";
-        let component = new PostEntryListComponent(
+        await puppeteerSetViewport(1000, 600);
+        document.body.style.width = "100vw";
+        this.component = new PostEntryListComponent(
           (postEntryCard) => {
             return new PostEntryCardComponent(postEntryCard);
           },
@@ -72,48 +73,46 @@ TEST_RUNNER.run({
             }
           })()
         ).init();
-        component.show();
+        this.component.show();
 
         // Execute
-        document.body.appendChild(component.body);
-        component.refresh();
+        document.body.appendChild(this.component.body);
+        this.component.refresh();
 
         // Verify
         await asyncAssertScreenshot(
           __dirname + "/render_component_narrow.png",
           __dirname + "/golden/render_component_narrow.png",
           __dirname + "/render_component_narrow_diff.png",
-          { fullPage: true }
+          { threshold: 0.05 }
         );
 
         // Execute
-        document.body.style.width = "1400px";
+        await puppeteerSetViewport(1400, 600);
 
         // Verify
         await asyncAssertScreenshot(
           __dirname + "/render_component_medium.png",
           __dirname + "/golden/render_component_medium.png",
           __dirname + "/render_component_medium_diff.png",
-          { fullPage: true }
+          { threshold: 0.05 }
         );
 
         // Execute
-        component.refresh();
-        document.body.style.width = "2000px";
+        this.component.refresh();
+        await puppeteerSetViewport(2000, 600);
 
         // Verify
         await asyncAssertScreenshot(
           __dirname + "/render_component_wide.png",
           __dirname + "/golden/render_component_wide.png",
           __dirname + "/render_component_wide_diff.png",
-          { fullPage: true }
+          { threshold: 0.05 }
         );
-      },
-      tearDown: () => {
-        if (document.body.lastChild) {
-          document.body.removeChild(document.body.lastChild);
-        }
-      },
-    },
+      }
+      public tearDown() {
+        this.component.body.remove();
+      }
+    })(),
   ],
 });

@@ -1,13 +1,14 @@
 let LIGHT_BLACK = "rgb(50, 50, 50)";
 let LIGHT_GREY = "rgb(230, 230, 230)";
 let GREY = "rgb(200, 200, 200)";
-let GREY_TRANSLUCENT = "rgba(200, 200, 200, .5)";
+let GREY_TRANSLUCENT = "rgba(150, 150, 150, .5)";
 let DARK_GREY = "rgb(120, 120, 120)";
 let LIGHT_BLUE = "rgb(200, 247, 255)";
 let BLUE = "rgb(0, 174, 239)";
 let ORANGE = "rgb(255, 180, 80)";
 let RED = "rgb(255, 0,0)";
 let WHITE = "white";
+let TRANSPARENT = "transparent";
 
 export class LightScheme {
   get normalText() {
@@ -22,11 +23,14 @@ export class LightScheme {
   get shadowText() {
     return WHITE;
   }
-  get textButtonText() {
-    return LIGHT_BLACK;
-  }
   get primaryButtonText() {
     return WHITE;
+  }
+  get outlineButtonText() {
+    return LIGHT_BLACK;
+  }
+  get textButtonText() {
+    return LIGHT_BLACK;
   }
   get menuText() {
     return LIGHT_BLACK;
@@ -52,6 +56,9 @@ export class LightScheme {
   get errorInputBorder() {
     return RED;
   }
+  get outlineButtonBorder() {
+    return LIGHT_BLACK;
+  }
   get resizeLineBorder() {
     return BLUE;
   }
@@ -61,14 +68,11 @@ export class LightScheme {
   get cardBackground() {
     return WHITE;
   }
-  get barBackground() {
+  get accountCardBackground() {
     return WHITE;
   }
   get placeholderBackground() {
     return LIGHT_GREY;
-  }
-  get menuHighlightBackground() {
-    return LIGHT_BLUE;
   }
   get primaryButtonBackground() {
     return BLUE;
@@ -79,8 +83,17 @@ export class LightScheme {
   get primaryButtonBackgroundDisabled() {
     return LIGHT_BLUE;
   }
+  get outlineButtonBackground() {
+    return TRANSPARENT;
+  }
+  get outlineButtonBackgroundPressed() {
+    return GREY;
+  }
+  get outlineButtonBackgroundDisabled() {
+    return GREY;
+  }
   get textButtonBackground() {
-    return WHITE;
+    return TRANSPARENT;
   }
   get textButtonBackgroundPressed() {
     return GREY;

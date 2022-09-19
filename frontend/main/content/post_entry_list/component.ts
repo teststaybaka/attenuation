@@ -1,5 +1,5 @@
 import { PostEntryCard } from "../../../../interface/post_entry_card";
-import { newReadPostsServiceRequest } from "../../../common/client_requests";
+import { newReadPostsServiceRequest } from "../../common/client_requests";
 import { WEB_SERVICE_CLIENT } from "../../web_service_client";
 import { PostEntryCardComponent } from "./post_entry_card/component";
 import { E } from "@selfage/element/factory";
@@ -14,7 +14,6 @@ export class PostEntryListComponent {
   >();
 
   public constructor(
-    
     private postEntryCardComponentFactoryFn: (
       postEntryCard: PostEntryCard
     ) => PostEntryCardComponent,
@@ -22,7 +21,7 @@ export class PostEntryListComponent {
   ) {
     this.body = E.div({
       class: "post-entry-list",
-      style: `flex-flow: column wrap; height: 100%; width: 100%; overflow: hidden;`,
+      style: `flex-flow: column wrap; width: 100%; height: 100vh; overflow: hidden;`,
     });
   }
 
@@ -34,6 +33,8 @@ export class PostEntryListComponent {
   }
 
   public init(): this {
+    this.hide();
+
     let observer = new ResizeObserver((entries) => {
       this.resize(entries[0]);
     });
