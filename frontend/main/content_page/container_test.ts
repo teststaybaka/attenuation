@@ -3,9 +3,10 @@ import { normalizeBody } from "../common/normalize_body";
 import { AccountPageMock } from "./account_page/mocks";
 import { ContentPage } from "./container";
 import { PostEntryListPageMock } from "./post_entry_list_page/mocks";
-import { ContentState, Page } from "./state";
+import { ContentState } from "./state";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
+import "@selfage/puppeteer_test_executor_api";
 
 normalizeBody();
 
@@ -17,26 +18,27 @@ TEST_RUNNER.run({
       private cut: ContentPage;
       public async execute() {
         // Prepare
-        let state = new ContentState();
-        state.page = Page.HOME;
+        let accountPageMock = new AccountPageMock();
+        let postEntryListPageMock = new PostEntryListPageMock([
+          {
+            postEntryId: "1",
+            userNatureName: "My name",
+            username: "my-name",
+            avatarSmallPath: userImage,
+            content: "Something to say",
+            createdTimestamp: Date.parse("2022-10-11"),
+          },
+        ]);
         this.cut = new ContentPage(
           () => {
-            return new AccountPageMock();
+            return accountPageMock;
           },
           () => {
-            return new PostEntryListPageMock([
-              {
-                postEntryId: "1",
-                userNatureName: "My name",
-                username: "my-name",
-                avatarSmallPath: userImage,
-                content: "Something to say",
-                createdTimestamp: Date.parse("2022-10-11"),
-              },
-            ]);
+            return postEntryListPageMock;
           },
-          state
+          new ContentState()
         );
+        await puppeteerSetViewport(1000, 1000);
         document.body.appendChild(this.cut.body);
 
         // Execute
@@ -47,6 +49,26 @@ TEST_RUNNER.run({
           __dirname + "/content_page_render.png",
           __dirname + "/golden/content_page_render.png",
           __dirname + "/content_page_render_diff.png"
+        );
+
+        // Execute
+        postEntryListPageMock.emit("account");
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/content_page_switch_to_account.png",
+          __dirname + "/golden/content_page_switch_to_account.png",
+          __dirname + "/content_page_switch_to_account_diff.png"
+        );
+
+        // Execute
+        accountPageMock.emit("home");
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/content_page_switch_to_home.png",
+          __dirname + "/golden/content_page_render.png",
+          __dirname + "/content_page_switch_to_home_diff.png"
         );
       }
       public tearDown() {

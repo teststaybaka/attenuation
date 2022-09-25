@@ -31,7 +31,7 @@ export class ContentPage extends EventEmitter {
     this.body = E.div(
       {
         class: "content",
-        style: `flex-flow: row nowrap; width: 100vw; background-color: ${SCHEME.bodyBackground};`,
+        style: `flex-flow: row nowrap; width: 100vw; min-height: 100vh; background-color: ${SCHEME.bodyBackground};`,
       },
       E.div(
         {
@@ -86,7 +86,7 @@ export class ContentPage extends EventEmitter {
     });
     this.lazyPostEntryListPage = new LazyInstance(() => {
       let page = this.postEntryListPageFactoryFn();
-      page.on("account", () => this.setPage(Page.HOME));
+      page.on("account", () => this.setPage(Page.ACCOUNT));
 
       page.refresh();
       this.menuContainer.append(...page.menuBodies);
