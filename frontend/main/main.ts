@@ -1,8 +1,8 @@
 import { ORIGIN_DEV } from "../../constants";
 import { BodyController } from "./body_controller";
 import { normalizeBody } from "./common/normalize_body";
-import { CONTENT_STATE } from "./content/state";
-import { WEB_SERVICE_CLIENT } from "./web_service_client";
+import { WEB_SERVICE_CLIENT } from "./common/web_service_client";
+import { CONTENT_STATE } from "./content_page/state";
 import { createLoaderAndUpdater } from "@selfage/stateful_navigator";
 import "../../environment";
 
