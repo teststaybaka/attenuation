@@ -1,7 +1,5 @@
-import { FillButton } from "./common/button";
 import { normalizeBody } from "./common/normalize_body";
 import { SignInPage } from "./sign_in_page";
-import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 
@@ -15,12 +13,8 @@ TEST_RUNNER.run({
       private cut: SignInPage;
       public async execute() {
         // Prepare
+        this.cut = new SignInPage(undefined, undefined);
         await puppeteerSetViewport(1000, 1000);
-        this.cut = new SignInPage(
-          FillButton.create(true, E.text("Sign in")),
-          undefined,
-          undefined
-        );
         document.body.appendChild(this.cut.body);
 
         // Execute
@@ -42,12 +36,8 @@ TEST_RUNNER.run({
       private cut: SignInPage;
       public async execute() {
         // Prepare
+        this.cut = new SignInPage(undefined, undefined);
         await puppeteerSetViewport(1000, 150);
-        this.cut = new SignInPage(
-          FillButton.create(true, E.text("Sign in")),
-          undefined,
-          undefined
-        );
         document.body.appendChild(this.cut.body);
 
         // Execute

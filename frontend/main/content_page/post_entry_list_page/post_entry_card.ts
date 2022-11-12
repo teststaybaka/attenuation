@@ -20,7 +20,7 @@ export class PostEntryCard {
     this.body = E.div(
       {
         class: "post-entry-card",
-        style: `display: flex; flex-flow: column nowrap; width: 60rem; padding: .6rem 1.2rem; margin-left: auto; margin-right: auto; box-sizing: border-box; background-color: ${SCHEME.cardBackground};`,
+        style: `display: flex; flex-flow: column nowrap; width: 60rem; padding: .6rem 1.2rem; margin-left: auto; margin-right: auto; box-sizing: border-box; background-color: ${SCHEME.neutral4};`,
       },
       E.div(
         {
@@ -42,14 +42,14 @@ export class PostEntryCard {
           E.div(
             {
               class: "post-entry-card-username",
-              style: `font-size: 1.6rem; color: ${SCHEME.hintText};`,
+              style: `font-size: 1.6rem; color: ${SCHEME.neutral2};`,
             },
             E.text(AT_USER + postEntry.username)
           ),
           E.div(
             {
               class: "post-entry-card-user-nature-name",
-              style: `font-size: 1.6rem; color: ${SCHEME.normalText};`,
+              style: `font-size: 1.6rem; color: ${SCHEME.neutral0};`,
             },
             E.text(postEntry.userNatureName)
           )
@@ -57,7 +57,7 @@ export class PostEntryCard {
         E.div(
           {
             class: "post-entry-card-created-timestamp",
-            style: `margin-left: auto; font-size: 1.4rem; color: ${SCHEME.hintText};`,
+            style: `margin-left: auto; font-size: 1.4rem; color: ${SCHEME.neutral2};`,
           },
           E.text(
             this.dateFormatter.format(new Date(postEntry.createdTimestamp))
@@ -71,7 +71,7 @@ export class PostEntryCard {
         E.div(
           {
             class: "post-entry-card-content",
-            style: `font-size: 1.6rem; white-space: pre-wrap; color: ${SCHEME.normalText};`,
+            style: `font-size: 1.6rem; white-space: pre-wrap; color: ${SCHEME.neutral0};`,
           },
           E.text(postEntry.content)
         )

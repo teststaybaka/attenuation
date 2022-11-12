@@ -10,8 +10,8 @@ import { Ref } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
 let INPUT_LINE_STYLE = `display: flex; flex-flow: row nowrap; box-sizing: border-box; width: 100%; padding: 0 10% 2.5rem; line-height: 2rem;`;
-let LABEL_STYLE = `flex: 0 0 12rem; font-size: 1.4rem; color: ${SCHEME.normalText};`;
-let VALUE_TEXT_STYLE = `flex: 1 0 0; font-size: 1.4rem; color: ${SCHEME.normalText};`;
+let LABEL_STYLE = `flex: 0 0 12rem; font-size: 1.4rem; color: ${SCHEME.neutral0};`;
+let VALUE_TEXT_STYLE = `flex: 1 0 0; font-size: 1.4rem; color: ${SCHEME.neutral0};`;
 
 export interface AccountBasicTab {
   on(event: "changeAvatar", listener: () => void): this;
@@ -53,12 +53,12 @@ export class AccountBasicTab extends EventEmitter {
           avatarChangeHintRef,
           {
             class: "account-basic-avatar-change-hint-background",
-            style: `position: absolute; display: flex; flex-flow: row nowrap; justify-content: center; align-items: center; bottom: 0; left: 0; height: 0; width: 100%; transition: height .2s; overflow: hidden; background-color: ${SCHEME.shadowCover};`,
+            style: `position: absolute; display: flex; flex-flow: row nowrap; justify-content: center; align-items: center; bottom: 0; left: 0; height: 0; width: 100%; transition: height .2s; overflow: hidden; background-color: ${SCHEME.neutral1Translucent};`,
           },
           E.div(
             {
               class: `account-basic-avatar-change-hint-label`,
-              style: `font-size: 1.4rem; color: ${SCHEME.shadowText};`,
+              style: `font-size: 1.4rem; color: ${SCHEME.neutral4};`,
             },
             E.text(LOCALIZED_TEXT.changeAvatarLabel)
           )

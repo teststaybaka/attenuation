@@ -54,7 +54,7 @@ export class AvatarCanvas extends EventEmitter {
         },
         E.divRef(leftColumnRef, {
           class: "avatar-canvas-left-column",
-          style: `flex: 1 0 0; height: 100%; background-color: ${SCHEME.shadowCover};`,
+          style: `flex: 1 0 0; height: 100%; background-color: ${SCHEME.neutral1Translucent};`,
         }),
         E.divRef(
           midColumnRef,
@@ -64,43 +64,43 @@ export class AvatarCanvas extends EventEmitter {
           },
           E.divRef(midTopBlockRef, {
             class: "avatar-canvas-mid-top-block",
-            style: `flex: 1 0 0; width: 100%; background-color: ${SCHEME.shadowCover};`,
+            style: `flex: 1 0 0; width: 100%; background-color: ${SCHEME.neutral1Translucent};`,
           }),
           E.divRef(
             midMidBlockRef,
             {
               class: "avatar-canvas-mid-mid-block",
-              style: `flex: 0 0 20rem; width: 100%; position: relative; box-sizing: border-box; border: .1rem dashed ${SCHEME.resizeLineBorder};`,
+              style: `flex: 0 0 20rem; width: 100%; position: relative; box-sizing: border-box; border: .1rem dashed ${SCHEME.primary1};`,
             },
             E.div({
               class: "avatar-canvas-mid-mid-circle",
-              style: `width: 100%; height: 100%; box-sizing: border-box; border: .1rem dashed ${SCHEME.resizeLineBorder}; border-radius: 100%;`,
+              style: `width: 100%; height: 100%; box-sizing: border-box; border: .1rem dashed ${SCHEME.primary1}; border-radius: 100%;`,
             }),
             E.divRef(resizePointTopLeftRef, {
               class: "avatar-canvas-resize-point-top-left",
-              style: `position: absolute; top: -.5rem; left: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.resizeLineBorder}; border-radius: 1rem; background-color: ${SCHEME.resizePointBackground}; cursor: nw-resize;`,
+              style: `position: absolute; top: -.5rem; left: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.primary1}; border-radius: 1rem; background-color: ${SCHEME.primaryContrast0}; cursor: nw-resize;`,
             }),
             E.divRef(resizePointTopRightRef, {
               class: "avatar-canvas-resize-point-top-right",
-              style: `position: absolute; top: -.5rem; right: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.resizeLineBorder}; border-radius: 1rem; background-color: ${SCHEME.resizePointBackground}; cursor: ne-resize;`,
+              style: `position: absolute; top: -.5rem; right: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.primary1}; border-radius: 1rem; background-color: ${SCHEME.primaryContrast0}; cursor: ne-resize;`,
             }),
             E.divRef(resizePointBottmLeftRef, {
               class: "avatar-canvas-resize-point-bottom-left",
-              style: `position: absolute; bottom: -.5rem; left: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.resizeLineBorder}; border-radius: 1rem; background-color: ${SCHEME.resizePointBackground}; cursor: se-resize;`,
+              style: `position: absolute; bottom: -.5rem; left: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.primary1}; border-radius: 1rem; background-color: ${SCHEME.primaryContrast0}; cursor: se-resize;`,
             }),
             E.divRef(resizePointBottmRightRef, {
               class: "avatar-canvas-resize-point-bottom-right",
-              style: `position: absolute; bottom: -.5rem; right: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.resizeLineBorder}; border-radius: 1rem; background-color: ${SCHEME.resizePointBackground}; cursor: sw-resize;`,
+              style: `position: absolute; bottom: -.5rem; right: -.5rem; width: 1rem; height: 1rem; border: .1rem solid ${SCHEME.primary1}; border-radius: 1rem; background-color: ${SCHEME.primaryContrast0}; cursor: sw-resize;`,
             })
           ),
           E.divRef(midBottmBlockRef, {
             class: "avatar-canvas-mid-bottom-block",
-            style: `flex: 1 0 0; width: 100%; background-color: ${SCHEME.shadowCover};`,
+            style: `flex: 1 0 0; width: 100%; background-color: ${SCHEME.neutral1Translucent};`,
           })
         ),
         E.divRef(rightColumnRef, {
           class: "avatar-canvas-right-column",
-          style: `flex: 1 0 0; height: 100%; background-color: ${SCHEME.shadowCover};`,
+          style: `flex: 1 0 0; height: 100%; background-color: ${SCHEME.neutral1Translucent};`,
         })
       )
     );

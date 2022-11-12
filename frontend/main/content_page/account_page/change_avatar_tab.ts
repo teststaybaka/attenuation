@@ -37,7 +37,7 @@ export class ChangeAvatarTab {
       chooseFileButton.body,
       E.divRef(loadErrorTextRef, {
         class: "change-avatar-image-load-error",
-        style: `display: none; margin-top: 1rem; font-size: 1.4rem; color: ${SCHEME.errorText};`,
+        style: `display: none; margin-top: 1rem; font-size: 1.4rem; color: ${SCHEME.error0};`,
       }),
       E.div(
         {
@@ -49,7 +49,7 @@ export class ChangeAvatarTab {
       E.div(
         {
           class: "change-avatar-preview-label",
-          style: `font-size: 1.4rem; color: ${SCHEME.normalText};`,
+          style: `font-size: 1.4rem; color: ${SCHEME.neutral0};`,
         },
         E.text(LOCALIZED_TEXT.previewAvatarLabel)
       ),
@@ -66,7 +66,7 @@ export class ChangeAvatarTab {
           E.div(
             {
               class: "change-avatar-preview-large-cap",
-              style: `position: relative; width: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; height: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; border-radius: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; border: .1rem solid ${SCHEME.inputBorder}; overflow: hidden;`,
+              style: `position: relative; width: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; height: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; border-radius: ${ChangeAvatarTab.LARGE_IMAGE_LENGTH}px; border: .1rem solid ${SCHEME.neutral1}; overflow: hidden;`,
             },
             E.canvasRef(previewLargeCanvasRef, {
               class: "change-avatar-preview-large-canvas",
@@ -76,7 +76,7 @@ export class ChangeAvatarTab {
           E.div(
             {
               class: "change-avatar-preview-large-label",
-              style: `font-size: 1.4rem; color: ${SCHEME.normalText}; margin-top: 2rem;`,
+              style: `font-size: 1.4rem; color: ${SCHEME.neutral0}; margin-top: 2rem;`,
             },
             E.text("160 x 160")
           )
@@ -89,7 +89,7 @@ export class ChangeAvatarTab {
           E.div(
             {
               class: "change-avatar-preview-small-cap",
-              style: `position: relative; width: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; height: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; border-radius: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; border: .1rem solid ${SCHEME.inputBorder}; overflow: hidden;`,
+              style: `position: relative; width: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; height: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; border-radius: ${ChangeAvatarTab.SMALL_IMAGE_LENGTH}px; border: .1rem solid ${SCHEME.neutral1}; overflow: hidden;`,
             },
             E.canvasRef(previewSmallCanvasRef, {
               class: "change-vatar-preview-small-canvas",
@@ -99,7 +99,7 @@ export class ChangeAvatarTab {
           E.div(
             {
               class: "change-avatar-preview-small-label",
-              style: `font-size: 1.4rem; color: ${SCHEME.normalText}; margin-top: 2rem;`,
+              style: `font-size: 1.4rem; color: ${SCHEME.neutral0}; margin-top: 2rem;`,
             },
             E.text("50 x 50")
           )
@@ -201,13 +201,13 @@ export class ChangeAvatarTab {
       let blob = await this.avatarCanvas.export();
       await this.sendUploadAvatarRequest(blob);
     } catch (e) {
-      this.uploadStatusText.style.color = SCHEME.errorText;
+      this.uploadStatusText.style.color = SCHEME.error0;
       this.uploadStatusText.textContent = LOCALIZED_TEXT.uploadAvatarError;
       this.uploadStatusText.style.display = "block";
       console.error(e);
       return;
     }
-    this.uploadStatusText.style.color = SCHEME.normalText;
+    this.uploadStatusText.style.color = SCHEME.neutral0;
     this.uploadStatusText.textContent = LOCALIZED_TEXT.uploadAvatarSuccess;
     this.uploadStatusText.style.display = "block";
   }

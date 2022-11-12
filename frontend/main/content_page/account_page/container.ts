@@ -6,7 +6,6 @@ import { createBackMenuItem, createHomeMenuItem } from "../common/menu_items";
 import { AccountBasicTab } from "./account_basic_tab";
 import { ChangeAvatarTab } from "./change_avatar_tab";
 import { E } from "@selfage/element/factory";
-import { Ref } from "@selfage/ref";
 
 export interface AccountPage {
   on(event: "home", listener: () => void): this;
@@ -15,7 +14,6 @@ export interface AccountPage {
 export class AccountPage extends EventEmitter {
   public body: HTMLDivElement;
   public menuBodies = new Array<HTMLDivElement>();
-  private card: HTMLDivElement;
   private homeMenuItem: MenuItem;
   private menuContainer: MenuContainer;
   private backMenuItem: MenuItem;
@@ -26,49 +24,34 @@ export class AccountPage extends EventEmitter {
     private changeAvatar: ChangeAvatarTab
   ) {
     super();
-    let cardRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
         class: "account",
-        style: `flex-flow: row nowrap; justify-content: center; width: 100%;`,
+        style: `flex-flow: row nowrap; justify-content: center; width: 100vw;`,
       },
-      E.divRef(
-        cardRef,
+      E.div(
         {
           class: "account-card",
-          style: `background-color: ${SCHEME.accountCardBackground};`,
+          style: `background-color: ${SCHEME.neutral4}; width: 100%; max-width: 100rem;`,
         },
         accountBasic.body,
         changeAvatar.body
       )
     );
-    this.card = cardRef.val;
     this.homeMenuItem = createHomeMenuItem();
     this.menuContainer = MenuContainer.create(this.homeMenuItem);
     this.backMenuItem = createBackMenuItem();
     this.backMenuContainer = MenuContainer.create(this.backMenuItem);
     this.menuBodies.push(this.menuContainer.body, this.backMenuContainer.body);
+    this.hide();
 
     this.homeMenuItem.on("action", () => this.emit("home"));
     this.backMenuItem.on("action", () => this.showAccountBasic());
     this.accountBasic.on("changeAvatar", () => this.showChangeAvatar());
-    let observer = new ResizeObserver((entries) => {
-      this.resize(entries[0]);
-    });
-    observer.observe(this.body);
-    this.hide();
   }
 
   public static create(): AccountPage {
     return new AccountPage(AccountBasicTab.create(), ChangeAvatarTab.create());
-  }
-
-  private resize(entry: ResizeObserverEntry): void {
-    if (entry.contentRect.width > 1000) {
-      this.card.style.flexBasis = `1000px`;
-    } else {
-      this.card.style.flexBasis = "100%";
-    }
   }
 
   private showChangeAvatar(): void {

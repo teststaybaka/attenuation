@@ -1,0 +1,18 @@
+[{
+  "name": "WarningTagType",
+  "enum": {
+    "values": [{
+      "name": "Unknown",
+      "value": 0
+    }, {
+      "name": "Nudity",
+      "value": 1
+    }, {
+      "name": "Spoiler",
+      "value": 2
+    }, {
+      "name": "Gross",
+      "value": 3
+    }]
+  }
+}]

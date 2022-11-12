@@ -77,4 +77,55 @@ export default class Text {
   get backLabel() {
     return `Back`;
   }
+  get chooseLayoutLabel() {
+    return `Choose a layout from below`;
+  }
+  get quickLayoutOption() {
+    return `Simplest layout for a quick post.`;
+  }
+  get imageSeriesOption() {
+    return `A series of vertically placed images with a cover image, such as comics or manga.`;
+  }
+  get longVideoOption() {
+    return `A long video with a preview video, such as movie or drama.`;
+  }
+  get audioOption() {
+    return `An audio with metadata and cover image, such as music, song or podcast.`;
+  }
+  get textImageInterleavedOption() {
+    return `An article that can insert iamges into texts.`;
+  }
+  get quickLayoutTextLabel() {
+    return `Write something to share`;
+  }
+  get characterCountLabel() {
+    return `Character count is `;
+  }
+  get quickLayoutUploadImagesLabel() {
+    return `Or upload one or more images`;
+  }
+  get quickLayoutUploadImageButtonLabel() {
+    return `Choose a file`;
+  }
+  get tagsLabel() {
+    return `Then add some tags to help people discover it`;
+  }
+  get warningTagsLabel() {
+    return `The following are special tags that warn people before they can see the content`;
+  }
+  get warningTagNudity() {
+    return `Nudity`;
+  }
+  get warningTagSpoiler() {
+    return `Spoiler`;
+  }
+  get warningTagGross() {
+    return `Gross`;
+  }
+  get previewPostButtonLabel() {
+    return `Preview`;
+  }
+  get submitPostButtonLabel() {
+    return `Submit your post`;
+  }
 }

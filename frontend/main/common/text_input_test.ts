@@ -1,5 +1,5 @@
 import { normalizeBody } from "./normalize_body";
-import { HorizontalTextInput } from "./text_input";
+import { VerticalTextInputWithErrorMsg } from "./text_input";
 import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
@@ -10,11 +10,14 @@ TEST_RUNNER.run({
   name: "TextInputTest",
   cases: [
     new (class implements TestCase {
-      public name = "RenderHorizontalTextInput";
+      public name = "RenderVerticalTextInput";
       private div: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = HorizontalTextInput.create("Input:");
+        let cut = VerticalTextInputWithErrorMsg.create(
+          "Input",
+          "width: 50rem;"
+        );
 
         // Execute
         this.div = E.div(
@@ -31,19 +34,21 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/horizontal_text_input_render.png",
-          __dirname + "/golden/horizontal_text_input_render.png",
-          __dirname + "/horizontal_text_input_diff_render.png"
+          __dirname + "/vertical_text_input_render.png",
+          __dirname + "/golden/vertical_text_input_render.png",
+          __dirname + "/vertical_text_input_render_diff.png",
+          { fullPage: true }
         );
 
         // Execute
-        cut.showError('Failed to validate.');
+        cut.showError("Failed to validate.");
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/horizontal_text_input_with_error.png",
-          __dirname + "/golden/horizontal_text_input_with_error.png",
-          __dirname + "/horizontal_text_input_with_error_diff.png"
+          __dirname + "/vertical_text_input_with_error.png",
+          __dirname + "/golden/vertical_text_input_with_error.png",
+          __dirname + "/vertical_text_input_with_error_diff.png",
+          { fullPage: true }
         );
 
         // Execute
@@ -51,9 +56,10 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/horizontal_text_input_hide_error.png",
-          __dirname + "/golden/horizontal_text_input_render.png",
-          __dirname + "/horizontal_text_input_hide_error_diff.png"
+          __dirname + "/vertical_text_input_hide_error.png",
+          __dirname + "/golden/vertical_text_input_render.png",
+          __dirname + "/vertical_text_input_hide_error_diff.png",
+          { fullPage: true }
         );
       }
       public tearDown() {

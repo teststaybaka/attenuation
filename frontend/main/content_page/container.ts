@@ -31,7 +31,7 @@ export class ContentPage extends EventEmitter {
     this.body = E.div(
       {
         class: "content",
-        style: `flex-flow: row nowrap; width: 100vw; min-height: 100vh; background-color: ${SCHEME.bodyBackground};`,
+        style: `flex-flow: row nowrap; width: 100vw; min-height: 100vh; background-color: ${SCHEME.neutral4};`,
       },
       E.div(
         {

@@ -13,7 +13,11 @@
   },
   "homepage": "https://github.com/teststaybaka/attenuation#readme",
   "datastoreIndex": "./backend/data_model/index",
-  "assetExts": [".png", ".jpg", "jpeg"],
+  "assetExts": [
+    ".png",
+    ".jpg",
+    "jpeg"
+  ],
   "devDependencies": {
     "@selfage/bundler_cli": "^4.0.3",
     "@selfage/cli": "^4.0.0",

@@ -1,5 +1,5 @@
 import { ORIGIN_DEV } from "../../constants";
-import { BodyController } from "./body_controller";
+import { BodyContainer } from "./body_container";
 import { normalizeBody } from "./common/normalize_body";
 import { WEB_SERVICE_CLIENT } from "./common/web_service_client";
 import { CONTENT_STATE } from "./content_page/state";
@@ -23,7 +23,7 @@ async function main(): Promise<void> {
 
   let queryParamKeyForState = "q";
   let [loader] = createLoaderAndUpdater(CONTENT_STATE, queryParamKeyForState);
-  BodyController.create(document.body, loader.state);
+  BodyContainer.create(document.body, loader.state);
 }
 
 main();

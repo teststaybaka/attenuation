@@ -1,11 +1,11 @@
 import { SCHEME } from "./color_scheme";
 import { BaseButton } from "@selfage/element/base_button";
 
-let COMMON_BUTTON_STYLE = `outline: none; border: 0; flex: 0 0 auto; font-size: 1.4rem; line-height: 100%; border-radius: .5rem; padding: .8rem 1.2rem; cursor: pointer;`;
+let COMMON_BUTTON_STYLE = `outline: none; border: 0; flex: 0 0 auto; background-color: initial; font-size: 1.4rem; line-height: 100%; border-radius: .5rem; padding: .8rem 1.2rem; cursor: pointer;`;
 
 export class FillButton extends BaseButton {
   public constructor(private enabled: boolean, ...childNodes: Array<Node>) {
-    super(`${COMMON_BUTTON_STYLE} color: ${SCHEME.primaryButtonText};`);
+    super(`${COMMON_BUTTON_STYLE} color: ${SCHEME.primaryContrast0};`);
     this.body.append(...childNodes);
     this.on("enable", () => this.handleEnable());
     this.on("disable", () => this.handleDisable());
@@ -26,19 +26,19 @@ export class FillButton extends BaseButton {
   }
 
   private handleEnable(): void {
-    this.body.style.backgroundColor = SCHEME.primaryButtonBackground;
+    this.body.style.backgroundColor = SCHEME.primary1;
   }
 
   private handleDisable(): void {
-    this.body.style.backgroundColor = SCHEME.primaryButtonBackgroundDisabled;
+    this.body.style.backgroundColor = SCHEME.primary2;
   }
 
   private handleDown(): void {
-    this.body.style.backgroundColor = SCHEME.primaryButtonBackgroundPressed;
+    this.body.style.backgroundColor = SCHEME.primary2;
   }
 
   private handleUp(): void {
-    this.body.style.backgroundColor = SCHEME.primaryButtonBackground;
+    this.body.style.backgroundColor = SCHEME.primary1;
   }
 
   public remove(): void {
@@ -49,7 +49,7 @@ export class FillButton extends BaseButton {
 export class OutlineButton extends BaseButton {
   public constructor(private enabled: boolean, ...childNodes: Array<Node>) {
     super(
-      `${COMMON_BUTTON_STYLE}; border: .1rem solid ${SCHEME.outlineButtonBorder}; color: ${SCHEME.outlineButtonText};`
+      `${COMMON_BUTTON_STYLE} border: .1rem solid;`
     );
     this.body.append(...childNodes);
     this.on("enable", () => this.handleEnable());
@@ -71,19 +71,23 @@ export class OutlineButton extends BaseButton {
   }
 
   private handleEnable(): void {
-    this.body.style.backgroundColor = SCHEME.outlineButtonBackground;
+    this.body.style.color = SCHEME.neutral0;
+    this.body.style.borderColor = SCHEME.neutral1;
   }
 
   private handleDisable(): void {
-    this.body.style.backgroundColor = SCHEME.outlineButtonBackgroundDisabled;
+    this.body.style.color = SCHEME.neutral2;
+    this.body.style.borderColor = SCHEME.neutral2;
   }
 
   private handleDown(): void {
-    this.body.style.backgroundColor = SCHEME.outlineButtonBackgroundPressed;
+    this.body.style.color = SCHEME.neutral2;
+    this.body.style.borderColor = SCHEME.neutral2;
   }
 
   private handleUp(): void {
-    this.body.style.backgroundColor = SCHEME.outlineButtonBackground;
+    this.body.style.color = SCHEME.neutral0;
+    this.body.style.borderColor = SCHEME.neutral1;
   }
 
   public remove(): void {
@@ -93,7 +97,7 @@ export class OutlineButton extends BaseButton {
 
 export class TextButton extends BaseButton {
   public constructor(private enabled: boolean, ...childNodes: Array<Node>) {
-    super(`${COMMON_BUTTON_STYLE}; color: ${SCHEME.textButtonText};`);
+    super(`${COMMON_BUTTON_STYLE}`);
     this.body.append(...childNodes);
     this.on("enable", () => this.handleEnable());
     this.on("disable", () => this.handleDisable());
@@ -119,19 +123,19 @@ export class TextButton extends BaseButton {
   }
 
   private handleEnable(): void {
-    this.body.style.backgroundColor = SCHEME.textButtonBackground;
+    this.body.style.color = SCHEME.neutral0;
   }
 
   private handleDisable(): void {
-    this.body.style.backgroundColor = SCHEME.textButtonBackgroundDisabled;
+    this.body.style.color = SCHEME.neutral2;
   }
 
   private handleDown(): void {
-    this.body.style.backgroundColor = SCHEME.textButtonBackgroundPressed;
+    this.body.style.color = SCHEME.neutral2;
   }
 
   private handleUp(): void {
-    this.body.style.backgroundColor = SCHEME.textButtonBackground;
+    this.body.style.color = SCHEME.neutral0;
   }
 
   public remove(): void {

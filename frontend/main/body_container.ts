@@ -9,7 +9,7 @@ import { TabsSwitcher } from "@selfage/tabs";
 import { WebServiceClient } from "@selfage/web_service_client";
 import { LocalSessionStorage } from "@selfage/web_service_client/local_session_storage";
 
-export class BodyController {
+export class BodyContainer {
   private pageSwitcher = TabsSwitcher.create();
   private lazySignInPage: LazyInstance<SignInPage>;
   private lazySignUpPage: LazyInstance<SignUpPage>;
@@ -28,8 +28,8 @@ export class BodyController {
   public static create(
     body: HTMLElement,
     contentState: ContentState
-  ): BodyController {
-    return new BodyController(
+  ): BodyContainer {
+    return new BodyContainer(
       body,
       SignInPage.create,
       SignUpPage.create,

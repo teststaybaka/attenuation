@@ -4,9 +4,10 @@ import { newSignInServiceRequest } from "./common/client_requests";
 import { SCHEME } from "./common/color_scheme";
 import { LOCAL_SESSION_STORAGE } from "./common/local_session_storage";
 import { LOCALIZED_TEXT } from "./common/locales/localized_text";
+import { VerticalTextInputWithErrorMsg } from "./common/text_input";
 import { WEB_SERVICE_CLIENT } from "./common/web_service_client";
 import { E } from "@selfage/element/factory";
-import { Ref } from "@selfage/ref";
+import { Ref, assign } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 import { LocalSessionStorage } from "@selfage/web_service_client/local_session_storage";
 
@@ -17,19 +18,20 @@ export interface SignInPage {
 
 export class SignInPage extends EventEmitter {
   public body: HTMLDivElement;
-  private usernameInput: HTMLInputElement;
-  private passwordInput: HTMLInputElement;
+  private usernameInput: VerticalTextInputWithErrorMsg;
+  private passwordInput: VerticalTextInputWithErrorMsg;
   private switcherToSignUpButton: HTMLDivElement;
+  private submitButton: FillButton;
 
   public constructor(
-    private submitButton: FillButton,
     private localSessionStorage: LocalSessionStorage,
     private webServiceClient: WebServiceClient
   ) {
     super();
-    let usernameInputRef = new Ref<HTMLInputElement>();
-    let passwordInputRef = new Ref<HTMLInputElement>();
+    let usernameInputRef = new Ref<VerticalTextInputWithErrorMsg>();
+    let passwordInputRef = new Ref<VerticalTextInputWithErrorMsg>();
     let switcherToSignUpButtonRef = new Ref<HTMLDivElement>();
+    let submitButtonRef = new Ref<FillButton>();
     this.body = E.div(
       {
         class: "sign-in",
@@ -38,38 +40,35 @@ export class SignInPage extends EventEmitter {
       E.div(
         {
           class: "sign-in-box",
-          style: `display: flex; flex-flow: column nowrap; width: 50rem; padding: 1rem 0;`,
+          style: `display: flex; flex-flow: column nowrap; width: 50rem;`,
         },
-        E.div(
-          {
-            class: "sign-in-username-label",
-            style: `color: ${SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
-          },
-          E.text(LOCALIZED_TEXT.usernameLabel)
-        ),
-        E.inputRef(usernameInputRef, {
-          class: "sign-in-username-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
-          autocomplete: "username",
-        }),
-        E.div(
-          {
-            class: "sign-in-password-label",
-            style: `color: ${SCHEME.normalText}; font-size: 1.6rem; margin: 1rem 5rem;`,
-          },
-          E.text(LOCALIZED_TEXT.passwordLabel)
-        ),
-        E.inputRef(passwordInputRef, {
-          class: "sign-in-password-input",
-          style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; margin: 1rem 5rem; color: ${SCHEME.normalText}; font-size: 1.6rem; line-height: 2.2rem; border-bottom: .1rem solid ${SCHEME.inputBorder};`,
-          type: "password",
-          autocomplete: "current-password",
-        }),
+        assign(
+          usernameInputRef,
+          VerticalTextInputWithErrorMsg.create(
+            LOCALIZED_TEXT.usernameLabel,
+            `margin: 1rem 5rem;`,
+            {
+              type: "text",
+              autocomplete: "username",
+            }
+          )
+        ).body,
+        assign(
+          passwordInputRef,
+          VerticalTextInputWithErrorMsg.create(
+            LOCALIZED_TEXT.passwordLabel,
+            `margin: 1rem 5rem;`,
+            {
+              type: "password",
+              autocomplete: "current-password",
+            }
+          )
+        ).body,
         E.divRef(
           switcherToSignUpButtonRef,
           {
             class: "sign-in-switch-to-sign-up",
-            style: `margin: 1rem 5rem; font-size: 1.4rem; color: ${SCHEME.hintText}; cursor: pointer;`,
+            style: `margin: 1rem 5rem; font-size: 1.4rem; color: ${SCHEME.neutral1}; cursor: pointer;`,
           },
           E.text(LOCALIZED_TEXT.switchToSignUpLink)
         ),
@@ -78,27 +77,27 @@ export class SignInPage extends EventEmitter {
             class: "sign-in-submit-button-wrapper",
             style: `margin: 1rem 5rem; align-self: flex-end;`,
           },
-          submitButton.body
+          assign(
+            submitButtonRef,
+            FillButton.create(true, E.text(LOCALIZED_TEXT.signInButtonLabel))
+          ).body
         )
       )
     );
     this.usernameInput = usernameInputRef.val;
     this.passwordInput = passwordInputRef.val;
     this.switcherToSignUpButton = switcherToSignUpButtonRef.val;
+    this.submitButton = submitButtonRef.val;
+    this.hide();
 
     this.submitButton.on("click", () => this.signIn());
     this.switcherToSignUpButton.addEventListener("click", () =>
       this.switchToSignUp()
     );
-    this.hide();
   }
 
   public static create(): SignInPage {
-    return new SignInPage(
-      FillButton.create(true, E.text(LOCALIZED_TEXT.signInButtonLabel)),
-      LOCAL_SESSION_STORAGE,
-      WEB_SERVICE_CLIENT
-    );
+    return new SignInPage(LOCAL_SESSION_STORAGE, WEB_SERVICE_CLIENT);
   }
 
   private async signIn(): Promise<void> {
@@ -110,8 +109,8 @@ export class SignInPage extends EventEmitter {
     let response = await this.webServiceClient.send(
       newSignInServiceRequest({
         body: {
-          username: this.usernameInput.value,
-          password: this.passwordInput.value,
+          username: this.usernameInput.getValue(),
+          password: this.passwordInput.getValue(),
         },
       })
     );

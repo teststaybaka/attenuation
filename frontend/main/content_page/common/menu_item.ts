@@ -31,7 +31,7 @@ export class MenuItem extends EventEmitter {
       E.div(
         {
           class: "menu-item-label",
-          style: `flex: 0 0 auto; margin-left: .5rem; font-size: 1.6rem; line-height: ${MenuItem.MENU_ITEM_HEIGHT}rem; color: ${SCHEME.menuText};`,
+          style: `flex: 0 0 auto; margin-left: .5rem; font-size: 1.6rem; line-height: ${MenuItem.MENU_ITEM_HEIGHT}rem; color: ${SCHEME.neutral0};`,
         },
         E.text(label)
       )

@@ -39,11 +39,11 @@ TEST_RUNNER.run({
           ),
           E.div(
             {
-              style: `width: 1000px;`,
             },
             cut.body
           )
         );
+        await puppeteerSetViewport(1600, 800);
         document.body.append(this.container);
 
         // Execute
@@ -51,9 +51,20 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/account_page_render.png",
-          __dirname + "/golden/account_page_render.png",
-          __dirname + "/account_page_render_diff.png",
+          __dirname + "/account_page_render_wide.png",
+          __dirname + "/golden/account_page_render_wide.png",
+          __dirname + "/account_page_render_wide_diff.png",
+          { fullPage: true }
+        );
+
+        // Execute
+        await puppeteerSetViewport(1000, 800);
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/account_page_render_narrow.png",
+          __dirname + "/golden/account_page_render_narrow.png",
+          __dirname + "/account_page_render_narrow_diff.png",
           { fullPage: true }
         );
 

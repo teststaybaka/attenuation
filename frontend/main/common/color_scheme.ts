@@ -1,108 +1,59 @@
-let LIGHT_BLACK = "rgb(50, 50, 50)";
-let LIGHT_GREY = "rgb(230, 230, 230)";
-let GREY = "rgb(200, 200, 200)";
-let GREY_TRANSLUCENT = "rgba(150, 150, 150, .5)";
-let DARK_GREY = "rgb(120, 120, 120)";
-let LIGHT_BLUE = "rgb(200, 247, 255)";
-let BLUE = "rgb(0, 174, 239)";
-let ORANGE = "rgb(255, 180, 80)";
-let RED = "rgb(255, 0,0)";
-let WHITE = "white";
 let TRANSPARENT = "transparent";
+let GREY_20 = "rgb(50, 50, 50)";
+let GREY_50 = "rgb(128, 128, 128)";
+let GREY_50_TRANSLUCENT = "rgb(128, 128, 128, .5)";
+let GREY_80 = "rgb(200, 200, 200)";
+let GREY_90 = "rgb(230, 230, 230)";
+let WHITE = "white";
+let BLUE_50 = "rgb(0, 170, 255)";
+let BLUE_65 = "rgb(77, 195, 255)";
+let BLUE_85 = "rgb(179, 229, 255)";
+let RED_50 = "rgb(255, 0,0)";
+let LOGO_BLUE = "rgb(0, 174, 239)";
+let LOGO_ORANGE = "rgb(255, 180, 80)";
 
 export class LightScheme {
-  get normalText() {
-    return LIGHT_BLACK;
-  }
-  get hintText() {
-    return DARK_GREY;
-  }
-  get errorText() {
-    return RED;
-  }
-  get shadowText() {
-    return WHITE;
-  }
-  get primaryButtonText() {
-    return WHITE;
-  }
-  get outlineButtonText() {
-    return LIGHT_BLACK;
-  }
-  get textButtonText() {
-    return LIGHT_BLACK;
-  }
-  get menuText() {
-    return LIGHT_BLACK;
-  }
   get logoOrange() {
-    return ORANGE;
+    return LOGO_ORANGE;
   }
   get logoBlue() {
-    return BLUE;
+    return LOGO_BLUE;
   }
-  get menuPrimaryIcon() {
-    return BLUE;
+  get neutral0() {
+    return GREY_20;
   }
-  get menuIcon() {
-    return LIGHT_BLACK;
+  get neutral1() {
+    return GREY_50;
   }
-  get shadowCover() {
-    return GREY_TRANSLUCENT;
+  get neutral1Translucent() {
+    return GREY_50_TRANSLUCENT;
   }
-  get inputBorder() {
-    return GREY;
+  get neutral2() {
+    return GREY_80;
   }
-  get errorInputBorder() {
-    return RED;
+  get neutral3() {
+    return GREY_90;
   }
-  get outlineButtonBorder() {
-    return LIGHT_BLACK;
-  }
-  get resizeLineBorder() {
-    return BLUE;
-  }
-  get bodyBackground() {
-    return LIGHT_GREY;
-  }
-  get cardBackground() {
+  get neutral4() {
     return WHITE;
   }
-  get accountCardBackground() {
-    return WHITE;
-  }
-  get placeholderBackground() {
-    return LIGHT_GREY;
-  }
-  get primaryButtonBackground() {
-    return BLUE;
-  }
-  get primaryButtonBackgroundPressed() {
-    return LIGHT_BLUE;
-  }
-  get primaryButtonBackgroundDisabled() {
-    return LIGHT_BLUE;
-  }
-  get outlineButtonBackground() {
+  get transparent() {
     return TRANSPARENT;
   }
-  get outlineButtonBackgroundPressed() {
-    return GREY;
+  get primary0() {
+    return BLUE_50;
   }
-  get outlineButtonBackgroundDisabled() {
-    return GREY;
+  get primary1() {
+    return BLUE_65;
   }
-  get textButtonBackground() {
-    return TRANSPARENT;
+  get primary2() {
+    return BLUE_85;
   }
-  get textButtonBackgroundPressed() {
-    return GREY;
-  }
-  get textButtonBackgroundDisabled() {
-    return GREY;
-  }
-  get resizePointBackground() {
+  get primaryContrast0() {
     return WHITE;
+  }
+  get error0() {
+    return RED_50;
   }
 }
 
