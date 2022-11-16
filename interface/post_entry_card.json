@@ -1,4 +1,16 @@
 [{
+  "name": "QuickLayoutPost",
+  "message": {
+    "fields": [{
+      "name": "text",
+      "type": "string"
+    }, {
+      "name": "images",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}, {
   "name": "PostEntryCard",
   "message": {
     "fields": [{
@@ -20,11 +32,11 @@
       "name": "avatarSmallPath",
       "type": "string"
     }, {
-      "name": "content",
-      "type": "string"
-    }, {
       "name": "createdTimestamp",
       "type": "number"
+    }, {
+      "name": "quickLayoutPost",
+      "type": "QuickLayoutPost"
     }]
   }
 }]

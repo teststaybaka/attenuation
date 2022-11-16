@@ -1,5 +1,25 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 
+export interface QuickLayoutPost {
+  text?: string,
+  images?: Array<string>,
+}
+
+export let QUICK_LAYOUT_POST: MessageDescriptor<QuickLayoutPost> = {
+  name: 'QuickLayoutPost',
+  fields: [
+    {
+      name: 'text',
+      primitiveType: PrimitiveType.STRING,
+    },
+    {
+      name: 'images',
+      primitiveType: PrimitiveType.STRING,
+      isArray: true,
+    },
+  ]
+};
+
 export interface PostEntryCard {
   postEntryId?: string,
   repliedEntryId?: string,
@@ -7,8 +27,8 @@ export interface PostEntryCard {
   username?: string,
   userNatureName?: string,
   avatarSmallPath?: string,
-  content?: string,
   createdTimestamp?: number,
+  quickLayoutPost?: QuickLayoutPost,
 }
 
 export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
@@ -39,12 +59,12 @@ export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'content',
-      primitiveType: PrimitiveType.STRING,
-    },
-    {
       name: 'createdTimestamp',
       primitiveType: PrimitiveType.NUMBER,
+    },
+    {
+      name: 'quickLayoutPost',
+      messageType: QUICK_LAYOUT_POST,
     },
   ]
 };

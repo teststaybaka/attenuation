@@ -16,7 +16,8 @@
   "assetExts": [
     ".png",
     ".jpg",
-    "jpeg"
+    ".jpeg",
+    ".webp"
   ],
   "devDependencies": {
     "@selfage/bundler_cli": "^4.0.3",

@@ -18,15 +18,14 @@ export interface ImageEditor {
 
 export class ImageEditor extends EventEmitter {
   public body: HTMLDivElement;
-  private imagePreview: HTMLImageElement;
-  private moveToTopButton: HTMLDivElement;
-  private moveUpButton: HTMLDivElement;
-  private moveDownButton: HTMLDivElement;
-  private moveToBottomButton: HTMLDivElement;
+  protected moveToTopButton: HTMLDivElement;
+  protected moveUpButton: HTMLDivElement;
+  protected moveDownButton: HTMLDivElement;
+  protected moveToBottomButton: HTMLDivElement;
+  protected deleteButton: HTMLDivElement;
 
-  public constructor(public imageFile: File) {
+  public constructor(public imageUrl: string) {
     super();
-    let imagePreviewRef = new Ref<HTMLImageElement>();
     let moveToTopButtonRef = new Ref<HTMLDivElement>();
     let moveUpButtonRef = new Ref<HTMLDivElement>();
     let moveDownButtonRef = new Ref<HTMLDivElement>();
@@ -42,9 +41,10 @@ export class ImageEditor extends EventEmitter {
           class: "image-editor-preview",
           style: `display: flex; flex-flow: row nowrap; justify-content: center; align-items: center; box-sizing: border-box; width: 12rem; height: 18rem; border: .1rem solid ${SCHEME.neutral2};`,
         },
-        E.imageRef(imagePreviewRef, {
+        E.image({
           class: "image-editor-preview-image",
           style: `max-width: 100%; max-height: 100%;`,
+          src: imageUrl,
         })
       ),
       E.div(
@@ -94,11 +94,11 @@ export class ImageEditor extends EventEmitter {
         )
       )
     );
-    this.imagePreview = imagePreviewRef.val;
     this.moveToTopButton = moveToTopButtonRef.val;
     this.moveUpButton = moveUpButtonRef.val;
     this.moveDownButton = moveDownButtonRef.val;
     this.moveToBottomButton = moveToBottomButtonRef.val;
+    this.deleteButton = deleteButtonRef.val;
 
     this.moveToTopButton.addEventListener("click", () => this.emit("top"));
     this.moveUpButton.addEventListener("click", () => this.emit("up"));
@@ -106,32 +106,11 @@ export class ImageEditor extends EventEmitter {
     this.moveToBottomButton.addEventListener("click", () =>
       this.emit("bottom")
     );
-    deleteButtonRef.val.addEventListener("click", () => this.emit("delete"));
+    this.deleteButton.addEventListener("click", () => this.emit("delete"));
   }
 
-  public static async create(imageFile: File): Promise<ImageEditor> {
-    let editor = new ImageEditor(imageFile);
-    await editor.load();
-    return editor;
-  }
-
-  public async load(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      let fileReader = new FileReader();
-      fileReader.onload = () => {
-        this.imagePreview.onload = () => {
-          resolve();
-        };
-        this.imagePreview.onerror = () => {
-          reject(new Error("Failed to load image from file."));
-        };
-        this.imagePreview.src = fileReader.result as string;
-      };
-      fileReader.onerror = (err) => {
-        reject(new Error("Failed to read image file."));
-      };
-      fileReader.readAsDataURL(this.imageFile);
-    });
+  public static create(imageUrl: string): ImageEditor {
+    return new ImageEditor(imageUrl);
   }
 
   public showMoveUpButtons(): void {

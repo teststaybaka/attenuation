@@ -71,7 +71,7 @@ export class WarningTag {
     return new WarningTag(warningTagType, localizedText);
   }
 
-  private unselect(): void {
+  public unselect(): void {
     this.body.style.borderStyle = "dashed";
     this.body.style.borderColor = SCHEME.neutral2;
     this.selected = false;

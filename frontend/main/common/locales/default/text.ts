@@ -102,7 +102,13 @@ export default class Text {
     return `Character count is `;
   }
   get quickLayoutUploadImagesLabel() {
-    return `Or upload one or more images`;
+    return `Or upload up to 9 images`;
+  }
+  get quickLayoutUploadImageFailure1() {
+    return `Failed to upload the following files `
+  }
+  get quickLayoutUploadImageFailure2() {
+    return `. Please only upload image files, and only up to 9 of them.`
   }
   get quickLayoutUploadImageButtonLabel() {
     return `Choose a file`;
@@ -127,5 +133,11 @@ export default class Text {
   }
   get submitPostButtonLabel() {
     return `Submit your post`;
+  }
+  get submitPostFailed() {
+    return `Failed to submit your post. Please try again later.`;
+  }
+  get submitPostSuccess() {
+    return `Successfully submitted your post!`;
   }
 }

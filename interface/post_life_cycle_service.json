@@ -1,0 +1,64 @@
+[{
+  "name": "UploadImageForPostResponse",
+  "message": {
+    "fields": [{
+      "name": "url",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "UploadImageForPost",
+  "service": {
+    "path": "/UploadImageForPost",
+    "body": "bytes",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "UploadImageForPostResponse",
+    "outputWebClient": "../frontend/main/common/post_life_cycle_client_requests",
+    "outputHandler": "../backend/handler/post_life_cycle_handlers"
+  }
+}, {
+  "name": "CreatePostRequestBody",
+  "message": {
+    "fields": [{
+      "name": "quickLayoutPost",
+      "type": "QuickLayoutPost",
+      "import": "./post_entry_card"
+    }, {
+      "name": "tags",
+      "type": "string",
+      "isArray": true
+    }, {
+      "name": "warningTags",
+      "type": "WarningTagType",
+      "import": "./warning_tag_type",
+      "isArray": true
+    }]
+  }
+}, {
+  "name": "CreatePostResponse",
+  "message": {
+    "fields": [{
+      "name": "postEntryCard",
+      "type": "PostEntryCard",
+      "import": "./post_entry_card"
+    }]
+  }
+}, {
+  "name": "CreatePost",
+  "service": {
+    "path": "/CreatePost",
+    "body": "CreatePostRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "CreatePostResponse",
+    "outputWebClient": "../frontend/main/common/post_life_cycle_client_requests",
+    "outputHandler": "../backend/handler/post_life_cycle_handlers"
+  }
+}]
