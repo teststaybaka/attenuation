@@ -160,7 +160,7 @@ export class ChangeAvatarTab {
     this.uploadButton.enable();
   }
 
-  public preview(): void {
+  private preview(): void {
     this.previewLargeCanvas.style.width = `${
       (this.avatarCanvas.canvas.width / this.avatarCanvas.sWidth) *
       ChangeAvatarTab.LARGE_IMAGE_LENGTH

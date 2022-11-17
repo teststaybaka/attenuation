@@ -55,7 +55,7 @@ export class OptionButton extends EventEmitter {
     this.emit("select");
   }
 
-  public deselect(): void {
+  public unselect(): void {
     this.selected_ = false;
     this.lowlight();
   }

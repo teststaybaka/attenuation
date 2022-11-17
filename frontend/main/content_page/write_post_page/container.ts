@@ -24,12 +24,12 @@ export class WritePostPage {
   private warningTagNudity: WarningTag;
   private warningTagSpoiler: WarningTag;
   private warningTagGross: WarningTag;
-  private previewButton: OutlineButton;
-  private submitButton: FillButton;
   private submitStatus: HTMLDivElement;
 
   public constructor(
     private quickLayoutEditor: QuickLayoutEditor,
+    private previewButton: OutlineButton,
+    private submitButton: FillButton,
     private webServiceClient: WebServiceClient
   ) {
     let quickOptionRef = new Ref<OptionButton>();
@@ -43,8 +43,6 @@ export class WritePostPage {
     let warningTagNudityRef = new Ref<WarningTag>();
     let warningTagSpoilerRef = new Ref<WarningTag>();
     let warningTagGrossRef = new Ref<WarningTag>();
-    let previewButtonRef = new Ref<OutlineButton>();
-    let submitButtonRef = new Ref<FillButton>();
     let submitStatusRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
@@ -181,20 +179,8 @@ export class WritePostPage {
             class: "write-post-finalizing-buttons",
             style: `display: flex; flex-flow: row wrap; align-items: center; justify-content: center; gap: 4rem;`,
           },
-          assign(
-            previewButtonRef,
-            OutlineButton.create(
-              false,
-              E.text(LOCALIZED_TEXT.previewPostButtonLabel)
-            )
-          ).body,
-          assign(
-            submitButtonRef,
-            FillButton.create(
-              false,
-              E.text(LOCALIZED_TEXT.submitPostButtonLabel)
-            )
-          ).body
+          previewButton.body,
+          submitButton.body
         ),
         E.divRef(submitStatusRef, {
           class: "write-post-submit-status",
@@ -208,8 +194,6 @@ export class WritePostPage {
     this.warningTagNudity = warningTagNudityRef.val;
     this.warningTagSpoiler = warningTagSpoilerRef.val;
     this.warningTagGross = warningTagGrossRef.val;
-    this.previewButton = previewButtonRef.val;
-    this.submitButton = submitButtonRef.val;
     this.submitStatus = submitStatusRef.val;
     this.hide();
 
@@ -224,7 +208,15 @@ export class WritePostPage {
   }
 
   public static create(): WritePostPage {
-    return new WritePostPage(QuickLayoutEditor.create(), WEB_SERVICE_CLIENT);
+    return new WritePostPage(
+      QuickLayoutEditor.create(),
+      OutlineButton.create(
+        false,
+        E.text(LOCALIZED_TEXT.previewPostButtonLabel)
+      ),
+      FillButton.create(false, E.text(LOCALIZED_TEXT.submitPostButtonLabel)),
+      WEB_SERVICE_CLIENT
+    );
   }
 
   private enableButtons(): void {

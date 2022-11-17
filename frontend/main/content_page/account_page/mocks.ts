@@ -23,10 +23,6 @@ export class AccountBasicTabMock extends AccountBasicTab {
 
 export class AvatarCanvasMock extends AvatarCanvas {
   public counter = new Counter<string>();
-
-  public constructor() {
-    super();
-  }
 }
 
 export class ChangeAvatarTabMock extends ChangeAvatarTab {

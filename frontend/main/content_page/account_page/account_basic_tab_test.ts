@@ -2,6 +2,7 @@ import path = require("path");
 import { normalizeBody } from "../../common/normalize_body";
 import { AccountBasicTab } from "./account_basic_tab";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
+import { assertThat, eq } from "@selfage/test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 import { WebServiceClient } from "@selfage/web_service_client";
 import "@selfage/puppeteer_test_executor_api";
@@ -53,7 +54,7 @@ TEST_RUNNER.run({
       }
     })(),
     new (class implements TestCase {
-      public name = "Hover";
+      public name = "HoverAndClick";
       private cut: AccountBasicTab;
       public async execute() {
         // Prepare
@@ -78,11 +79,10 @@ TEST_RUNNER.run({
         );
         document.body.appendChild(this.cut.body);
         await this.cut.show();
+        let avatar = this.cut.body.querySelector(".account-basic-avatar");
 
         // Execute
-        this.cut.body
-          .querySelector(".account-basic-avatar")
-          .dispatchEvent(new MouseEvent("mouseenter"));
+        avatar.dispatchEvent(new MouseEvent("mouseenter"));
 
         // Verify
         await asyncAssertScreenshot(
@@ -91,6 +91,16 @@ TEST_RUNNER.run({
           __dirname + "/account_basic_tab_hover_avatar_diff.png",
           { fullPage: true }
         );
+
+        // Prepare
+        let changed = false;
+        this.cut.on("changeAvatar", () => (changed = true));
+
+        // Execute
+        avatar.dispatchEvent(new MouseEvent("click"));
+
+        // Verify
+        assertThat(changed, eq(true), "changed avatar");
       }
       public tearDown() {
         this.cut.body.remove();

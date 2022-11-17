@@ -1,9 +1,11 @@
 import wideImage = require("./test_data/wide.jpeg");
 import { CREATE_POST_REQUEST_BODY } from "../../../../interface/post_life_cycle_service";
 import { WarningTagType } from "../../../../interface/warning_tag_type";
+import { FillButton, OutlineButton } from "../../common/button";
 import { normalizeBody } from "../../common/normalize_body";
 import { WritePostPage } from "./container";
 import { QuickLayoutEditorMock } from "./quick_layout_editor/mocks";
+import { E } from "@selfage/element/factory";
 import { eqMessage } from "@selfage/message/test_matcher";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { assertThat } from "@selfage/test_matcher";
@@ -34,8 +36,11 @@ TEST_RUNNER.run({
             requestCaptured = request;
           }
         })();
+        let submitButton = FillButton.create(false, E.text("Submit your post"));
         this.cut = new WritePostPage(
           quickLayoutEditorMock,
+          OutlineButton.create(false, E.text("Preview")),
+          submitButton,
           serviceClientMock
         );
         document.body.append(this.cut.body);
@@ -46,9 +51,6 @@ TEST_RUNNER.run({
         let addTagButton = document.body.querySelector(
           ".write-post-add-tag-button"
         ) as HTMLButtonElement;
-        let submitButton = document.body
-        .querySelector(".write-post-finalizing-buttons")
-        .lastElementChild;
 
         // Execute
         this.cut.show();
@@ -115,10 +117,10 @@ TEST_RUNNER.run({
         );
 
         // Prepare
-        serviceClientMock.errorToThrow = new Error('Some error');
+        serviceClientMock.errorToThrow = new Error("Some error");
 
         // Execute
-        submitButton.dispatchEvent(new MouseEvent("click"));
+        submitButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -132,7 +134,7 @@ TEST_RUNNER.run({
         serviceClientMock.errorToThrow = undefined;
 
         // Execute
-        submitButton.dispatchEvent(new MouseEvent("click"));
+        submitButton.click();
 
         // Verify
         assertThat(
