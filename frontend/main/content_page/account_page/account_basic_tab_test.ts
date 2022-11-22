@@ -17,7 +17,6 @@ TEST_RUNNER.run({
       private cut: AccountBasicTab;
       public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
         this.cut = new AccountBasicTab(
           new (class extends WebServiceClient {
             public constructor() {
@@ -36,6 +35,7 @@ TEST_RUNNER.run({
             }
           })()
         );
+        document.body.style.width = "1000px";
         document.body.appendChild(this.cut.body);
 
         // Execute
@@ -58,7 +58,6 @@ TEST_RUNNER.run({
       private cut: AccountBasicTab;
       public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
         this.cut = new AccountBasicTab(
           new (class extends WebServiceClient {
             public constructor() {
@@ -77,6 +76,7 @@ TEST_RUNNER.run({
             }
           })()
         );
+        document.body.style.width = "1000px";
         document.body.appendChild(this.cut.body);
         await this.cut.show();
         let avatar = this.cut.body.querySelector(".account-basic-avatar");

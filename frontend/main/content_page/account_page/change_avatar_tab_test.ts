@@ -1,5 +1,7 @@
 import { FillButton, OutlineButton } from "../../common/button";
 import { normalizeBody } from "../../common/normalize_body";
+import { createBackMenuIcon } from "../common/menu_items";
+import { MenuItemMock } from "../common/mocks";
 import { ChangeAvatarTab } from "./change_avatar_tab";
 import { AvatarCanvasMock } from "./mocks";
 import { Counter } from "@selfage/counter";
@@ -16,10 +18,9 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "Render";
-      private cut: ChangeAvatarTab;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
         let chooseButton = OutlineButton.create(
           true,
           E.text("Choose an image file")
@@ -47,16 +48,28 @@ TEST_RUNNER.run({
             });
           }
         })();
-        this.cut = new ChangeAvatarTab(
+        let cut = new ChangeAvatarTab(
+          new MenuItemMock(createBackMenuIcon(), "Back"),
           avatarCanvasMock,
           chooseButton,
           FillButton.create(false, E.text("Upload")),
           undefined
         );
-        document.body.appendChild(this.cut.body);
+        this.container = E.div(
+          {},
+          E.div(
+            {
+              style: `position: fixed;`,
+            },
+            cut.menuBody
+          ),
+          E.div({}, cut.body)
+        );
+        document.body.style.width = "1000px";
+        document.body.appendChild(this.container);
 
         // Execute
-        this.cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -84,6 +97,8 @@ TEST_RUNNER.run({
         avatarCanvasMock.sy = 10;
         avatarCanvasMock.sWidth = 130;
         avatarCanvasMock.sHeight = 130;
+
+        // Execute
         avatarCanvasMock.emit("change");
 
         // Verify
@@ -95,20 +110,20 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "LoadError";
-      private cut: ChangeAvatarTab;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
         let chooseButton = OutlineButton.create(
           true,
           E.text("Choose an image file")
         );
-        this.cut = new ChangeAvatarTab(
+        let cut = new ChangeAvatarTab(
+          new MenuItemMock(createBackMenuIcon(), "Back"),
           new (class extends AvatarCanvasMock {
             public async load(imageFile: File): Promise<void> {
               throw new Error("load error");
@@ -118,8 +133,19 @@ TEST_RUNNER.run({
           FillButton.create(false, E.text("Upload")),
           undefined
         );
-        document.body.appendChild(this.cut.body);
-        this.cut.show();
+        this.container = E.div(
+          {},
+          E.div(
+            {
+              style: `position: fixed;`,
+            },
+            cut.menuBody
+          ),
+          E.div({}, cut.body)
+        );
+        document.body.style.width = "1000px";
+        document.body.appendChild(this.container);
+        cut.show();
 
         // Execute
         await puppeteerWaitForFileChooser();
@@ -135,15 +161,14 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "Upload";
-      private cut: ChangeAvatarTab;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        document.body.style.width = "1000px";
         let uploadButton = FillButton.create(true, E.text("Upload"));
         let clientMock = new (class extends WebServiceClient {
           public counter = new Counter<string>();
@@ -173,7 +198,8 @@ TEST_RUNNER.run({
             }
           }
         })();
-        this.cut = new ChangeAvatarTab(
+        let cut = new ChangeAvatarTab(
+          new MenuItemMock(createBackMenuIcon(), "Back"),
           new (class extends AvatarCanvasMock {
             public async export(): Promise<Blob> {
               let input = E.input({ type: "file" });
@@ -189,8 +215,19 @@ TEST_RUNNER.run({
           uploadButton,
           clientMock
         );
-        document.body.appendChild(this.cut.body);
-        this.cut.show();
+        this.container = E.div(
+          {},
+          E.div(
+            {
+              style: `position: fixed;`,
+            },
+            cut.menuBody
+          ),
+          E.div({}, cut.body)
+        );
+        document.body.style.width = "1000px";
+        document.body.appendChild(this.container);
+        cut.show();
 
         // Execute
         await uploadButton.click();
@@ -217,8 +254,30 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
+    {
+      name: "Back",
+      execute: () => {
+        // Prepare
+        let backButton = new MenuItemMock(createBackMenuIcon(), "Back");
+        let cut = new ChangeAvatarTab(
+          backButton,
+          new AvatarCanvasMock(),
+          OutlineButton.create(true, E.text("Choose an image file")),
+          FillButton.create(false, E.text("Upload")),
+          undefined
+        );
+        let isBack = false;
+        cut.on("back", () => (isBack = true));
+
+        // Execute
+        backButton.click();
+
+        // Verify
+        assertThat(isBack, eq(true), "Back");
+      },
+    },
   ],
 });

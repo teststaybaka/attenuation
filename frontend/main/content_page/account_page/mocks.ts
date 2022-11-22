@@ -2,6 +2,8 @@ import path = require("path");
 import { GetUserInfoResponse } from "../../../../interface/service";
 import { AvatarUrlComposer } from "../../common/avatar_url_composer";
 import { FillButton, OutlineButton } from "../../common/button";
+import { createBackMenuIcon, createHomeMenuIcon } from "../common/menu_items";
+import { MenuItemMock } from "../common/mocks";
 import { AccountBasicTab } from "./account_basic_tab";
 import { AvatarCanvas } from "./avatar_canvas";
 import { ChangeAvatarTab } from "./change_avatar_tab";
@@ -30,6 +32,7 @@ export class ChangeAvatarTabMock extends ChangeAvatarTab {
 
   public constructor() {
     super(
+      new MenuItemMock(createBackMenuIcon(), "Back"),
       new AvatarCanvasMock(),
       OutlineButton.create(true, E.text("Choose an image file")),
       FillButton.create(false, E.text("Upload")),
@@ -45,6 +48,7 @@ export class AccountPageMock extends AccountPage {
 
   public constructor() {
     super(
+      new MenuItemMock(createHomeMenuIcon(), "Home"),
       new AccountBasicTabMock({
         username: "some user name",
         naturalName: "Mr. Your Name",

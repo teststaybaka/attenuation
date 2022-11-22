@@ -2,7 +2,7 @@ import EventEmitter = require("events");
 import { SCHEME } from "../../common/color_scheme";
 import { MenuContainer } from "../common/menu_container";
 import { MenuItem } from "../common/menu_item";
-import { createBackMenuItem, createHomeMenuItem } from "../common/menu_items";
+import { createHomeMenuItem } from "../common/menu_items";
 import { AccountBasicTab } from "./account_basic_tab";
 import { ChangeAvatarTab } from "./change_avatar_tab";
 import { E } from "@selfage/element/factory";
@@ -14,16 +14,17 @@ export interface AccountPage {
 export class AccountPage extends EventEmitter {
   public body: HTMLDivElement;
   public menuBodies = new Array<HTMLDivElement>();
-  private homeMenuItem: MenuItem;
   private menuContainer: MenuContainer;
-  private backMenuItem: MenuItem;
-  private backMenuContainer: MenuContainer;
 
   public constructor(
+    private homeMenuItem: MenuItem,
     private accountBasic: AccountBasicTab,
     private changeAvatar: ChangeAvatarTab
   ) {
     super();
+    this.menuContainer = MenuContainer.create(this.homeMenuItem);
+    this.menuBodies.push(this.menuContainer.body, this.changeAvatar.menuBody);
+
     this.body = E.div(
       {
         class: "account",
@@ -38,30 +39,27 @@ export class AccountPage extends EventEmitter {
         changeAvatar.body
       )
     );
-    this.homeMenuItem = createHomeMenuItem();
-    this.menuContainer = MenuContainer.create(this.homeMenuItem);
-    this.backMenuItem = createBackMenuItem();
-    this.backMenuContainer = MenuContainer.create(this.backMenuItem);
-    this.menuBodies.push(this.menuContainer.body, this.backMenuContainer.body);
     this.hide();
 
     this.homeMenuItem.on("action", () => this.emit("home"));
-    this.backMenuItem.on("action", () => this.showAccountBasic());
     this.accountBasic.on("changeAvatar", () => this.showChangeAvatar());
+    this.changeAvatar.on("back", () => this.showAccountBasic());
   }
 
   public static create(): AccountPage {
-    return new AccountPage(AccountBasicTab.create(), ChangeAvatarTab.create());
+    return new AccountPage(
+      createHomeMenuItem(),
+      AccountBasicTab.create(),
+      ChangeAvatarTab.create()
+    );
   }
 
   private showChangeAvatar(): void {
-    this.backMenuContainer.expand();
     this.accountBasic.hide();
     this.changeAvatar.show();
   }
 
   private async showAccountBasic(): Promise<void> {
-    this.backMenuContainer.collapse();
     this.changeAvatar.hide();
     await this.accountBasic.show();
   }
@@ -74,7 +72,6 @@ export class AccountPage extends EventEmitter {
 
   public hide(): void {
     this.menuContainer.collapse();
-    this.backMenuContainer.collapse();
     this.body.style.display = "none";
   }
 }

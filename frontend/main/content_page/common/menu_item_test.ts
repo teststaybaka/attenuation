@@ -22,9 +22,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_menu_item.png",
-          __dirname + "/golden/render_menu_item.png",
-          __dirname + "/render_menu_item_diff.png",
+          __dirname + "/menu_item_render.png",
+          __dirname + "/golden/menu_item_render.png",
+          __dirname + "/menu_item_render_diff.png",
           { fullPage: true }
         );
 
@@ -35,9 +35,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_menu_item_hover.png",
-          __dirname + "/golden/render_menu_item_hover.png",
-          __dirname + "/render_menu_item_hover_diff.png",
+          __dirname + "/menu_item_hover.png",
+          __dirname + "/golden/menu_item_hover.png",
+          __dirname + "/menu_item_hover_diff.png",
           { fullPage: true }
         );
       }

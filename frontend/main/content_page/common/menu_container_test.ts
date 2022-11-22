@@ -26,9 +26,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_menu_container.png",
-          __dirname + "/golden/render_menu_container.png",
-          __dirname + "/render_menu_container_diff.png",
+          __dirname + "/menu_container_render.png",
+          __dirname + "/golden/menu_container_render.png",
+          __dirname + "/menu_container_render_diff.png",
           { fullPage: true }
         );
       }

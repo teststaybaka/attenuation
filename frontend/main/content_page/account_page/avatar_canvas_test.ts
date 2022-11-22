@@ -19,9 +19,9 @@ TEST_RUNNER.run({
         this.cut = new AvatarCanvas();
 
         // Execute
-        document.body.appendChild(this.cut.body);
         document.body.style.width = "460px";
         document.body.style.height = "460px";
+        document.body.appendChild(this.cut.body);
 
         // Verify
         await asyncAssertScreenshot(
@@ -193,9 +193,9 @@ TEST_RUNNER.run({
       public async execute() {
         // Prepare
         this.cut = new AvatarCanvas();
-        document.body.appendChild(this.cut.body);
         document.body.style.width = "460px";
         document.body.style.height = "460px";
+        document.body.appendChild(this.cut.body);
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();
@@ -270,9 +270,9 @@ TEST_RUNNER.run({
       public async execute() {
         // Prepare
         this.cut = new AvatarCanvas();
-        document.body.appendChild(this.cut.body);
         document.body.style.width = "460px";
         document.body.style.height = "460px";
+        document.body.appendChild(this.cut.body);
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();

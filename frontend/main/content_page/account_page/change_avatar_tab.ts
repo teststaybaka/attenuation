@@ -1,30 +1,45 @@
+import EventEmitter = require("events");
 import { FillButton, OutlineButton } from "../../common/button";
 import { newUploadAvatarServiceRequest } from "../../common/client_requests";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
+import { MenuContainer } from "../common/menu_container";
+import { MenuItem } from "../common/menu_item";
+import { createBackMenuItem } from "../common/menu_items";
 import { AvatarCanvas } from "./avatar_canvas";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
-export class ChangeAvatarTab {
+export interface ChangeAvatarTab {
+  on(event: "back", listener: () => void): this;
+}
+
+export class ChangeAvatarTab extends EventEmitter {
   private static LARGE_IMAGE_LENGTH = 160;
   private static SMALL_IMAGE_LENGTH = 50;
 
   public body: HTMLDivElement;
+  public menuBody: HTMLDivElement;
   private loadErrorText: HTMLDivElement;
   private previewLargeCanvas: HTMLCanvasElement;
   private previewSmallCanvas: HTMLCanvasElement;
   private uploadStatusText: HTMLDivElement;
   private fileInput = E.input({ type: "file" });
+  private backMenuContainer: MenuContainer;
 
   public constructor(
+    private backMenuItem: MenuItem,
     private avatarCanvas: AvatarCanvas,
     private chooseFileButton: OutlineButton,
     private uploadButton: FillButton,
     private serviceClient: WebServiceClient
   ) {
+    super();
+    this.backMenuContainer = MenuContainer.create(this.backMenuItem);
+    this.menuBody = this.backMenuContainer.body;
+
     let loadErrorTextRef = new Ref<HTMLDivElement>();
     let previewLargeCanvasRef = new Ref<HTMLCanvasElement>();
     let previewSmallCanvasRef = new Ref<HTMLCanvasElement>();
@@ -115,16 +130,18 @@ export class ChangeAvatarTab {
     this.previewLargeCanvas = previewLargeCanvasRef.val;
     this.previewSmallCanvas = previewSmallCanvasRef.val;
     this.uploadStatusText = uploadStatusTextRef.val;
+    this.hide();
 
+    this.backMenuItem.on("action", () => this.emit("back"));
     this.chooseFileButton.on("click", () => this.chooseFile());
     this.fileInput.addEventListener("input", () => this.load());
     this.avatarCanvas.on("change", () => this.preview());
     this.uploadButton.on("click", () => this.uploadAvatar());
-    this.hide();
   }
 
   public static create(): ChangeAvatarTab {
     return new ChangeAvatarTab(
+      createBackMenuItem(),
       AvatarCanvas.create(),
       OutlineButton.create(true, E.text(LOCALIZED_TEXT.chooseAvatarLabel)),
       FillButton.create(false, E.text(LOCALIZED_TEXT.uploadAvatarLabel)),
@@ -221,10 +238,12 @@ export class ChangeAvatarTab {
   }
 
   public show(): void {
+    this.backMenuContainer.expand();
     this.body.style.display = "flex";
   }
 
   public hide(): void {
+    this.backMenuContainer.collapse();
     this.body.style.display = "none";
   }
 }
