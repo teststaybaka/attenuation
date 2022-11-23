@@ -57,9 +57,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_write_post_page.png",
-          __dirname + "/golden/render_write_post_page.png",
-          __dirname + "/render_write_post_page_diff.png",
+          __dirname + "/write_post_page_render.png",
+          __dirname + "/golden/write_post_page_render.png",
+          __dirname + "/write_post_page_render_diff.png",
           { fullPage: true }
         );
 
@@ -68,9 +68,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/upload_first_image_in_write_post_page.png",
-          __dirname + "/golden/upload_first_image_in_write_post_page.png",
-          __dirname + "/upload_first_image_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_upload_first_image.png",
+          __dirname + "/golden/write_post_page_upload_first_image.png",
+          __dirname + "/write_post_page_upload_first_image_diff.png",
           { fullPage: true }
         );
 
@@ -84,9 +84,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/add_tags_in_write_post_page.png",
-          __dirname + "/golden/add_tags_in_write_post_page.png",
-          __dirname + "/add_tags_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_add_tags.png",
+          __dirname + "/golden/write_post_page_add_tags.png",
+          __dirname + "/write_post_page_add_tags_diff.png",
           { fullPage: true }
         );
 
@@ -97,9 +97,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/remove_tag_in_write_post_page.png",
-          __dirname + "/golden/remove_tag_in_write_post_page.png",
-          __dirname + "/remove_tag_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_remove_tag.png",
+          __dirname + "/golden/write_post_page_remove_tag.png",
+          __dirname + "/write_post_page_remove_tag_diff.png",
           { fullPage: true }
         );
 
@@ -110,9 +110,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/add_warning_tag_in_write_post_page.png",
-          __dirname + "/golden/add_warning_tag_in_write_post_page.png",
-          __dirname + "/add_warning_tag_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_add_warning_tag.png",
+          __dirname + "/golden/write_post_page_add_warning_tag.png",
+          __dirname + "/write_post_page_add_warning_tag_diff.png",
           { fullPage: true }
         );
 
@@ -124,9 +124,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/submit_failure_in_write_post_page.png",
-          __dirname + "/golden/submit_failure_in_write_post_page.png",
-          __dirname + "/submit_failure_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_submit_failure.png",
+          __dirname + "/golden/write_post_page_submit_failure.png",
+          __dirname + "/write_post_page_submit_failure_diff.png",
           { fullPage: true }
         );
 
@@ -153,9 +153,9 @@ TEST_RUNNER.run({
           "submitPost request"
         );
         await asyncAssertScreenshot(
-          __dirname + "/after_submit_in_write_post_page.png",
-          __dirname + "/golden/render_write_post_page.png",
-          __dirname + "/after_submit_in_write_post_page_diff.png",
+          __dirname + "/write_post_page_after_submit.png",
+          __dirname + "/golden/write_post_page_after_submit.png",
+          __dirname + "/write_post_page_after_submit_diff.png",
           { fullPage: true }
         );
       }

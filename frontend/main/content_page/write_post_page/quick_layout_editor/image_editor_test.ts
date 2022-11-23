@@ -20,9 +20,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_image_editor_wide.png",
-          __dirname + "/golden/render_image_editor_wide.png",
-          __dirname + "/render_image_editor_wide_diff.png",
+          __dirname + "/image_editor_wide_render.png",
+          __dirname + "/golden/image_editor_wide_render.png",
+          __dirname + "/image_editor_wide_render_diff.png",
           { fullPage: true }
         );
       }
@@ -42,9 +42,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_image_editor_tall.png",
-          __dirname + "/golden/render_image_editor_tall.png",
-          __dirname + "/render_image_editor_tall_diff.png",
+          __dirname + "/image_editor_tall_render.png",
+          __dirname + "/golden/image_editor_tall_render.png",
+          __dirname + "/image_editor_tall_render_diff.png",
           { fullPage: true }
         );
       }

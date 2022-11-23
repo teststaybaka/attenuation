@@ -32,17 +32,15 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_quick_layout_editor.png",
-          __dirname + "/golden/render_quick_layout_editor.png",
-          __dirname + "/render_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_render.png",
+          __dirname + "/golden/quick_layout_editor_render.png",
+          __dirname + "/quick_layout_editor_render_diff.png",
           { fullPage: true }
         );
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),
@@ -88,9 +86,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/upload_image_error_in_quick_layout_editor.png",
-          __dirname + "/golden/upload_image_error_in_quick_layout_editor.png",
-          __dirname + "/upload_image_error_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_upload_image_error.png",
+          __dirname + "/golden/quick_layout_editor_upload_image_error.png",
+          __dirname + "/quick_layout_editor_upload_image_error_diff.png",
           { fullPage: true }
         );
 
@@ -107,9 +105,9 @@ TEST_RUNNER.run({
         assertThat(valid, eq(true), "valid");
         assertThat(this.cut.valid, eq(true), "cut valid");
         await asyncAssertScreenshot(
-          __dirname + "/upload_first_image_to_quick_layout_editor.png",
-          __dirname + "/golden/upload_first_image_to_quick_layout_editor.png",
-          __dirname + "/upload_first_image_to_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_upload_first_image.png",
+          __dirname + "/golden/quick_layout_editor_upload_first_image.png",
+          __dirname + "/quick_layout_editor_upload_first_image_diff.png",
           { fullPage: true }
         );
 
@@ -123,9 +121,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/upload_second_image_to_quick_layout_editor.png",
-          __dirname + "/golden/upload_second_image_to_quick_layout_editor.png",
-          __dirname + "/upload_second_image_to_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_upload_second_image.png",
+          __dirname + "/golden/quick_layout_editor_upload_second_image.png",
+          __dirname + "/quick_layout_editor_upload_second_image_diff.png",
           { fullPage: true }
         );
 
@@ -134,9 +132,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/move_up_image_in_quick_layout_editor.png",
-          __dirname + "/golden/move_up_image_in_quick_layout_editor.png",
-          __dirname + "/move_up_image_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_move_up_image.png",
+          __dirname + "/golden/quick_layout_editor_move_up_image.png",
+          __dirname + "/quick_layout_editor_move_up_image_diff.png",
           { fullPage: true }
         );
 
@@ -150,9 +148,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/upload_third_image_to_quick_layout_editor.png",
-          __dirname + "/golden/upload_third_image_to_quick_layout_editor.png",
-          __dirname + "/upload_third_image_to_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_upload_third_image.png",
+          __dirname + "/golden/quick_layout_editor_upload_third_image.png",
+          __dirname + "/quick_layout_editor_upload_third_image_diff.png",
           { fullPage: true }
         );
 
@@ -161,10 +159,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/move_down_first_image_in_quick_layout_editor.png",
-          __dirname +
-            "/golden/move_down_first_image_in_quick_layout_editor.png",
-          __dirname + "/move_down_first_image_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_move_down_first_image.png",
+          __dirname + "/golden/quick_layout_editor_move_down_first_image.png",
+          __dirname + "/quick_layout_editor_move_down_first_image_diff.png",
           { fullPage: true }
         );
 
@@ -173,10 +170,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/move_down_second_image_in_quick_layout_editor.png",
-          __dirname +
-            "/golden/move_down_second_image_in_quick_layout_editor.png",
-          __dirname + "/move_down_second_image_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_move_down_second_image.png",
+          __dirname + "/golden/quick_layout_editor_move_down_second_image.png",
+          __dirname + "/quick_layout_editor_move_down_second_image_diff.png",
           { fullPage: true }
         );
 
@@ -191,9 +187,9 @@ TEST_RUNNER.run({
         assertThat(valid, eq(true), "valid 9");
         assertThat(this.cut.valid, eq(true), "cut valid 9");
         await asyncAssertScreenshot(
-          __dirname + "/upload_9_images_in_quick_layout_editor.png",
-          __dirname + "/golden/upload_9_images_in_quick_layout_editor.png",
-          __dirname + "/upload_9_images_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_upload_9_images.png",
+          __dirname + "/golden/quick_layout_editor_upload_9_images.png",
+          __dirname + "/quick_layout_editor_upload_9_images_diff.png",
           { fullPage: true }
         );
 
@@ -204,9 +200,9 @@ TEST_RUNNER.run({
         assertThat(valid, eq(true), "valid 8");
         assertThat(this.cut.valid, eq(true), "cut valid 8");
         await asyncAssertScreenshot(
-          __dirname + "/delete_image_in_quick_layout_editor.png",
-          __dirname + "/golden/delete_image_in_quick_layout_editor.png",
-          __dirname + "/delete_image_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_delete_image.png",
+          __dirname + "/golden/quick_layout_editor_delete_image.png",
+          __dirname + "/quick_layout_editor_delete_image_diff.png",
           { fullPage: true }
         );
 
@@ -217,17 +213,15 @@ TEST_RUNNER.run({
         assertThat(valid, eq(false), "invalid");
         assertThat(this.cut.valid, eq(false), "cut invalid");
         await asyncAssertScreenshot(
-          __dirname + "/delete_all_images_in_quick_layout_editor.png",
-          __dirname + "/golden/delete_all_images_in_quick_layout_editor.png",
-          __dirname + "/delete_all_images_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_delete_all_images.png",
+          __dirname + "/golden/quick_layout_editor_render.png",
+          __dirname + "/quick_layout_editor_delete_all_images_diff.png",
           { fullPage: true }
         );
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),
@@ -256,9 +250,9 @@ TEST_RUNNER.run({
         assertThat(valid, eq(true), "valid");
         assertThat(this.cut.valid, eq(true), "cut valid");
         await asyncAssertScreenshot(
-          __dirname + "/count_character_in_quick_layout_editor.png",
-          __dirname + "/golden/count_character_in_quick_layout_editor.png",
-          __dirname + "/count_character_in_quick_layout_editor_diff.png",
+          __dirname + "/quick_layout_editor_count_character.png",
+          __dirname + "/golden/quick_layout_editor_count_character.png",
+          __dirname + "/quick_layout_editor_count_character_diff.png",
           { fullPage: true }
         );
 
@@ -274,19 +268,17 @@ TEST_RUNNER.run({
         assertThat(valid, eq(false), "invalid");
         assertThat(this.cut.valid, eq(false), "cut invalid");
         await asyncAssertScreenshot(
-          __dirname + "/count_overflowed_character_in_quick_layout_editor.png",
+          __dirname + "/quick_layout_editor_count_overflowed_character.png",
           __dirname +
-            "/golden/count_overflowed_character_in_quick_layout_editor.png",
+            "/golden/quick_layout_editor_count_overflowed_character.png",
           __dirname +
-            "/count_overflowed_character_in_quick_layout_editor_diff.png",
+            "/quick_layout_editor_count_overflowed_character_diff.png",
           { fullPage: true }
         );
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),
@@ -344,10 +336,8 @@ TEST_RUNNER.run({
         assertThat(this.cut.valid, eq(false), "cut invalid");
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),
@@ -405,10 +395,8 @@ TEST_RUNNER.run({
         assertThat(this.cut.valid, eq(false), "cut invalid");
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),
@@ -451,10 +439,8 @@ TEST_RUNNER.run({
         assertThat(this.cut.valid, eq(false), "cut invalid");
       }
       public tearDown() {
-        if (this.cut) {
-          for (let div of this.cut.bodies) {
-            div.remove();
-          }
+        for (let div of this.cut.bodies) {
+          div.remove();
         }
       }
     })(),

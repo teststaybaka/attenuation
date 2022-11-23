@@ -22,9 +22,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_sign_up_page_tall.png",
-          __dirname + "/golden/render_sign_up_page_tall.png",
-          __dirname + "/render_sign_up_page_tall_diff.png"
+          __dirname + "/sign_up_page_tall_render.png",
+          __dirname + "/golden/sign_up_page_tall_render.png",
+          __dirname + "/sign_up_page_tall_render_diff.png"
         );
       }
       public tearDown() {
@@ -45,9 +45,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_sign_up_page_short.png",
-          __dirname + "/golden/render_sign_up_page_short.png",
-          __dirname + "/render_sign_up_page_short_diff.png"
+          __dirname + "/sign_up_page_short_render.png",
+          __dirname + "/golden/sign_up_page_short_render.png",
+          __dirname + "/sign_up_page_short_render_diff.png"
         );
 
         // Execute
@@ -55,9 +55,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/render_sign_up_page_short_bottom.png",
-          __dirname + "/golden/render_sign_up_page_short_bottom.png",
-          __dirname + "/render_sign_up_page_short_bottom_diff.png"
+          __dirname + "/sign_up_page_short_scroll_to_bottom.png",
+          __dirname + "/golden/sign_up_page_short_scroll_to_bottom.png",
+          __dirname + "/sign_up_page_short_scroll_to_bottom_diff.png"
         );
       }
       public tearDown() {
