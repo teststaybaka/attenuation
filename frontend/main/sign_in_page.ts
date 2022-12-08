@@ -35,12 +35,12 @@ export class SignInPage extends EventEmitter {
     this.body = E.div(
       {
         class: "sign-in",
-        style: `flex-flow: column nowrap; justify-content: center; align-items: center; width: 100vw; min-height: 100vh;`,
+        style: `flex-flow: column nowrap; width: 100vw; min-height: 100vh;`,
       },
       E.div(
         {
           class: "sign-in-box",
-          style: `display: flex; flex-flow: column nowrap; width: 50rem;`,
+          style: `display: flex; flex-flow: column nowrap; width: 50rem; margin: auto;`,
         },
         assign(
           usernameInputRef,
