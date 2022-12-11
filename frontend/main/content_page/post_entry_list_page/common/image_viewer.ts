@@ -13,7 +13,7 @@ export interface ImageViewer {
 }
 
 export class ImageViewer extends EventEmitter {
-  private static BUTTON_STYLE = `width: 3rem; height: 3rem; border-radius: .3rem; background-color: ${SCHEME.neutral4}; color: ${SCHEME.neutral1};`;
+  private static BUTTON_STYLE = `width: 3rem; height: 3rem;`;
 
   public body: HTMLDivElement;
   public controllerBodies = new Array<HTMLDivElement>();
@@ -29,21 +29,21 @@ export class ImageViewer extends EventEmitter {
         class: "image-viewer-zoom-in-button",
         style: ImageViewer.BUTTON_STYLE,
       },
-      createPlusIcon("currentColor")
+      createPlusIcon(SCHEME.neutral1)
     );
     this.zommOutButton = E.div(
       {
         class: "image-viewer-zoom-out-button",
         style: ImageViewer.BUTTON_STYLE,
       },
-      createMinusIcon("currentColor")
+      createMinusIcon(SCHEME.neutral1)
     );
     this.zommFitButton = E.div(
       {
         class: "image-viewer-zoom-fit-button",
         style: ImageViewer.BUTTON_STYLE,
       },
-      createExpandIcon("currentColor")
+      createExpandIcon(SCHEME.neutral1)
     );
     this.controllerBodies.push(
       this.zommFitButton,
@@ -73,6 +73,10 @@ export class ImageViewer extends EventEmitter {
     this.zommFitButton.addEventListener("click", () => this.fitImage());
     this.image.onload = () => this.load();
     this.image.src = imageUrl;
+  }
+
+  public static create(imageUrl: string, display: boolean): ImageViewer {
+    return new ImageViewer(imageUrl, display);
   }
 
   private zoomInImage(): void {
@@ -117,9 +121,15 @@ export class ImageViewer extends EventEmitter {
 
   public show(): void {
     this.body.style.display = "flex";
+    this.zoomInButton.style.display = "block";
+    this.zommOutButton.style.display = "block";
+    this.zommFitButton.style.display = "block";
   }
 
   public hide(): void {
     this.body.style.display = "none";
+    this.zoomInButton.style.display = "none";
+    this.zommOutButton.style.display = "none";
+    this.zommFitButton.style.display = "none";
   }
 }

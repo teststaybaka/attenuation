@@ -16,8 +16,8 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new ImageViewer(wideImage, true);
         await puppeteerSetViewport(1000, 400);
+        let cut = new ImageViewer(wideImage, true);
         this.container = E.div(
           {},
           E.div(
@@ -68,8 +68,8 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new ImageViewer(wideImage, true);
         await puppeteerSetViewport(1000, 400);
+        let cut = new ImageViewer(wideImage, true);
         this.container = E.div(
           {},
           E.div(
