@@ -1,4 +1,5 @@
 import wideImage = require("./test_data/wide.jpeg");
+import tallImage = require("./test_data/tall.webp");
 import { normalizeBody } from "../../../common/normalize_body";
 import { ImageViewer } from "./image_viewer";
 import { E } from "@selfage/element/factory";
@@ -24,9 +25,9 @@ TEST_RUNNER.run({
             {
               style: `position: fixed;`,
             },
-            ...cut.controllerBodies
+            cut.controllerBody
           ),
-          E.div({}, cut.body)
+          cut.body
         );
 
         // Execute
@@ -64,6 +65,38 @@ TEST_RUNNER.run({
       }
     })(),
     new (class implements TestCase {
+      public name = "RenderTall";
+      private container: HTMLDivElement;
+      public async execute() {
+        // Prepare
+        await puppeteerSetViewport(400, 400);
+        let cut = new ImageViewer(tallImage, true);
+        this.container = E.div(
+          {},
+          E.div(
+            {
+              style: `position: fixed;`,
+            },
+            cut.controllerBody
+          ),
+          cut.body
+        );
+
+        // Execute
+        document.body.appendChild(this.container);
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/image_viewer_render_tall.png",
+          __dirname + "/golden/image_viewer_render_tall.png",
+          __dirname + "/image_viewer_render_tall_diff.png"
+        );
+      }
+      public tearDown() {
+        this.container.remove();
+      }
+    })(),
+    new (class implements TestCase {
       public name = "ZoomInAndOut";
       private container: HTMLDivElement;
       public async execute() {
@@ -76,9 +109,9 @@ TEST_RUNNER.run({
             {
               style: `position: fixed;`,
             },
-            ...cut.controllerBodies
+            cut.controllerBody
           ),
-          E.div({}, cut.body)
+          cut.body
         );
         let fitButton = this.container.querySelector(
           ".image-viewer-zoom-fit-button"
@@ -173,9 +206,9 @@ TEST_RUNNER.run({
             {
               style: `position: fixed;`,
             },
-            ...cut.controllerBodies
+            cut.controllerBody
           ),
-          E.div({}, cut.body)
+          cut.body
         );
         document.body.appendChild(this.container);
         let zoomInButton = this.container.querySelector(

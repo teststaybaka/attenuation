@@ -16,7 +16,7 @@ export class ImageViewer extends EventEmitter {
   private static BUTTON_STYLE = `width: 3rem; height: 3rem;`;
 
   public body: HTMLDivElement;
-  public controllerBodies = new Array<HTMLDivElement>();
+  public controllerBody: HTMLDivElement;
   private zoomInButton: HTMLDivElement;
   private zommOutButton: HTMLDivElement;
   private zommFitButton: HTMLDivElement;
@@ -24,32 +24,43 @@ export class ImageViewer extends EventEmitter {
 
   public constructor(imageUrl: string, display: boolean) {
     super();
-    this.zoomInButton = E.div(
+    let zoomInButtonRef = new Ref<HTMLDivElement>();
+    let zoomOutButtonRef = new Ref<HTMLDivElement>();
+    let zoomFitButtonRef = new Ref<HTMLDivElement>();
+    this.controllerBody = E.div(
       {
-        class: "image-viewer-zoom-in-button",
-        style: ImageViewer.BUTTON_STYLE,
+        class: "image-viewer-controllers",
+        style: `flex-flow: column nowrap; gap: .3rem;`,
       },
-      createPlusIcon(SCHEME.neutral1)
+      E.divRef(
+        zoomInButtonRef,
+        {
+          class: "image-viewer-zoom-in-button",
+          style: ImageViewer.BUTTON_STYLE,
+        },
+        createPlusIcon(SCHEME.neutral1)
+      ),
+      E.divRef(
+        zoomOutButtonRef,
+        {
+          class: "image-viewer-zoom-out-button",
+          style: ImageViewer.BUTTON_STYLE,
+        },
+        createMinusIcon(SCHEME.neutral1)
+      ),
+      E.divRef(
+        zoomFitButtonRef,
+        {
+          class: "image-viewer-zoom-fit-button",
+          style: ImageViewer.BUTTON_STYLE,
+        },
+        createExpandIcon(SCHEME.neutral1)
+      )
     );
-    this.zommOutButton = E.div(
-      {
-        class: "image-viewer-zoom-out-button",
-        style: ImageViewer.BUTTON_STYLE,
-      },
-      createMinusIcon(SCHEME.neutral1)
-    );
-    this.zommFitButton = E.div(
-      {
-        class: "image-viewer-zoom-fit-button",
-        style: ImageViewer.BUTTON_STYLE,
-      },
-      createExpandIcon(SCHEME.neutral1)
-    );
-    this.controllerBodies.push(
-      this.zommFitButton,
-      this.zommOutButton,
-      this.zoomInButton
-    );
+    this.zoomInButton = zoomInButtonRef.val;
+    this.zommOutButton = zoomOutButtonRef.val;
+    this.zommFitButton = zoomFitButtonRef.val;
+
     let imageRef = new Ref<HTMLImageElement>();
     this.body = E.div(
       {
@@ -100,16 +111,16 @@ export class ImageViewer extends EventEmitter {
   }
 
   private fitImage(): void {
-    let documentWidth = document.documentElement.clientWidth;
-    let documentHeight = document.documentElement.clientHeight;
+    let viewportWidth = window.innerWidth;
+    let viewportHeight = window.innerHeight;
     if (
       this.image.naturalWidth / this.image.naturalHeight >
-      documentWidth / documentHeight
+      viewportWidth / viewportHeight
     ) {
-      this.image.style.width = `${documentWidth}px`;
+      this.image.style.width = `${viewportWidth}px`;
     } else {
       this.image.style.width = `${
-        (this.image.naturalWidth / this.image.naturalHeight) * documentHeight
+        (this.image.naturalWidth / this.image.naturalHeight) * viewportHeight
       }px`;
     }
   }
@@ -121,15 +132,16 @@ export class ImageViewer extends EventEmitter {
 
   public show(): void {
     this.body.style.display = "flex";
-    this.zoomInButton.style.display = "block";
-    this.zommOutButton.style.display = "block";
-    this.zommFitButton.style.display = "block";
+    this.controllerBody.style.display = "flex";
   }
 
   public hide(): void {
     this.body.style.display = "none";
-    this.zoomInButton.style.display = "none";
-    this.zommOutButton.style.display = "none";
-    this.zommFitButton.style.display = "none";
+    this.controllerBody.style.display = "none";
+  }
+
+  public delete(): void {
+    this.body.remove();
+    this.controllerBody.remove();
   }
 }

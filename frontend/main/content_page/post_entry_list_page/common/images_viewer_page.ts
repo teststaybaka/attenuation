@@ -1,71 +1,131 @@
 import EventEmitter = require("events");
 import { SCHEME } from "../../../common/color_scheme";
 import { createArrowIcon } from "../../../common/icons";
+import { MenuContainer } from "../../common/menu_container";
 import { MenuItem } from "../../common/menu_item";
 import { createBackMenuItem } from "../../common/menu_items";
 import { ImageViewer } from "./image_viewer";
 import { E } from "@selfage/element/factory";
+import { Ref } from "@selfage/ref";
 
 export interface ImagesViewerPage {
-  on(event: "load", listener: () => void): this;
+  on(event: "back", listener: () => void): this;
 }
 
 export class ImagesViewerPage extends EventEmitter {
-  public bodies = new Array<HTMLDivElement>();
-  public menuBodies = new Array<HTMLDivElement>();
+  public body: HTMLDivElement;
+  public menuBody: HTMLDivElement;
   public controllerBodies = new Array<HTMLDivElement>();
-  private backButton: MenuItem;
-  private downButton: HTMLDivElement;
+  private menuContainer: MenuContainer;
+  private navigationControllerContainer: HTMLDivElement;
   private upButton: HTMLDivElement;
-  private imagesLoaded = 0;
+  private downButton: HTMLDivElement;
+  private zoomControllerContainer: HTMLDivElement;
+  private index: number;
   private imageViewers = new Array<ImageViewer>();
 
   public constructor(
-    private imageUrls: Array<string>,
-    private index: number,
-    imageViewerFactoryFn: (imageUrl: string, display: boolean) => ImageViewer
+    private backButton: MenuItem,
+    private imageViewerFactoryFn: (
+      imageUrl: string,
+      display: boolean
+    ) => ImageViewer
   ) {
     super();
-    this.backButton = createBackMenuItem();
-    this.menuBodies.push(this.backButton.body);
+    this.menuContainer = MenuContainer.create(this.backButton);
+    this.menuBody = this.menuContainer.body;
 
-    this.downButton = E.div(
+    this.zoomControllerContainer = E.div({
+      class: "images-viewer-zoom-controllers",
+    });
+
+    let upButtonRef = new Ref<HTMLDivElement>();
+    let downButtonRef = new Ref<HTMLDivElement>();
+    this.navigationControllerContainer = E.div(
       {
-        class: "images-viewer-down-button",
-        style: `width: 3rem; height: 3rem; rotate: -90deg;`,
+        class: "images-viewer-navigation-controllers",
+        style: `flex-flow: column nowrap; gap: .3rem;`,
       },
-      createArrowIcon("currentColor")
+      E.divRef(
+        upButtonRef,
+        {
+          class: "images-viewer-up-button",
+          style: `width: 3rem; height: 3rem; rotate: 90deg;`,
+        },
+        createArrowIcon("currentColor")
+      ),
+      E.divRef(
+        downButtonRef,
+        {
+          class: "images-viewer-down-button",
+          style: `width: 3rem; height: 3rem; rotate: -90deg;`,
+        },
+        createArrowIcon("currentColor")
+      )
     );
-    this.upButton = E.div(
-      {
-        class: "images-viewer-up-button",
-        style: `width: 3rem; height: 3rem; rotate: 90deg;`,
-      },
-      createArrowIcon("currentColor")
+    this.upButton = upButtonRef.val;
+    this.downButton = downButtonRef.val;
+    this.controllerBodies.push(
+      this.zoomControllerContainer,
+      this.navigationControllerContainer
     );
-    this.controllerBodies.push(this.downButton, this.upButton);
 
-    for (let i = 0; i < this.imageUrls.length; i++) {
-      let imageViewer = imageViewerFactoryFn(
-        this.imageUrls[i],
-        i === this.index
-      );
-      imageViewer.on("load", () => this.checkLoaded());
-      this.imageViewers.push(imageViewer);
-      this.bodies.push(imageViewer.body);
-      this.controllerBodies.push(...imageViewer.controllerBodies);
-    }
-    this.setButtonState();
+    this.body = E.div({
+      class: "images-viewer",
+    });
 
+    this.hide();
+    this.backButton.on("action", () => this.emit("back"));
     this.downButton.addEventListener("click", () => this.showNext());
     this.upButton.addEventListener("click", () => this.showPrev());
   }
 
-  private checkLoaded(): void {
-    this.imagesLoaded++;
-    if (this.imagesLoaded >= this.imageUrls.length) {
-      this.emit("load");
+  public static create(): ImagesViewerPage {
+    return new ImagesViewerPage(createBackMenuItem(), ImageViewer.create);
+  }
+
+  public async show(
+    imageUrls: Array<string>,
+    initialIndex: number
+  ): Promise<void> {
+    for (let imageViewer of this.imageViewers) {
+      imageViewer.delete();
     }
+    this.imageViewers = new Array<ImageViewer>();
+    this.body.style.display = "block";
+    this.menuContainer.expand();
+
+    this.index = initialIndex;
+    await new Promise<void>((resolve) => {
+      let imagesLoaded = 0;
+      for (let i = 0; i < imageUrls.length; i++) {
+        let imageViewer = this.imageViewerFactoryFn(
+          imageUrls[i],
+          i === initialIndex
+        );
+        imageViewer.on("load", () => {
+          imagesLoaded++;
+          if (imagesLoaded >= imageUrls.length) {
+            resolve();
+          }
+        });
+        this.imageViewers.push(imageViewer);
+        this.body.append(imageViewer.body);
+        this.zoomControllerContainer.append(
+          imageViewer.controllerBody
+        );
+      }
+      this.setButtonState();
+    });
+    this.zoomControllerContainer.style.display = "block";
+    this.navigationControllerContainer.style.display = "flex";
+  }
+
+  public hide(): void {
+    this.body.style.display = "none";
+    this.menuContainer.collapse();
+    this.zoomControllerContainer.style.display = "none";
+    this.navigationControllerContainer.style.display = "none";
   }
 
   private showNext(): void {
@@ -89,15 +149,15 @@ export class ImagesViewerPage extends EventEmitter {
   }
 
   private setButtonState(): void {
-    if (this.index >= this.imageViewers.length - 1) {
-      this.fadeButton(this.downButton);
-    } else {
-      this.restoreButton(this.downButton);
-    }
     if (this.index <= 0) {
       this.fadeButton(this.upButton);
     } else {
       this.restoreButton(this.upButton);
+    }
+    if (this.index >= this.imageViewers.length - 1) {
+      this.fadeButton(this.downButton);
+    } else {
+      this.restoreButton(this.downButton);
     }
   }
 
