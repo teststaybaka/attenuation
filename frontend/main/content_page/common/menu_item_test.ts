@@ -1,6 +1,7 @@
 import { normalizeBody } from "../../common/normalize_body";
 import { MenuItem } from "./menu_item";
 import { createHomeMenuIcon } from "./menu_items";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 import "@selfage/puppeteer_test_executor_api";
@@ -12,13 +13,15 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "Render";
-      private cut: MenuItem;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new MenuItem(createHomeMenuIcon(), "A long long test label");
+        let cut = new MenuItem(createHomeMenuIcon(), "A long long test label");
+        this.container = E.div({}, cut.body);
+        let item = this.container.querySelector(".menu-item");
 
         // Execute
-        document.body.appendChild(this.cut.body);
+        document.body.append(this.container);
 
         // Verify
         await asyncAssertScreenshot(
@@ -29,9 +32,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        this.cut.body.dispatchEvent(
-          new MouseEvent("mouseover", { bubbles: true })
-        );
+        item.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
 
         // Verify
         await asyncAssertScreenshot(
@@ -42,7 +43,7 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

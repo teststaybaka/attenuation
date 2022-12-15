@@ -1,5 +1,6 @@
 import { normalizeBody } from "./common/normalize_body";
 import { SignUpPage } from "./sign_up_page";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 
@@ -10,15 +11,16 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "RenderTall";
-      private cut: SignUpPage;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new SignUpPage(undefined, undefined);
         await puppeteerSetViewport(1000, 1000);
-        document.body.appendChild(this.cut.body);
+        let cut = new SignUpPage(undefined, undefined);
+        this.container = E.div({}, cut.body);
+        document.body.appendChild(this.container);
 
         // Execute
-        this.cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -28,20 +30,21 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "RenderShort";
-      private cut: SignUpPage;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new SignUpPage(undefined, undefined);
         await puppeteerSetViewport(1000, 150);
-        document.body.appendChild(this.cut.body);
+        let cut = new SignUpPage(undefined, undefined);
+        this.container = E.div({}, cut.body);
+        document.body.appendChild(this.container);
 
         // Execute
-        this.cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -61,7 +64,7 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

@@ -13,15 +13,16 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "RenderAndResize";
-      private cut: AvatarCanvas;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new AvatarCanvas();
+        let cut = new AvatarCanvas();
+        this.container = E.div({}, cut.body);
 
         // Execute
         document.body.style.width = "460px";
         document.body.style.height = "460px";
-        document.body.appendChild(this.cut.body);
+        document.body.appendChild(this.container);
 
         // Verify
         await asyncAssertScreenshot(
@@ -32,7 +33,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let topLeftPoint = this.cut.body.querySelector(
+        let topLeftPoint = this.container.querySelector(
           ".avatar-canvas-resize-point-top-left"
         );
         topLeftPoint.dispatchEvent(
@@ -103,7 +104,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let topRightPoint = this.cut.body.querySelector(
+        let topRightPoint = this.container.querySelector(
           ".avatar-canvas-resize-point-top-right"
         );
         topRightPoint.dispatchEvent(
@@ -130,7 +131,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let bottomRightPoint = this.cut.body.querySelector(
+        let bottomRightPoint = this.container.querySelector(
           ".avatar-canvas-resize-point-bottom-right"
         );
         bottomRightPoint.dispatchEvent(
@@ -157,7 +158,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let bottomLeftPoint = this.cut.body.querySelector(
+        let bottomLeftPoint = this.container.querySelector(
           ".avatar-canvas-resize-point-bottom-left"
         );
         bottomLeftPoint.dispatchEvent(
@@ -184,25 +185,26 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "DrawImage";
-      private cut: AvatarCanvas;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new AvatarCanvas();
+        let cut = new AvatarCanvas();
+        this.container = E.div({}, cut.body);
         document.body.style.width = "460px";
         document.body.style.height = "460px";
-        document.body.appendChild(this.cut.body);
+        document.body.appendChild(this.container);
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();
         await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
 
         // Execute
-        await this.cut.load(fileInput.files[0]);
+        await cut.load(fileInput.files[0]);
 
         // Verify
         await asyncAssertScreenshot(
@@ -218,7 +220,7 @@ TEST_RUNNER.run({
         await puppeteerFileChooserAccept(__dirname + "/test_data/wider.jpg");
 
         // Execute
-        await this.cut.load(fileInput.files[0]);
+        await cut.load(fileInput.files[0]);
 
         // Verify
         await asyncAssertScreenshot(
@@ -234,7 +236,7 @@ TEST_RUNNER.run({
         await puppeteerFileChooserAccept(__dirname + "/test_data/high.jpg");
 
         // Execute
-        await this.cut.load(fileInput.files[0]);
+        await cut.load(fileInput.files[0]);
 
         // Verify
         await asyncAssertScreenshot(
@@ -250,7 +252,7 @@ TEST_RUNNER.run({
         await puppeteerFileChooserAccept(__dirname + "/test_data/higher.jpg");
 
         // Execute
-        await this.cut.load(fileInput.files[0]);
+        await cut.load(fileInput.files[0]);
 
         // Verify
         await asyncAssertScreenshot(
@@ -261,25 +263,26 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "Export";
-      private cut: AvatarCanvas;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new AvatarCanvas();
+        let cut = new AvatarCanvas();
+        this.container = E.div({}, cut.body);
         document.body.style.width = "460px";
         document.body.style.height = "460px";
-        document.body.appendChild(this.cut.body);
+        document.body.appendChild(this.container);
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();
         await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
-        await this.cut.load(fileInput.files[0]);
+        await cut.load(fileInput.files[0]);
 
-        let topLeftPoint = this.cut.body.querySelector(
+        let topLeftPoint = this.container.querySelector(
           ".avatar-canvas-resize-point-top-left"
         );
         topLeftPoint.dispatchEvent(
@@ -291,7 +294,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let fileBlob = await this.cut.export();
+        let fileBlob = await cut.export();
 
         // Verify
         let fileData = await new Promise<string>((resolve) => {
@@ -312,7 +315,7 @@ TEST_RUNNER.run({
         await puppeteerDeleteFile(__dirname + "/cropped.png");
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

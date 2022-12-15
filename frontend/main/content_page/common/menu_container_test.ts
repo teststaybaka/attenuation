@@ -1,6 +1,7 @@
 import { normalizeBody } from "../../common/normalize_body";
 import { MenuContainer } from "./menu_container";
 import { createHomeMenuItem, createRefreshMenuItem } from "./menu_items";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 import "@selfage/puppeteer_test_executor_api";
@@ -12,17 +13,18 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "Render";
-      private cut: MenuContainer;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new MenuContainer(
+        let cut = new MenuContainer(
           createHomeMenuItem(),
           createRefreshMenuItem()
         );
-        document.body.appendChild(this.cut.body);
+        this.container = E.div({}, cut.body);
+        document.body.appendChild(this.container);
 
         // Execute
-        this.cut.expand();
+        cut.expand();
 
         // Verify
         await asyncAssertScreenshot(
@@ -33,7 +35,7 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

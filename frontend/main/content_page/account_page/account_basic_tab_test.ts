@@ -1,6 +1,7 @@
 import path = require("path");
 import { normalizeBody } from "../../common/normalize_body";
 import { AccountBasicTab } from "./account_basic_tab";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { assertThat, eq } from "@selfage/test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
@@ -14,10 +15,10 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "Render";
-      private cut: AccountBasicTab;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new AccountBasicTab(
+        let cut = new AccountBasicTab(
           new (class extends WebServiceClient {
             public constructor() {
               super(undefined, undefined);
@@ -35,11 +36,12 @@ TEST_RUNNER.run({
             }
           })()
         );
+        this.container = E.div({}, cut.body);
         document.body.style.width = "1000px";
-        document.body.appendChild(this.cut.body);
+        document.body.appendChild(this.container);
 
         // Execute
-        await this.cut.show();
+        await cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -50,15 +52,15 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "HoverAndClick";
-      private cut: AccountBasicTab;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        this.cut = new AccountBasicTab(
+        let cut = new AccountBasicTab(
           new (class extends WebServiceClient {
             public constructor() {
               super(undefined, undefined);
@@ -76,10 +78,11 @@ TEST_RUNNER.run({
             }
           })()
         );
+        this.container = E.div({}, cut.body);
         document.body.style.width = "1000px";
-        document.body.appendChild(this.cut.body);
-        await this.cut.show();
-        let avatar = this.cut.body.querySelector(".account-basic-avatar");
+        document.body.appendChild(this.container);
+        await cut.show();
+        let avatar = this.container.querySelector(".account-basic-avatar");
 
         // Execute
         avatar.dispatchEvent(new MouseEvent("mouseenter"));
@@ -94,7 +97,7 @@ TEST_RUNNER.run({
 
         // Prepare
         let changed = false;
-        this.cut.on("changeAvatar", () => (changed = true));
+        cut.on("changeAvatar", () => (changed = true));
 
         // Execute
         avatar.dispatchEvent(new MouseEvent("click"));
@@ -103,7 +106,7 @@ TEST_RUNNER.run({
         assertThat(changed, eq(true), "changed avatar");
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

@@ -22,9 +22,6 @@ export class AccountPage extends EventEmitter {
     private changeAvatar: ChangeAvatarTab
   ) {
     super();
-    this.menuContainer = MenuContainer.create(this.homeMenuItem);
-    this.menuBodies.push(this.menuContainer.body, this.changeAvatar.menuBody);
-
     this.body = E.div(
       {
         class: "account",
@@ -39,8 +36,11 @@ export class AccountPage extends EventEmitter {
         changeAvatar.body
       )
     );
-    this.hide();
 
+    this.menuContainer = MenuContainer.create(this.homeMenuItem);
+    this.menuBodies.push(this.menuContainer.body, this.changeAvatar.menuBody);
+
+    this.hide();
     this.homeMenuItem.on("action", () => this.emit("home"));
     this.accountBasic.on("changeAvatar", () => this.showChangeAvatar());
     this.changeAvatar.on("back", () => this.showAccountBasic());
