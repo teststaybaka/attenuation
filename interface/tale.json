@@ -1,5 +1,5 @@
 [{
-  "name": "QuickLayoutPost",
+  "name": "QuickLayoutTale",
   "message": {
     "fields": [{
       "name": "text",
@@ -11,13 +11,13 @@
     }]
   }
 }, {
-  "name": "PostEntryCard",
+  "name": "TaleCard",
   "message": {
     "fields": [{
-      "name": "postEntryId",
+      "name": "taleId",
       "type": "string"
     }, {
-      "name": "repliedEntryId",
+      "name": "repliedTaleId",
       "type": "string"
     }, {
       "name": "userId",
@@ -35,8 +35,8 @@
       "name": "createdTimestamp",
       "type": "number"
     }, {
-      "name": "quickLayoutPost",
-      "type": "QuickLayoutPost"
+      "name": "quickLayoutTale",
+      "type": "QuickLayoutTale"
     }]
   }
 }]

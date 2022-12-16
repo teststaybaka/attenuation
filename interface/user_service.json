@@ -1,0 +1,115 @@
+[{
+  "name": "SignUpRequestBody",
+  "message": {
+    "fields": [{
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
+      "name": "password",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "SignUpResponse",
+  "message": {
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "SignUp",
+  "service": {
+    "path": "/SignUp",
+    "body": "SignUpRequestBody",
+    "response": "SignUpResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
+}, {
+  "name": "SignInRequestBody",
+  "message": {
+    "fields": [{
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "password",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "SignInResponse",
+  "message": {
+    "fields": [{
+      "name": "signedSession",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "SignIn",
+  "service": {
+    "path": "/SignIn",
+    "body": "SignInRequestBody",
+    "response": "SignInResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
+}, {
+  "name": "GetUserInfoRequestBody",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "GetUserInfoResponse",
+  "message": {
+    "fields": [{
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
+      "name": "email",
+      "type": "string"
+    }, {
+      "name": "avatarLargePath",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetUserInfo",
+  "service": {
+    "path": "/GetUserInfo",
+    "body": "GetUserInfoRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "GetUserInfoResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
+}, {
+  "name": "UploadAvatarResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "UploadAvatar",
+  "service": {
+    "path": "/UploadAvatar",
+    "body": "bytes",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "UploadAvatarResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
+}]

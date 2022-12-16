@@ -1,0 +1,95 @@
+[{
+  "name": "UploadImageForTaleResponse",
+  "message": {
+    "fields": [{
+      "name": "url",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "UploadImageForTale",
+  "service": {
+    "path": "/UploadImageForTale",
+    "body": "bytes",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "UploadImageForTaleResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}, {
+  "name": "CreateTaleRequestBody",
+  "message": {
+    "fields": [{
+      "name": "quickLayoutTale",
+      "type": "QuickLayoutTale",
+      "import": "./tale"
+    }, {
+      "name": "tags",
+      "type": "string",
+      "isArray": true
+    }, {
+      "name": "warningTags",
+      "type": "WarningTagType",
+      "import": "./warning_tag_type",
+      "isArray": true
+    }]
+  }
+}, {
+  "name": "CreateTaleResponse",
+  "message": {
+    "fields": [{
+      "name": "taleCard",
+      "type": "TaleCard",
+      "import": "./tale"
+    }]
+  }
+}, {
+  "name": "CreateTale",
+  "service": {
+    "path": "/CreateTale",
+    "body": "CreateTaleRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "CreateTaleResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}, {
+  "name": "ReactToTaleRequestBody",
+  "message": {
+    "fields": [{
+      "name": "taleId",
+      "type": "string"
+    }, {
+      "name": "reaction",
+      "type": "TaleReaction",
+      "import": "./tale_reaction"
+    }]
+  }
+}, {
+  "name": "ReactToTaleResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "ReactToTale",
+  "service": {
+    "path": "/ReactToTale",
+    "body": "ReactToTaleRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "ReactToTaleResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}]

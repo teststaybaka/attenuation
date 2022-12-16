@@ -1,12 +1,12 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 
-export interface QuickLayoutPost {
+export interface QuickLayoutTale {
   text?: string,
   images?: Array<string>,
 }
 
-export let QUICK_LAYOUT_POST: MessageDescriptor<QuickLayoutPost> = {
-  name: 'QuickLayoutPost',
+export let QUICK_LAYOUT_TALE: MessageDescriptor<QuickLayoutTale> = {
+  name: 'QuickLayoutTale',
   fields: [
     {
       name: 'text',
@@ -20,26 +20,26 @@ export let QUICK_LAYOUT_POST: MessageDescriptor<QuickLayoutPost> = {
   ]
 };
 
-export interface PostEntryCard {
-  postEntryId?: string,
-  repliedEntryId?: string,
+export interface TaleCard {
+  taleId?: string,
+  repliedTaleId?: string,
   userId?: string,
   username?: string,
   userNatureName?: string,
   avatarSmallPath?: string,
   createdTimestamp?: number,
-  quickLayoutPost?: QuickLayoutPost,
+  quickLayoutTale?: QuickLayoutTale,
 }
 
-export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
-  name: 'PostEntryCard',
+export let TALE_CARD: MessageDescriptor<TaleCard> = {
+  name: 'TaleCard',
   fields: [
     {
-      name: 'postEntryId',
+      name: 'taleId',
       primitiveType: PrimitiveType.STRING,
     },
     {
-      name: 'repliedEntryId',
+      name: 'repliedTaleId',
       primitiveType: PrimitiveType.STRING,
     },
     {
@@ -63,8 +63,8 @@ export let POST_ENTRY_CARD: MessageDescriptor<PostEntryCard> = {
       primitiveType: PrimitiveType.NUMBER,
     },
     {
-      name: 'quickLayoutPost',
-      messageType: QUICK_LAYOUT_POST,
+      name: 'quickLayoutTale',
+      messageType: QUICK_LAYOUT_TALE,
     },
   ]
 };
