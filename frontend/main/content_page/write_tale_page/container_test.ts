@@ -1,9 +1,9 @@
 import wideImage = require("./test_data/wide.jpeg");
-import { CREATE_POST_REQUEST_BODY } from "../../../../interface/post_life_cycle_service";
+import { CREATE_TALE_REQUEST_BODY } from "../../../../interface/tale_service";
 import { WarningTagType } from "../../../../interface/warning_tag_type";
 import { FillButton, OutlineButton } from "../../common/button";
 import { normalizeBody } from "../../common/normalize_body";
-import { WritePostPage } from "./container";
+import { WriteTalePage } from "./container";
 import { QuickLayoutEditorMock } from "./quick_layout_editor/mocks";
 import { E } from "@selfage/element/factory";
 import { eqMessage } from "@selfage/message/test_matcher";
@@ -15,11 +15,11 @@ import { WebServiceClient } from "@selfage/web_service_client";
 normalizeBody();
 
 TEST_RUNNER.run({
-  name: "WritePostPageTest",
+  name: "WriteTalePageTest",
   cases: [
     new (class implements TestCase {
       public name = "RenderAndSubmit";
-      private cut: WritePostPage;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
         let quickLayoutEditorMock = new QuickLayoutEditorMock();
@@ -37,13 +37,14 @@ TEST_RUNNER.run({
           }
         })();
         let submitButton = FillButton.create(false, E.text("Submit your post"));
-        this.cut = new WritePostPage(
+        let cut = new WriteTalePage(
           quickLayoutEditorMock,
           OutlineButton.create(false, E.text("Preview")),
           submitButton,
           serviceClientMock
         );
-        document.body.append(this.cut.body);
+        this.container = E.div({}, ...cut.bodies);
+        document.body.append(this.container);
         await puppeteerSetViewport(1000, 600);
         let tagInput = document.body.querySelector(
           ".write-post-add-tag-input"
@@ -53,13 +54,13 @@ TEST_RUNNER.run({
         ) as HTMLButtonElement;
 
         // Execute
-        this.cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_render.png",
-          __dirname + "/golden/write_post_page_render.png",
-          __dirname + "/write_post_page_render_diff.png",
+          __dirname + "/write_tale_page_render.png",
+          __dirname + "/golden/write_tale_page_render.png",
+          __dirname + "/write_tale_page_render_diff.png",
           { fullPage: true }
         );
 
@@ -68,9 +69,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_upload_first_image.png",
-          __dirname + "/golden/write_post_page_upload_first_image.png",
-          __dirname + "/write_post_page_upload_first_image_diff.png",
+          __dirname + "/write_tale_page_upload_first_image.png",
+          __dirname + "/golden/write_tale_page_upload_first_image.png",
+          __dirname + "/write_tale_page_upload_first_image_diff.png",
           { fullPage: true }
         );
 
@@ -84,9 +85,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_add_tags.png",
-          __dirname + "/golden/write_post_page_add_tags.png",
-          __dirname + "/write_post_page_add_tags_diff.png",
+          __dirname + "/write_tale_page_add_tags.png",
+          __dirname + "/golden/write_tale_page_add_tags.png",
+          __dirname + "/write_tale_page_add_tags_diff.png",
           { fullPage: true }
         );
 
@@ -97,9 +98,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_remove_tag.png",
-          __dirname + "/golden/write_post_page_remove_tag.png",
-          __dirname + "/write_post_page_remove_tag_diff.png",
+          __dirname + "/write_tale_page_remove_tag.png",
+          __dirname + "/golden/write_tale_page_remove_tag.png",
+          __dirname + "/write_tale_page_remove_tag_diff.png",
           { fullPage: true }
         );
 
@@ -110,9 +111,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_add_warning_tag.png",
-          __dirname + "/golden/write_post_page_add_warning_tag.png",
-          __dirname + "/write_post_page_add_warning_tag_diff.png",
+          __dirname + "/write_tale_page_add_warning_tag.png",
+          __dirname + "/golden/write_tale_page_add_warning_tag.png",
+          __dirname + "/write_tale_page_add_warning_tag_diff.png",
           { fullPage: true }
         );
 
@@ -124,9 +125,9 @@ TEST_RUNNER.run({
 
         // Verify
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_submit_failure.png",
-          __dirname + "/golden/write_post_page_submit_failure.png",
-          __dirname + "/write_post_page_submit_failure_diff.png",
+          __dirname + "/write_tale_page_submit_failure.png",
+          __dirname + "/golden/write_tale_page_submit_failure.png",
+          __dirname + "/write_tale_page_submit_failure_diff.png",
           { fullPage: true }
         );
 
@@ -141,26 +142,26 @@ TEST_RUNNER.run({
           requestCaptured.request.body,
           eqMessage(
             {
-              quickLayoutPost: {
+              quickLayoutTale: {
                 text: "",
                 images: [wideImage],
               },
               tags: ["tag 2", "tag 3"],
               warningTags: [WarningTagType.Gross],
             },
-            CREATE_POST_REQUEST_BODY
+            CREATE_TALE_REQUEST_BODY
           ),
           "submitPost request"
         );
         await asyncAssertScreenshot(
-          __dirname + "/write_post_page_after_submit.png",
-          __dirname + "/golden/write_post_page_after_submit.png",
-          __dirname + "/write_post_page_after_submit_diff.png",
+          __dirname + "/write_tale_page_after_submit.png",
+          __dirname + "/golden/write_tale_page_after_submit.png",
+          __dirname + "/write_tale_page_after_submit_diff.png",
           { fullPage: true }
         );
       }
       public tearDown() {
-        this.cut.body.remove();
+        this.container.remove();
       }
     })(),
   ],

@@ -1,6 +1,6 @@
 import tallImage = require("./test_data/tall.webp");
 import wideImage = require("./test_data/wide.jpeg");
-import { UploadImageForPostResponse } from "../../../../../interface/post_life_cycle_service";
+import { UploadImageForTaleResponse } from "../../../../../interface/tale_service";
 import { normalizeBody } from "../../../common/normalize_body";
 import { QuickLayoutEditor } from "./container";
 import { ImageEditorMock } from "./mocks";
@@ -59,7 +59,7 @@ TEST_RUNNER.run({
             if (this.errorToThrow) {
               throw this.errorToThrow;
             }
-            return { url: this.imageToReturn } as UploadImageForPostResponse;
+            return { url: this.imageToReturn } as UploadImageForTaleResponse;
           }
         })();
         let imageEditorMocks = new Array<ImageEditorMock>();
@@ -298,7 +298,7 @@ TEST_RUNNER.run({
               super(undefined, undefined);
             }
             public async send(request: any): Promise<any> {
-              return { url: wideImage } as UploadImageForPostResponse;
+              return { url: wideImage } as UploadImageForTaleResponse;
             }
           })()
         );
@@ -357,7 +357,7 @@ TEST_RUNNER.run({
               super(undefined, undefined);
             }
             public async send(request: any): Promise<any> {
-              return { url: wideImage } as UploadImageForPostResponse;
+              return { url: wideImage } as UploadImageForTaleResponse;
             }
           })()
         );
@@ -412,7 +412,7 @@ TEST_RUNNER.run({
               super(undefined, undefined);
             }
             public async send(request: any): Promise<any> {
-              return { url: wideImage } as UploadImageForPostResponse;
+              return { url: wideImage } as UploadImageForTaleResponse;
             }
           })()
         );

@@ -1,9 +1,9 @@
 import EventEmitter = require("events");
-import { UploadImageForPostResponse } from "../../../../../interface/post_life_cycle_service";
+import { UploadImageForTaleResponse } from "../../../../../interface/tale_service";
 import { SCHEME } from "../../../common/color_scheme";
 import { createPlusIcon } from "../../../common/icons";
 import { LOCALIZED_TEXT } from "../../../common/locales/localized_text";
-import { newUploadImageForPostServiceRequest } from "../../../common/post_life_cycle_client_requests";
+import { newUploadImageForTaleServiceRequest } from "../../../common/tale_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../../common/web_service_client";
 import { MARGIN } from "../constants";
 import { ImageEditor } from "./image_editor";
@@ -20,7 +20,7 @@ export class QuickLayoutEditor extends EventEmitter {
   private static CHARACTER_LIMIT = 700;
   private static IMAGE_NUMBER_LIMIT = 9;
 
-  public bodies = new Array<HTMLDivElement>();
+  public bodies: Array<HTMLDivElement>;
   public textInput: HTMLTextAreaElement;
   public valid = false;
   public imageEditors = new Array<ImageEditor>();
@@ -41,7 +41,7 @@ export class QuickLayoutEditor extends EventEmitter {
     let uploadImagesContainerRef = new Ref<HTMLDivElement>();
     let uploadImageButtonRef = new Ref<HTMLDivElement>();
     let uploadImageErrorRef = new Ref<HTMLDivElement>();
-    this.bodies.push(
+    this.bodies = [
       E.div(
         {
           class: "quick-layout-text-input-label",
@@ -122,8 +122,8 @@ export class QuickLayoutEditor extends EventEmitter {
           class: "quick-layout-upload-image-error",
           style: `align-self: center; margin-top: 1rem; font-size: 1.4rem; color: ${SCHEME.error0};`,
         })
-      )
-    );
+      ),
+    ];
     this.textInput = textInputRef.val;
     this.characterCountContainer = characterCountContainerRef.val;
     this.characterCount = characterCountRef.val;
@@ -198,10 +198,10 @@ export class QuickLayoutEditor extends EventEmitter {
     imageFile: File,
     filesFailed: Array<string>
   ): Promise<void> {
-    let response: UploadImageForPostResponse;
+    let response: UploadImageForTaleResponse;
     try {
       response = await this.webServiceClient.send(
-        newUploadImageForPostServiceRequest({
+        newUploadImageForTaleServiceRequest({
           body: imageFile,
         })
       );

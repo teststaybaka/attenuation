@@ -2,6 +2,7 @@ import tallImage = require("./test_data/tall.webp");
 import wideImage = require("./test_data/wide.jpeg");
 import { normalizeBody } from "../../../common/normalize_body";
 import { ImageEditor } from "./image_editor";
+import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 
@@ -12,11 +13,12 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "RenderWide";
-      private cut: ImageEditor;
+      private container: HTMLDivElement;
       public async execute() {
         // Execute
-        this.cut = ImageEditor.create(wideImage);
-        document.body.append(this.cut.body);
+        let cut = ImageEditor.create(wideImage);
+        this.container = E.div({}, cut.body);
+        document.body.append(this.container);
 
         // Verify
         await asyncAssertScreenshot(
@@ -27,18 +29,17 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        if (this.cut) {
-          this.cut.body.remove();
-        }
+        this.container.remove();
       }
     })(),
     new (class implements TestCase {
       public name = "RenderTall";
-      private cut: ImageEditor;
+      private container: HTMLDivElement;
       public async execute() {
         // Execute
-        this.cut = await ImageEditor.create(tallImage);
-        document.body.append(this.cut.body);
+        let cut = await ImageEditor.create(tallImage);
+        this.container = E.div({}, cut.body);
+        document.body.append(this.container);
 
         // Verify
         await asyncAssertScreenshot(
@@ -49,9 +50,7 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        if (this.cut) {
-          this.cut.body.remove();
-        }
+        this.container.remove();
       }
     })(),
   ],

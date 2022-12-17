@@ -3,8 +3,7 @@ import { FillButton, OutlineButton } from "../../common/button";
 import { SCHEME } from "../../common/color_scheme";
 import { createPlusIcon } from "../../common/icons";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
-import { OptionButton } from "../../common/option_button";
-import { newCreatePostServiceRequest } from "../../common/post_life_cycle_client_requests";
+import { newCreateTaleServiceRequest } from "../../common/tale_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
 import { MARGIN } from "./constants";
 import { QuickLayoutEditor } from "./quick_layout_editor/container";
@@ -13,10 +12,9 @@ import { E } from "@selfage/element/factory";
 import { Ref, assign } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
-export class WritePostPage {
-  private static OPTION_BUTTON_CUSTOM_STYLE = `box-sizing: border-box; width: 25rem; padding: 1.5rem 1rem; text-align: center; font-size: 1.6rem; line-height: 1.8rem; border: .1rem solid; border-radius: 1rem; cursor: pointer;`;
-
-  public body: HTMLDivElement;
+export class WriteTalePage {
+  public bodies: Array<HTMLDivElement>;
+  private body: HTMLDivElement;
   private tags = new Array<NormalTag>();
   private tagsContainer: HTMLDivElement;
   private tagInput: HTMLInputElement;
@@ -32,11 +30,6 @@ export class WritePostPage {
     private submitButton: FillButton,
     private webServiceClient: WebServiceClient
   ) {
-    let quickOptionRef = new Ref<OptionButton>();
-    let imageSeriesOptionRef = new Ref<OptionButton>();
-    let longVideoOptionRef = new Ref<OptionButton>();
-    let audioOptionRef = new Ref<OptionButton>();
-    let textImageInterleavedOptionRef = new Ref<OptionButton>();
     let tagsContainerRef = new Ref<HTMLDivElement>();
     let tagInputRef = new Ref<HTMLInputElement>();
     let addTagButtonRef = new Ref<HTMLDivElement>();
@@ -54,59 +47,6 @@ export class WritePostPage {
           class: "write-post-card",
           style: `display: flex; flex-flow: column nowrap; box-sizing: border-box; width: 100%; max-width: 100rem; gap: ${MARGIN}; padding: ${MARGIN} ${MARGIN} 10rem ${MARGIN};`,
         },
-        E.div(
-          {
-            class: "write-post-choose-layout-label",
-            style: `font-size: 1.4rem; color: ${SCHEME.neutral0};`,
-          },
-          E.text(LOCALIZED_TEXT.chooseLayoutLabel)
-        ),
-        E.div(
-          {
-            class: "write-post-choose-layout",
-            style: `display: flex; flex-flow: row wrap; width: 100%; gap: ${MARGIN};`,
-          },
-          assign(
-            quickOptionRef,
-            OptionButton.create(
-              true,
-              WritePostPage.OPTION_BUTTON_CUSTOM_STYLE,
-              E.text(LOCALIZED_TEXT.quickLayoutOption)
-            )
-          ).body,
-          assign(
-            imageSeriesOptionRef,
-            OptionButton.create(
-              false,
-              WritePostPage.OPTION_BUTTON_CUSTOM_STYLE,
-              E.text(LOCALIZED_TEXT.imageSeriesOption)
-            )
-          ).body,
-          assign(
-            longVideoOptionRef,
-            OptionButton.create(
-              false,
-              WritePostPage.OPTION_BUTTON_CUSTOM_STYLE,
-              E.text(LOCALIZED_TEXT.longVideoOption)
-            )
-          ).body,
-          assign(
-            audioOptionRef,
-            OptionButton.create(
-              false,
-              WritePostPage.OPTION_BUTTON_CUSTOM_STYLE,
-              E.text(LOCALIZED_TEXT.audioOption)
-            )
-          ).body,
-          assign(
-            textImageInterleavedOptionRef,
-            OptionButton.create(
-              false,
-              WritePostPage.OPTION_BUTTON_CUSTOM_STYLE,
-              E.text(LOCALIZED_TEXT.textImageInterleavedOption)
-            )
-          ).body
-        ),
         ...quickLayoutEditor.bodies,
         E.div(
           {
@@ -195,8 +135,9 @@ export class WritePostPage {
     this.warningTagSpoiler = warningTagSpoilerRef.val;
     this.warningTagGross = warningTagGrossRef.val;
     this.submitStatus = submitStatusRef.val;
-    this.hide();
+    this.bodies = [this.body];
 
+    this.hide();
     this.quickLayoutEditor.on("valid", () => this.enableButtons());
     this.quickLayoutEditor.on("invalid", () => this.disableButtons());
     this.tagInput.addEventListener("keydown", (event) =>
@@ -207,8 +148,8 @@ export class WritePostPage {
     this.submitButton.on("afterClick", (e) => this.afterSubmitPost(e));
   }
 
-  public static create(): WritePostPage {
-    return new WritePostPage(
+  public static create(): WriteTalePage {
+    return new WriteTalePage(
       QuickLayoutEditor.create(),
       OutlineButton.create(
         false,
@@ -269,9 +210,9 @@ export class WritePostPage {
       warningTags.push(this.warningTagGross.warningTagType);
     }
     await this.webServiceClient.send(
-      newCreatePostServiceRequest({
+      newCreateTaleServiceRequest({
         body: {
-          quickLayoutPost: {
+          quickLayoutTale: {
             text: this.quickLayoutEditor.textInput.value,
             images: this.quickLayoutEditor.imageEditors.map(
               (imageEditor) => imageEditor.imageUrl
