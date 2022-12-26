@@ -55,6 +55,15 @@ export class LightScheme {
   get error0() {
     return RED_50;
   }
+  get heart() {
+    return RED_50;
+  }
+  get thumbUp() {
+    return BLUE_50;
+  }
+  get anger() {
+    return RED_50;
+  }
 }
 
 export let SCHEME: LightScheme = new LightScheme();

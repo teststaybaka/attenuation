@@ -42,7 +42,7 @@ export default class Text {
     return `Write a post`;
   }
   get refreshPostsLabel() {
-    return `Refresh with new posts`;
+    return `Shuffle`;
   }
   get accountLabel() {
     return `Account`;
@@ -139,5 +139,11 @@ export default class Text {
   }
   get submitPostSuccess() {
     return `Successfully submitted your post!`;
+  }
+  get showMoreButtonLabel() {
+    return `Read more`;
+  }
+  get showLessButtonLabel() {
+    return `Show less`;
   }
 }

@@ -4,7 +4,9 @@ export enum TaleReaction {
   UNKNOWN = 0,
   LIKE = 1,
   DISLIKE = 2,
-  DISMISS = 3,
+  LOVE = 3,
+  HATE = 4,
+  DISMISS = 5,
 }
 
 export let TALE_REACTION: EnumDescriptor<TaleReaction> = {
@@ -23,8 +25,16 @@ export let TALE_REACTION: EnumDescriptor<TaleReaction> = {
       value: 2,
     },
     {
-      name: 'DISMISS',
+      name: 'LOVE',
       value: 3,
+    },
+    {
+      name: 'HATE',
+      value: 4,
+    },
+    {
+      name: 'DISMISS',
+      value: 5,
     },
   ]
 }

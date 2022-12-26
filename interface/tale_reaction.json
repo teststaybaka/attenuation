@@ -11,8 +11,14 @@
       "name": "DISLIKE",
       "value": 2
     }, {
-      "name": "DISMISS",
+      "name": "LOVE",
       "value": 3
+    }, {
+      "name": "HATE",
+      "value": 4
+    }, {
+      "name": "DISMISS",
+      "value": 5
     }]
   }
 }]
