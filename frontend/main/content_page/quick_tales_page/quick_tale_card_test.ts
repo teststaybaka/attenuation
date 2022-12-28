@@ -4,6 +4,7 @@ import userImage = require("./test_data/user_image.jpg");
 import wideImage = require("./test_data/wide.png");
 import { TaleReaction } from "../../../../interface/tale_reaction";
 import { REACT_TO_TALE_REQUEST_BODY } from "../../../../interface/tale_service";
+import { IconButton } from "../../common/icon_button";
 import { normalizeBody } from "../../common/normalize_body";
 import { QuickTaleCard } from "./quick_tale_card";
 import { E } from "@selfage/element/factory";
@@ -28,27 +29,23 @@ class RenderCase implements TestCase {
   ) {}
   public async execute() {
     // Prepare
-    let cut = new QuickTaleCard(
-      {
-        avatarSmallPath: userImage,
-        username: "some-name",
-        userNatureName: "Some Name",
-        createdTimestamp: Date.parse("2022-10-11"),
-        quickLayoutTale: {
-          text: this.text,
-          images: this.images,
-        },
+    let cut = new QuickTaleCard(undefined, undefined, {
+      avatarSmallPath: userImage,
+      username: "some-name",
+      userNatureName: "Some Name",
+      createdTimestamp: Date.parse("2022-10-11"),
+      quickLayoutTale: {
+        text: this.text,
+        images: this.images,
       },
-      undefined,
-      undefined
-    );
+    });
     this.container = E.div({}, cut.body);
     document.body.style.width = "800px";
 
     // Execute
     document.body.appendChild(this.container);
     if (this.images.length > 0) {
-      await new Promise<void>((resolve) => cut.once("load", resolve));
+      await new Promise<void>((resolve) => cut.once("imagesLoaded", resolve));
     }
 
     // Verify
@@ -68,7 +65,7 @@ class ReactionAndDeleteCase implements TestCase {
   private container: HTMLDivElement;
   public constructor(
     public name: string,
-    private buttonSelector: string,
+    private getReactionButtonFn: (cut: QuickTaleCard) => IconButton,
     private reaction: TaleReaction
   ) {}
   public async execute() {
@@ -85,37 +82,27 @@ class ReactionAndDeleteCase implements TestCase {
         return 0;
       }
     })();
-    let cut = new QuickTaleCard(
-      {
-        taleId: "id1",
-        avatarSmallPath: userImage,
-        username: "some-name",
-        userNatureName: "Some Name",
-        createdTimestamp: Date.parse("2022-10-11"),
-        quickLayoutTale: {
-          text: "blahblahblahblah\nsomethingsomething",
-        },
+    let cut = new QuickTaleCard(webServiceClientMock, windowMock as any, {
+      taleId: "id1",
+      avatarSmallPath: userImage,
+      username: "some-name",
+      userNatureName: "Some Name",
+      createdTimestamp: Date.parse("2022-10-11"),
+      quickLayoutTale: {
+        text: "blahblahblahblah\nsomethingsomething",
       },
-      webServiceClientMock,
-      windowMock as any
-    );
+    });
     this.container = E.div({}, cut.body);
-    let actionsExpandButton = this.container.querySelector(
-      ".quick-tale-card-actions-expand-button"
-    ) as HTMLDivElement;
-    let reactionButton = this.container.querySelector(
-      this.buttonSelector
-    ) as HTMLDivElement;
     document.body.style.width = "800px";
     document.body.appendChild(this.container);
     document.body.clientHeight; // Force reflow
     // Expand actions
-    actionsExpandButton.click();
+    cut.actionsExpandButton.click();
     await new Promise<void>((resolve) =>
-      cut.once("actionsLineTranstionEnd", resolve)
+      cut.once("actionsLineTranstionEnded", resolve)
     );
     // Reacting
-    reactionButton.click();
+    this.getReactionButtonFn(cut).click();
 
     // Prepare
     let requestCaptured: any;
@@ -126,7 +113,7 @@ class ReactionAndDeleteCase implements TestCase {
 
     // Execute
     windowMock.callback();
-    await new Promise<void>((resolve) => cut.once("delete", resolve));
+    await new Promise<void>((resolve) => cut.once("deleted", resolve));
 
     // Verify
     assertThat(
@@ -148,8 +135,8 @@ class UndoReactionCase implements TestCase {
   private container: HTMLDivElement;
   public constructor(
     public name: string,
-    private buttonSelector: string,
-    private undoButtonSelector: string,
+    private getReactionButtonFn: (cut: QuickTaleCard) => IconButton,
+    private getUndoReactionButtonFn: (cut: QuickTaleCard) => IconButton,
     private screenshotPath: string,
     private screenshotBaselinePath: string,
     private screenshotDiffPath: string
@@ -167,43 +154,30 @@ class UndoReactionCase implements TestCase {
         this.clearedTimeoutHandler = timeoutHandle;
       }
     })();
-    let cut = new QuickTaleCard(
-      {
-        taleId: "id1",
-        avatarSmallPath: userImage,
-        username: "some-name",
-        userNatureName: "Some Name",
-        createdTimestamp: Date.parse("2022-10-11"),
-        quickLayoutTale: {
-          text: "blahblahblahblah\nsomethingsomething",
-        },
+    let cut = new QuickTaleCard(undefined, windowMock as any, {
+      taleId: "id1",
+      avatarSmallPath: userImage,
+      username: "some-name",
+      userNatureName: "Some Name",
+      createdTimestamp: Date.parse("2022-10-11"),
+      quickLayoutTale: {
+        text: "blahblahblahblah\nsomethingsomething",
       },
-      undefined,
-      windowMock as any
-    );
+    });
     this.container = E.div({}, cut.body);
-    let actionsExpandButton = this.container.querySelector(
-      ".quick-tale-card-actions-expand-button"
-    ) as HTMLDivElement;
-    let reactionButton = this.container.querySelector(
-      this.buttonSelector
-    ) as HTMLDivElement;
-    let undoReactionButton = this.container.querySelector(
-      this.undoButtonSelector
-    ) as HTMLDivElement;
     document.body.style.width = "800px";
     document.body.appendChild(this.container);
     document.body.clientHeight; // Force reflow
     // Expand actions
-    actionsExpandButton.click();
+    cut.actionsExpandButton.click();
     await new Promise<void>((resolve) =>
-      cut.once("actionsLineTranstionEnd", resolve)
+      cut.once("actionsLineTranstionEnded", resolve)
     );
     await puppeteerScreenshot(this.screenshotBaselinePath, { fullPage: true });
-    reactionButton.click();
+    this.getReactionButtonFn(cut).click();
 
     // Execute
-    undoReactionButton.click();
+    this.getUndoReactionButtonFn(cut).click();
 
     // Verify
     assertThat(windowMock.clearedTimeoutHandler, eq(1), "cleared");
@@ -260,22 +234,18 @@ TEST_RUNNER.run({
       public name = "ViewOneImage";
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(
-          {
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              images: [smallImage],
-            },
+        let cut = new QuickTaleCard(undefined, undefined, {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            images: [smallImage],
           },
-          undefined,
-          undefined
-        );
+        });
         let imageUrlsCaptured: Array<string>;
         let indexCaptured: number;
-        cut.on("imageViewer", (imageUrls, index) => {
+        cut.on("viewImages", (imageUrls, index) => {
           imageUrlsCaptured = imageUrls;
           indexCaptured = index;
         });
@@ -293,22 +263,18 @@ TEST_RUNNER.run({
       public name = "ViewImages";
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(
-          {
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              images: [smallImage, tallImage, wideImage],
-            },
+        let cut = new QuickTaleCard(undefined, undefined, {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            images: [smallImage, tallImage, wideImage],
           },
-          undefined,
-          undefined
-        );
+        });
         let imageUrlsCaptured: Array<string>;
         let indexCaptured: number;
-        cut.on("imageViewer", (imageUrls, index) => {
+        cut.on("viewImages", (imageUrls, index) => {
           imageUrlsCaptured = imageUrls;
           indexCaptured = index;
         });
@@ -362,26 +328,16 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(
-          {
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              text: "hahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\n",
-            },
+        let cut = new QuickTaleCard(undefined, undefined, {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            text: "hahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\n",
           },
-          undefined,
-          undefined
-        );
+        });
         this.container = E.div({}, cut.body);
-        let showMoreButton = this.container.querySelector(
-          ".quick-tale-card-text-content-show-more-button"
-        ) as HTMLDivElement;
-        let showLessButton = this.container.querySelector(
-          ".quick-tale-card-text-content-show-less-button"
-        ) as HTMLDivElement;
         document.body.style.width = "800px";
 
         // Execute
@@ -396,7 +352,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        showMoreButton.click();
+        cut.showMoreButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -407,7 +363,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        showLessButton.click();
+        cut.showLessButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -426,26 +382,16 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(
-          {
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              text: "blahblahblahblah\nsomethingsomething",
-            },
+        let cut = new QuickTaleCard(undefined, undefined, {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            text: "blahblahblahblah\nsomethingsomething",
           },
-          undefined,
-          undefined
-        );
+        });
         this.container = E.div({}, cut.body);
-        let actionsExpandButton = this.container.querySelector(
-          ".quick-tale-card-actions-expand-button"
-        ) as HTMLDivElement;
-        let collapseButton = this.container.querySelector(
-          ".quick-tale-card-collapse-button"
-        ) as HTMLDivElement;
         document.body.style.width = "800px";
         document.body.appendChild(this.container);
         await puppeteerScreenshot(
@@ -454,9 +400,9 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        actionsExpandButton.click();
+        cut.actionsExpandButton.click();
         await new Promise<void>((resolve) => {
-          cut.once("actionsLineTranstionEnd", resolve);
+          cut.once("actionsLineTranstionEnded", resolve);
         });
 
         // Verify
@@ -468,9 +414,9 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        collapseButton.click();
+        cut.actionsCollapseButton.click();
         await new Promise<void>((resolve) => {
-          cut.once("actionsLineTranstionEnd", resolve);
+          cut.once("actionsLineTranstionEnded", resolve);
         });
 
         // Verify
@@ -504,45 +450,26 @@ TEST_RUNNER.run({
             this.clearedTimeoutHandler = timeoutHandle;
           }
         })();
-        let cut = new QuickTaleCard(
-          {
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              text: "blahblahblahblah\nsomethingsomething",
-            },
+        let cut = new QuickTaleCard(undefined, windowMock as any, {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            text: "blahblahblahblah\nsomethingsomething",
           },
-          undefined,
-          windowMock as any
-        );
+        });
         this.container = E.div({}, cut.body);
-        let actionsExpandButton = this.container.querySelector(
-          ".quick-tale-card-actions-expand-button"
-        ) as HTMLDivElement;
-        let loveButton = this.container.querySelector(
-          ".quick-tale-card-love-button"
-        ) as HTMLDivElement;
-        let likeButton = this.container.querySelector(
-          ".quick-tale-card-like-button"
-        ) as HTMLDivElement;
-        let dislikeButton = this.container.querySelector(
-          ".quick-tale-card-dislike-button"
-        ) as HTMLDivElement;
-        let hateButton = this.container.querySelector(
-          ".quick-tale-card-hate-button"
-        ) as HTMLDivElement;
         document.body.style.width = "800px";
         document.body.appendChild(this.container);
         document.body.clientHeight; // Force reflow.
-        actionsExpandButton.click();
+        cut.actionsExpandButton.click();
         await new Promise<void>((resolve) =>
-          cut.once("actionsLineTranstionEnd", resolve)
+          cut.once("actionsLineTranstionEnded", resolve)
         );
 
         // Execute
-        loveButton.click();
+        cut.loveButton.click();
 
         // Verify
         assertThat(windowMock.timeoutHandle, eq(1), "love");
@@ -554,7 +481,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        likeButton.click();
+        cut.likeButton.click();
 
         // Verify
         assertThat(windowMock.clearedTimeoutHandler, eq(1), "cleared love");
@@ -566,7 +493,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        dislikeButton.click();
+        cut.dislikeButton.click();
 
         // Verify
         assertThat(windowMock.clearedTimeoutHandler, eq(2), "cleared liked");
@@ -578,7 +505,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        hateButton.click();
+        cut.hateButton.click();
 
         // Verify
         assertThat(windowMock.clearedTimeoutHandler, eq(3), "cleared disliked");
@@ -590,7 +517,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        loveButton.click();
+        cut.loveButton.click();
 
         // Verify
         assertThat(windowMock.clearedTimeoutHandler, eq(4), "cleared hated");
@@ -607,54 +534,54 @@ TEST_RUNNER.run({
     })(),
     new UndoReactionCase(
       "UndoLove",
-      ".quick-tale-card-love-button",
-      ".quick-tale-card-loved-button",
+      (cut) => cut.loveButton,
+      (cut) => cut.lovedButton,
       __dirname + "/quick_tale_card_undo_love.png",
       __dirname + "/quick_tale_card_undo_love_baseline.png",
       __dirname + "/quick_tale_card_undo_love_diff.png"
     ),
     new UndoReactionCase(
       "UndoLike",
-      ".quick-tale-card-like-button",
-      ".quick-tale-card-liked-button",
+      (cut) => cut.likeButton,
+      (cut) => cut.likedButton,
       __dirname + "/quick_tale_card_undo_like.png",
       __dirname + "/quick_tale_card_undo_like_baseline.png",
       __dirname + "/quick_tale_card_undo_like_diff.png"
     ),
     new UndoReactionCase(
       "UndoDislike",
-      ".quick-tale-card-dislike-button",
-      ".quick-tale-card-disliked-button",
+      (cut) => cut.dislikeButton,
+      (cut) => cut.dislikedButton,
       __dirname + "/quick_tale_card_undo_dislike.png",
       __dirname + "/quick_tale_card_undo_dislike_baseline.png",
       __dirname + "/quick_tale_card_undo_dislike_diff.png"
     ),
     new UndoReactionCase(
       "UndoHate",
-      ".quick-tale-card-hate-button",
-      ".quick-tale-card-hated-button",
+      (cut) => cut.hateButton,
+      (cut) => cut.hatedButton,
       __dirname + "/quick_tale_card_undo_hate.png",
       __dirname + "/quick_tale_card_undo_hate_baseline.png",
       __dirname + "/quick_tale_card_undo_hate_diff.png"
     ),
     new ReactionAndDeleteCase(
       "LoveAndDelete",
-      ".quick-tale-card-love-button",
+      (cut) => cut.loveButton,
       TaleReaction.LOVE
     ),
     new ReactionAndDeleteCase(
       "LikeAndDelete",
-      ".quick-tale-card-like-button",
+      (cut) => cut.likeButton,
       TaleReaction.LIKE
     ),
     new ReactionAndDeleteCase(
       "DislikeAndDelete",
-      ".quick-tale-card-dislike-button",
+      (cut) => cut.dislikeButton,
       TaleReaction.DISLIKE
     ),
     new ReactionAndDeleteCase(
       "HateAndDelete",
-      ".quick-tale-card-hate-button",
+      (cut) => cut.hateButton,
       TaleReaction.HATE
     ),
     new (class implements TestCase {
@@ -667,34 +594,24 @@ TEST_RUNNER.run({
             super(undefined, undefined);
           }
         })();
-        let cut = new QuickTaleCard(
-          {
-            taleId: "id1",
-            avatarSmallPath: userImage,
-            username: "some-name",
-            userNatureName: "Some Name",
-            createdTimestamp: Date.parse("2022-10-11"),
-            quickLayoutTale: {
-              text: "blahblahblahblah\nsomethingsomething",
-            },
+        let cut = new QuickTaleCard(webServiceClientMock, undefined, {
+          taleId: "id1",
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+          quickLayoutTale: {
+            text: "blahblahblahblah\nsomethingsomething",
           },
-          webServiceClientMock,
-          undefined
-        );
+        });
         this.container = E.div({}, cut.body);
-        let actionsExpandButton = this.container.querySelector(
-          ".quick-tale-card-actions-expand-button"
-        ) as HTMLDivElement;
-        let dismissButton = this.container.querySelector(
-          ".quick-tale-card-dismiss-button"
-        ) as HTMLDivElement;
         document.body.style.width = "800px";
         document.body.appendChild(this.container);
         document.body.clientHeight; // Force reflow.
         // Expand actions.
-        actionsExpandButton.click();
+        cut.actionsExpandButton.click();
         await new Promise<void>((resolve) =>
-          cut.once("actionsLineTranstionEnd", resolve)
+          cut.once("actionsLineTranstionEnded", resolve)
         );
         let requestCaptured: any;
         webServiceClientMock.send = (request) => {
@@ -703,8 +620,8 @@ TEST_RUNNER.run({
         };
 
         // Execute
-        dismissButton.click();
-        await new Promise<void>((resolve) => cut.once("delete", resolve));
+        cut.dismissButton.click();
+        await new Promise<void>((resolve) => cut.once("deleted", resolve));
 
         // Verify
         assertThat(

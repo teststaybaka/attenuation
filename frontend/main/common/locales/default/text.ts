@@ -146,4 +146,37 @@ export default class Text {
   get showLessButtonLabel() {
     return `Show less`;
   }
+  get actionsExpandLabel() {
+    return `Show actions`;
+  }
+  get actionsCollapseLabel() {
+    return `Collapse actions`;
+  }
+  get loveTaleLabel() {
+    return `Love`;
+  }
+  get undoLoveTaleLabel() {
+    return `Undo love`;
+  }
+  get likeTaleLabel() {
+    return `Like`;
+  }
+  get undoLikeTaleLabel() {
+    return `Undo like`;
+  }
+  get dislikeTaleLabel() {
+    return `Dislike`;
+  }
+  get undoDislikeTaleLabel() {
+    return `Undo dislike`;
+  }
+  get hateTaleLabel() {
+    return `Hate`;
+  }
+  get undoHateTaleLabel() {
+    return `Undo hate`;
+  }
+  get dismissTaleLabel() {
+    return `Dismiss`;
+  }
 }

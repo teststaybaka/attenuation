@@ -4,6 +4,7 @@ import { TaleReaction } from "../../../../interface/tale_reaction";
 import { AT_USER } from "../../common/at_user";
 import { AvatarUrlComposer } from "../../common/avatar_url_composer";
 import { SCHEME } from "../../common/color_scheme";
+import { IconButton, TooltipPosition } from "../../common/icon_button";
 import {
   createAngerIcon,
   createDoubleArrowsIcon,
@@ -18,19 +19,19 @@ import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { newReactToTaleServiceRequest } from "../../common/tale_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
 import { E } from "@selfage/element/factory";
-import { Ref } from "@selfage/ref";
+import { Ref, assign } from "@selfage/ref";
 import { TabsSwitcher } from "@selfage/tabs";
 import { WebServiceClient } from "@selfage/web_service_client";
 
 export interface QuickTaleCard {
-  on(event: "load", listener: () => void): this;
-  on(event: "asContext", listener: (taleId: string) => void): this;
+  on(event: "imagesLoaded", listener: () => void): this;
+  on(event: "pin", listener: (taleId: string) => void): this;
   on(
-    event: "imageViewer",
+    event: "viewImages",
     listener: (imageUrls: Array<string>, index: number) => void
   ): this;
-  on(event: "actionsLineTranstionEnd", listener: () => void): this;
-  on(event: "delete", listener: () => void): this;
+  on(event: "actionsLineTranstionEnded", listener: () => void): this;
+  on(event: "deleted", listener: () => void): this;
 }
 
 export class QuickTaleCard extends EventEmitter {
@@ -38,30 +39,32 @@ export class QuickTaleCard extends EventEmitter {
   private static ACTION_BUTTON_SIZE = 5;
   private static DELETE_DELAY = 1000; // ms
 
+  // Visible for testing
+  public showMoreButton: HTMLDivElement;
+  public showLessButton: HTMLDivElement;
+  public actionsExpandButton: IconButton;
+  public actionsCollapseButton: IconButton;
+  public loveButton: IconButton;
+  public lovedButton: IconButton;
+  public likeButton: IconButton;
+  public likedButton: IconButton;
+  public dislikeButton: IconButton;
+  public dislikedButton: IconButton;
+  public hateButton: IconButton;
+  public hatedButton: IconButton;
+  public dismissButton: IconButton;
+
   public body: HTMLDivElement;
   private textContent: HTMLDivElement;
-  private showMoreButton: HTMLDivElement;
-  private showLessButton: HTMLDivElement;
-  private actionsExpandButton: HTMLDivElement;
   private actionsLine: HTMLDivElement;
-  private actionsCollapseButton: HTMLDivElement;
-  private loveButton: HTMLDivElement;
-  private lovedButton: HTMLDivElement;
-  private likeButton: HTMLDivElement;
-  private likedButton: HTMLDivElement;
-  private dislikeButton: HTMLDivElement;
-  private dislikedButton: HTMLDivElement;
-  private hateButton: HTMLDivElement;
-  private hatedButton: HTMLDivElement;
-  private dismissButton: HTMLDivElement;
   private reaction: TaleReaction;
   private timeoutHandle: number;
   private switcher = new TabsSwitcher();
 
   public constructor(
-    private taleCard: TaleCard,
     private webServiceClient: WebServiceClient,
-    private window: Window
+    private window: Window,
+    private taleCard: TaleCard
   ) {
     super();
     let dateFormatter = new Intl.DateTimeFormat(navigator.language, {
@@ -72,18 +75,18 @@ export class QuickTaleCard extends EventEmitter {
       minute: "numeric",
     });
 
-    let actionsExpandButtonRef = new Ref<HTMLDivElement>();
+    let actionsExpandButtonRef = new Ref<IconButton>();
     let actionsLineRef = new Ref<HTMLDivElement>();
-    let actionsCollapseButtonRef = new Ref<HTMLDivElement>();
-    let loveButtonRef = new Ref<HTMLDivElement>();
-    let lovedButtonRef = new Ref<HTMLDivElement>();
-    let likeButtonRef = new Ref<HTMLDivElement>();
-    let likedButtonRef = new Ref<HTMLDivElement>();
-    let dislikeButtonRef = new Ref<HTMLDivElement>();
-    let dislikedButtonRef = new Ref<HTMLDivElement>();
-    let hateButtonRef = new Ref<HTMLDivElement>();
-    let hatedButtonRef = new Ref<HTMLDivElement>();
-    let dismissButtonRef = new Ref<HTMLDivElement>();
+    let actionsCollapseButtonRef = new Ref<IconButton>();
+    let loveButtonRef = new Ref<IconButton>();
+    let lovedButtonRef = new Ref<IconButton>();
+    let likeButtonRef = new Ref<IconButton>();
+    let likedButtonRef = new Ref<IconButton>();
+    let dislikeButtonRef = new Ref<IconButton>();
+    let dislikedButtonRef = new Ref<IconButton>();
+    let hateButtonRef = new Ref<IconButton>();
+    let hatedButtonRef = new Ref<IconButton>();
+    let dismissButtonRef = new Ref<IconButton>();
     this.body = E.div(
       {
         class: "quick-tale-card",
@@ -128,100 +131,122 @@ export class QuickTaleCard extends EventEmitter {
           },
           E.text(dateFormatter.format(new Date(taleCard.createdTimestamp)))
         ),
-        E.divRef(
+        assign(
           actionsExpandButtonRef,
-          {
-            class: "quick-tale-card-actions-expand-button",
-            style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1rem;`,
-          },
-          createEllipsisIcon(SCHEME.neutral2)
-        ),
+          IconButton.create(
+            `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1rem;`,
+            createEllipsisIcon(SCHEME.neutral2),
+            TooltipPosition.TOP,
+            LOCALIZED_TEXT.actionsExpandLabel,
+            true
+          )
+        ).body,
         E.divRef(
           actionsLineRef,
           {
             class: "quick-tale-card-actions-line",
             style: `position: absolute; height: 100%; background-color: ${SCHEME.neutral4}; right: 0; top: 0; transition: width .3s linear; overflow: hidden; display: flex; flex-flow: row-reverse nowrap; justify-content: space-between; align-items: center;`,
           },
-          E.divRef(
+          assign(
             actionsCollapseButtonRef,
-            {
-              class: "quick-tale-card-collapse-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.7rem; rotate: 180deg;`,
-            },
-            createDoubleArrowsIcon(SCHEME.neutral2)
-          ),
-          E.divRef(
+            IconButton.create(
+              `position: relative; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 180deg;`,
+              createDoubleArrowsIcon(SCHEME.neutral2),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.actionsCollapseLabel,
+              true
+            )
+          ).body,
+          assign(
             loveButtonRef,
-            {
-              class: "quick-tale-card-love-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
-            },
-            createHeartIcon(SCHEME.neutral1)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              createHeartIcon(SCHEME.neutral1),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.loveTaleLabel,
+              true
+            )
+          ).body,
+          assign(
             lovedButtonRef,
-            {
-              class: "quick-tale-card-loved-button",
-              style: `display: none; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
-            },
-            createFilledHeartIcon(SCHEME.heart)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              createFilledHeartIcon(SCHEME.heart),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.undoLoveTaleLabel,
+              false
+            )
+          ).body,
+          assign(
             likeButtonRef,
-            {
-              class: "quick-tale-card-like-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
-            },
-            createThumbUpIcon(SCHEME.neutral1)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              createThumbUpIcon(SCHEME.neutral1),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.likeTaleLabel,
+              true
+            )
+          ).body,
+          assign(
             likedButtonRef,
-            {
-              class: "quick-tale-card-liked-button",
-              style: `display: none; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
-            },
-            createFilledThumbUpIcon(SCHEME.thumbUp)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              createFilledThumbUpIcon(SCHEME.thumbUp),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.undoLikeTaleLabel,
+              false
+            )
+          ).body,
+          assign(
             dislikeButtonRef,
-            {
-              class: "quick-tale-card-dislike-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; rotate: 180deg;`,
-            },
-            createThumbUpIcon(SCHEME.neutral1)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; rotate: 180deg;`,
+              createThumbUpIcon(SCHEME.neutral1),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.dislikeTaleLabel,
+              true
+            )
+          ).body,
+          assign(
             dislikedButtonRef,
-            {
-              class: "quick-tale-card-disliked-button",
-              style: `display: none; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; rotate: 180deg;`,
-            },
-            createFilledThumbUpIcon(SCHEME.thumbUp)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; rotate: 180deg;`,
+              createFilledThumbUpIcon(SCHEME.thumbUp),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.undoDislikeTaleLabel,
+              false
+            )
+          ).body,
+          assign(
             hateButtonRef,
-            {
-              class: "quick-tale-card-hate-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
-            },
-            createAngerIcon(SCHEME.neutral1)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              createAngerIcon(SCHEME.neutral1),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.hateTaleLabel,
+              true
+            )
+          ).body,
+          assign(
             hatedButtonRef,
-            {
-              class: "quick-tale-card-hated-button",
-              style: `display: none; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
-            },
-            createAngerIcon(SCHEME.anger)
-          ),
-          E.divRef(
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              createAngerIcon(SCHEME.anger),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.undoHateTaleLabel,
+              false
+            )
+          ).body,
+          assign(
             dismissButtonRef,
-            {
-              class: "quick-tale-card-dismiss-button",
-              style: `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 45deg;`,
-            },
-            createPlusIcon(SCHEME.neutral2)
-          )
+            IconButton.create(
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 45deg;`,
+              createPlusIcon(SCHEME.neutral2),
+              TooltipPosition.TOP,
+              LOCALIZED_TEXT.dismissTaleLabel,
+              true
+            )
+          ).body
         )
       )
     );
@@ -239,31 +264,27 @@ export class QuickTaleCard extends EventEmitter {
     this.dismissButton = dismissButtonRef.val;
 
     this.hideActions();
-    this.actionsExpandButton.addEventListener("click", () =>
-      this.showActions()
-    );
-    this.actionsCollapseButton.addEventListener("click", () =>
-      this.hideActions()
-    );
+    this.actionsExpandButton.on("action", () => this.showActions());
+    this.actionsCollapseButton.on("action", () => this.hideActions());
     this.actionsLine.addEventListener("transitionend", () =>
-      this.emit("actionsLineTranstionEnd")
+      this.emit("actionsLineTranstionEnded")
     );
-    this.loveButton.addEventListener("click", this.love);
-    this.lovedButton.addEventListener("click", this.unlove);
-    this.likeButton.addEventListener("click", this.like);
-    this.likedButton.addEventListener("click", this.unlike);
-    this.dislikeButton.addEventListener("click", this.dislike);
-    this.dislikedButton.addEventListener("click", this.undislike);
-    this.hateButton.addEventListener("click", this.hate);
-    this.hatedButton.addEventListener("click", this.unhate);
-    this.dismissButton.addEventListener("click", this.dismiss);
+    this.loveButton.on("action", this.love);
+    this.lovedButton.on("action", this.unlove);
+    this.likeButton.on("action", this.like);
+    this.likedButton.on("action", this.unlike);
+    this.dislikeButton.on("action", this.dislike);
+    this.dislikedButton.on("action", this.undislike);
+    this.hateButton.on("action", this.hate);
+    this.hatedButton.on("action", this.unhate);
+    this.dismissButton.on("action", this.dismiss);
     this.body.addEventListener("click", () =>
-      this.emit("asContext", taleCard.taleId)
+      this.emit("pin", taleCard.taleId)
     );
   }
 
   public static create(taleCard: TaleCard): QuickTaleCard {
-    return new QuickTaleCard(taleCard, WEB_SERVICE_CLIENT, window);
+    return new QuickTaleCard(WEB_SERVICE_CLIENT, window, taleCard);
   }
 
   private createTextContent(text?: string): Array<HTMLElement> {
@@ -354,7 +375,9 @@ export class QuickTaleCard extends EventEmitter {
       return [];
     } else if (imageUrls.length === 1) {
       return [
-        this.createSinglePreviewImage(imageUrls[0], () => this.emit("load")),
+        this.createSinglePreviewImage(imageUrls[0], () =>
+          this.emit("imagesLoaded")
+        ),
       ];
     } else {
       let loadedCount = 0;
@@ -368,7 +391,7 @@ export class QuickTaleCard extends EventEmitter {
             this.createTilePreviewImage(imageUrl, index, imageUrls, () => {
               loadedCount += 1;
               if (loadedCount >= imageUrls.length) {
-                this.emit("load");
+                this.emit("imagesLoaded");
               }
             })
           )
@@ -395,7 +418,7 @@ export class QuickTaleCard extends EventEmitter {
       onload();
     };
     imageElement.addEventListener("click", () =>
-      this.emit("imageViewer", [imageUrl], 0)
+      this.emit("viewImages", [imageUrl], 0)
     );
     return imageElement;
   }
@@ -428,7 +451,7 @@ export class QuickTaleCard extends EventEmitter {
       onload();
     };
     imageElement.addEventListener("click", () =>
-      this.emit("imageViewer", imageUrls, index)
+      this.emit("viewImages", imageUrls, index)
     );
     return container;
   }
@@ -443,8 +466,8 @@ export class QuickTaleCard extends EventEmitter {
 
   private love = (): void => {
     this.switcher.show(() => {
-      this.loveButton.style.display = "none";
-      this.lovedButton.style.display = "block";
+      this.loveButton.hide();
+      this.lovedButton.show();
       this.reaction = TaleReaction.LOVE;
       this.timeoutHandle = this.window.setTimeout(
         () => this.reactAndDelete(),
@@ -454,8 +477,8 @@ export class QuickTaleCard extends EventEmitter {
   };
 
   private unlove = (): void => {
-    this.loveButton.style.display = "block";
-    this.lovedButton.style.display = "none";
+    this.loveButton.show();
+    this.lovedButton.hide();
     this.stopReacting();
   };
 
@@ -465,15 +488,15 @@ export class QuickTaleCard extends EventEmitter {
   }
 
   private async reactAndDelete(): Promise<void> {
-    this.loveButton.removeEventListener("click", this.love);
-    this.lovedButton.removeEventListener("click", this.unlove);
-    this.likeButton.removeEventListener("click", this.like);
-    this.likedButton.removeEventListener("click", this.unlike);
-    this.dislikeButton.removeEventListener("click", this.dislike);
-    this.dislikedButton.removeEventListener("click", this.undislike);
-    this.hateButton.removeEventListener("click", this.hate);
-    this.hatedButton.removeEventListener("click", this.unhate);
-    this.dismissButton.removeEventListener("click", this.dismiss);
+    this.loveButton.off("click", this.love);
+    this.lovedButton.off("click", this.unlove);
+    this.likeButton.off("click", this.like);
+    this.likedButton.off("click", this.unlike);
+    this.dislikeButton.off("click", this.dislike);
+    this.dislikedButton.off("click", this.undislike);
+    this.hateButton.off("click", this.hate);
+    this.hatedButton.off("click", this.unhate);
+    this.dismissButton.off("click", this.dismiss);
 
     this.body.style.height = `${this.body.clientHeight}px`;
     this.body.clientHeight; // Force reflow.
@@ -495,13 +518,13 @@ export class QuickTaleCard extends EventEmitter {
         })
       ),
     ]);
-    this.emit("delete");
+    this.emit("deleted");
   }
 
   private like = (): void => {
     this.switcher.show(() => {
-      this.likeButton.style.display = "none";
-      this.likedButton.style.display = "block";
+      this.likeButton.hide();
+      this.likedButton.show();
       this.reaction = TaleReaction.LIKE;
       this.timeoutHandle = this.window.setTimeout(
         () => this.reactAndDelete(),
@@ -511,15 +534,15 @@ export class QuickTaleCard extends EventEmitter {
   };
 
   private unlike = (): void => {
-    this.likeButton.style.display = "block";
-    this.likedButton.style.display = "none";
+    this.likeButton.show();
+    this.likedButton.hide();
     this.stopReacting();
   };
 
   private dislike = (): void => {
     this.switcher.show(() => {
-      this.dislikeButton.style.display = "none";
-      this.dislikedButton.style.display = "block";
+      this.dislikeButton.hide();
+      this.dislikedButton.show();
       this.reaction = TaleReaction.DISLIKE;
       this.timeoutHandle = this.window.setTimeout(
         () => this.reactAndDelete(),
@@ -529,15 +552,15 @@ export class QuickTaleCard extends EventEmitter {
   };
 
   private undislike = (): void => {
-    this.dislikeButton.style.display = "block";
-    this.dislikedButton.style.display = "none";
+    this.dislikeButton.show();
+    this.dislikedButton.hide();
     this.stopReacting();
   };
 
   private hate = (): void => {
     this.switcher.show(() => {
-      this.hateButton.style.display = "none";
-      this.hatedButton.style.display = "block";
+      this.hateButton.hide();
+      this.hatedButton.show();
       this.reaction = TaleReaction.HATE;
       this.timeoutHandle = this.window.setTimeout(
         () => this.reactAndDelete(),
@@ -547,8 +570,8 @@ export class QuickTaleCard extends EventEmitter {
   };
 
   private unhate = (): void => {
-    this.hateButton.style.display = "block";
-    this.hatedButton.style.display = "none";
+    this.hateButton.show();
+    this.hatedButton.hide();
     this.stopReacting();
   };
 
