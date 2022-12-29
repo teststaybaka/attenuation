@@ -89,7 +89,7 @@ export class QuickTaleCard extends EventEmitter {
     this.body = E.div(
       {
         class: "quick-tale-card",
-        style: `display: flex; flex-flow: column nowrap; gap: 1rem; width: 60rem; padding: .6rem 1.2rem; border-bottom: .1rem solid ${SCHEME.neutral2}; box-sizing: border-box; overflow: hidden; background-color: ${SCHEME.neutral4}; margin-left: auto; margin-right: auto; cursor: pointer;`,
+        style: `display: flex; flex-flow: column nowrap; gap: 1rem; width: 60rem; padding: .6rem 1.2rem; border-bottom: .1rem solid ${SCHEME.neutral2}; box-sizing: border-box; overflow: hidden; background-color: ${SCHEME.neutral4}; margin-left: auto; margin-right: auto;`,
       },
       ...this.createTextContent(taleCard.quickLayoutTale.text),
       ...this.createPreviewImages(taleCard.quickLayoutTale.images),
@@ -133,7 +133,7 @@ export class QuickTaleCard extends EventEmitter {
         assign(
           actionsExpandButtonRef,
           IconButton.create(
-            `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1rem;`,
+            `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1rem; cursor: pointer;`,
             createEllipsisIcon(SCHEME.neutral2),
             TooltipPosition.TOP,
             LOCALIZED_TEXT.actionsExpandLabel,
@@ -149,7 +149,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             actionsCollapseButtonRef,
             IconButton.create(
-              `position: relative; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 180deg;`,
+              `position: relative; width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 180deg; cursor: pointer;`,
               createDoubleArrowsIcon(SCHEME.neutral2),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.actionsCollapseLabel,
@@ -159,7 +159,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             loveButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; cursor: pointer;`,
               createHeartIcon(SCHEME.neutral1),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.loveTaleLabel,
@@ -169,7 +169,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             lovedButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; cursor: pointer;`,
               createFilledHeartIcon(SCHEME.heart),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.undoLoveTaleLabel,
@@ -179,7 +179,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             likeButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; cursor: pointer;`,
               createThumbUpIcon(SCHEME.neutral1),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.likeTaleLabel,
@@ -189,7 +189,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             likedButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; cursor: pointer;`,
               createFilledThumbUpIcon(SCHEME.thumbUp),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.undoLikeTaleLabel,
@@ -199,7 +199,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             dislikeButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; rotate: 180deg;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; rotate: 180deg; cursor: pointer;`,
               createThumbUpIcon(SCHEME.neutral1),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.dislikeTaleLabel,
@@ -209,7 +209,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             dislikedButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; rotate: 180deg;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; rotate: 180deg; cursor: pointer;`,
               createFilledThumbUpIcon(SCHEME.thumbUp),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.undoDislikeTaleLabel,
@@ -219,7 +219,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             hateButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box;padding: 1.3rem; cursor: pointer;`,
               createAngerIcon(SCHEME.neutral1),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.hateTaleLabel,
@@ -229,7 +229,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             hatedButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.3rem; cursor: pointer;`,
               createAngerIcon(SCHEME.anger),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.undoHateTaleLabel,
@@ -239,7 +239,7 @@ export class QuickTaleCard extends EventEmitter {
           assign(
             dismissButtonRef,
             IconButton.create(
-              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 45deg;`,
+              `width: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; height: ${QuickTaleCard.ACTION_BUTTON_SIZE}rem; box-sizing: border-box; padding: 1.7rem; rotate: 45deg; cursor: pointer;`,
               createPlusIcon(SCHEME.neutral2),
               TooltipPosition.TOP,
               LOCALIZED_TEXT.dismissTaleLabel,
@@ -314,7 +314,7 @@ export class QuickTaleCard extends EventEmitter {
         showMoreButtonRef,
         {
           class: "quick-tale-card-text-content-show-more-button",
-          style: `display: none; font-size: 1.4rem; line-height: ${QuickTaleCard.CONTENT_LINE_HEIGHT}rem; color: ${SCHEME.primary0};`,
+          style: `display: none; font-size: 1.4rem; line-height: ${QuickTaleCard.CONTENT_LINE_HEIGHT}rem; color: ${SCHEME.primary0}; cursor: pointer;`,
         },
         E.text(LOCALIZED_TEXT.showMoreButtonLabel)
       ),
@@ -322,7 +322,7 @@ export class QuickTaleCard extends EventEmitter {
         showLessButtonRef,
         {
           class: "quick-tale-card-text-content-show-less-button",
-          style: `display: none; font-size: 1.4rem; line-height: ${QuickTaleCard.CONTENT_LINE_HEIGHT}rem; color: ${SCHEME.neutral2};`,
+          style: `display: none; font-size: 1.4rem; line-height: ${QuickTaleCard.CONTENT_LINE_HEIGHT}rem; color: ${SCHEME.neutral2};cursor: pointer;`,
         },
         E.text(LOCALIZED_TEXT.showLessButtonLabel)
       )

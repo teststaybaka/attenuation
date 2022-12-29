@@ -6,8 +6,8 @@ import { createPlusIcon } from "../../common/icons";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { newCreateTaleServiceRequest } from "../../common/tale_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
-import { MenuItem } from "../common/menu_item";
-import { createBackMenuItem } from "../common/menu_items";
+import { MenuItem } from "../menu_item/container";
+import { createBackMenuItem } from "../menu_item/factory";
 import { MARGIN } from "./constants";
 import { QuickLayoutEditor } from "./quick_layout_editor/container";
 import { NormalTag, WarningTag } from "./tags";
@@ -85,7 +85,7 @@ export class WriteTalePage extends EventEmitter {
               addTagButtonRef,
               {
                 class: "write-tale-add-tag-button",
-                style: `height: 3rem; width: 3rem; padding: .5rem; box-sizing: border-box; margin-left: .5rem;`,
+                style: `height: 3rem; width: 3rem; padding: .5rem; box-sizing: border-box; margin-left: .5rem; cursor: pointer;`,
               },
               createPlusIcon(SCHEME.neutral1)
             )

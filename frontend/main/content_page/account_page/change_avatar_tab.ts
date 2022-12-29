@@ -5,8 +5,8 @@ import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { newUploadAvatarServiceRequest } from "../../common/user_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
-import { MenuItem } from "../common/menu_item";
-import { createBackMenuItem } from "../common/menu_items";
+import { MenuItem } from "../menu_item/container";
+import { createBackMenuItem } from "../menu_item/factory";
 import { AvatarCanvas } from "./avatar_canvas";
 import { E } from "@selfage/element/factory";
 import { Ref, assign } from "@selfage/ref";
@@ -53,7 +53,7 @@ export class ChangeAvatarTab extends EventEmitter {
         chooseFileButtonRef,
         {
           class: "change-avatar-choose-file-button",
-          style: `${OUTLINE_BUTTON_STYLE} color: ${SCHEME.neutral0}; border-color: ${SCHEME.neutral1};`,
+          style: `${OUTLINE_BUTTON_STYLE} color: ${SCHEME.neutral0}; border-color: ${SCHEME.neutral1}; cursor: pointer;`,
         },
         E.text(LOCALIZED_TEXT.chooseAvatarLabel)
       ),

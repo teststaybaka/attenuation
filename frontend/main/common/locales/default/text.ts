@@ -176,4 +176,19 @@ export default class Text {
   get dismissTaleLabel() {
     return `Dismiss`;
   }
+  get zoomInLabel() {
+    return `Zoom in`;
+  }
+  get zoomOutLabel() {
+    return `Zoom out`;
+  }
+  get zoomFitLabel() {
+    return `Fit to screen`;
+  }
+  get nextImageLabel() {
+    return `Next`;
+  }
+  get prevImageLabel() {
+    return `Previous`;
+  }
 }

@@ -33,7 +33,7 @@ export class NormalTag extends EventEmitter {
         deleteButtonRef,
         {
           class: "normal-tag-delete-button",
-          style: `height: 1.6rem; width: 1.6rem; padding: .2rem; box-sizing: border-box; margin: 0 .5rem 0 .3rem; rotate: 45deg;`,
+          style: `height: 1.6rem; width: 1.6rem; padding: .2rem; box-sizing: border-box; margin: 0 .5rem 0 .3rem; rotate: 45deg; cursor: pointer;`,
         },
         createPlusIcon(SCHEME.neutral1)
       )
@@ -59,7 +59,7 @@ export class WarningTag {
     this.body = E.div(
       {
         class: "warning-tag",
-        style: `font-size: 1.4rem; color: ${SCHEME.neutral0}; line-height: 3rem; padding: 0 1rem; border: .1rem; border-radius: 2rem;`,
+        style: `font-size: 1.4rem; color: ${SCHEME.neutral0}; line-height: 3rem; padding: 0 1rem; border: .1rem; border-radius: 2rem; cursor: pointer;`,
       },
       E.text(localizedText)
     );

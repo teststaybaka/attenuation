@@ -19,11 +19,11 @@ export class LightScheme {
   get logoBlue() {
     return LOGO_BLUE;
   }
-  // Main texts.
+  // Texts.
   get neutral0() {
     return GREY_20;
   }
-  // Main SVG icons.
+  // SVG icons & borders.
   get neutral1() {
     return GREY_50;
   }
@@ -31,11 +31,11 @@ export class LightScheme {
   get neutral1Translucent() {
     return GREY_50_TRANSLUCENT;
   }
-  // Most borders. Hinted & disabled texts & SVG icons.
+  // Hinted & disabled texts. Hinted SVG icons.
   get neutral2() {
     return GREY_80;
   }
-  // Overall background color.
+  // Overall Background color. Disabled SVG icons & borders.
   get neutral3() {
     return GREY_90;
   }

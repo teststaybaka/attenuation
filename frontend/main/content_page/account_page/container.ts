@@ -1,10 +1,10 @@
 import EventEmitter = require("events");
 import { SCHEME } from "../../common/color_scheme";
-import { MenuItem } from "../common/menu_item";
+import { MenuItem } from "../menu_item/container";
 import {
   createAccountMenuItem,
   createHomeMenuItem,
-} from "../common/menu_items";
+} from "../menu_item/factory";
 import { AccountBasicTab } from "./account_basic_tab";
 import { ChangeAvatarTab } from "./change_avatar_tab";
 import { E } from "@selfage/element/factory";
@@ -50,7 +50,7 @@ export class AccountPage extends EventEmitter {
 
     this.hide();
     this.homeMenuItem.on("action", () => this.emit("home"));
-    this.accountMenuItem.on('action', () => this.showAccountBasic());
+    this.accountMenuItem.on("action", () => this.showAccountBasic());
     this.accountBasic.on("changeAvatar", () => this.showChangeAvatar());
     this.changeAvatar.on("back", () => this.showAccountBasic());
   }
