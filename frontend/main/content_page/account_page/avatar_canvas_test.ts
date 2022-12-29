@@ -1,3 +1,7 @@
+import highImage = require("./test_data/high.jpg");
+import higherImage = require("./test_data/higher.jpg");
+import wideImage = require("./test_data/wide.jpeg");
+import widerImage = require("./test_data/wider.jpg");
 import { normalizeBody } from "../../common/normalize_body";
 import { AvatarCanvas } from "./avatar_canvas";
 import { E } from "@selfage/element/factory";
@@ -33,10 +37,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let topLeftPoint = this.container.querySelector(
-          ".avatar-canvas-resize-point-top-left"
-        );
-        topLeftPoint.dispatchEvent(
+        cut.resizePointTopLeft.dispatchEvent(
           new MouseEvent("mousedown", {
             clientX: 120,
             clientY: 110,
@@ -53,7 +54,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        topLeftPoint.dispatchEvent(
+        cut.resizePointTopLeft.dispatchEvent(
           new MouseEvent("mousemove", {
             clientX: 100,
             clientY: 50,
@@ -70,7 +71,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        topLeftPoint.dispatchEvent(
+        cut.resizePointTopLeft.dispatchEvent(
           new MouseEvent("mouseup", {
             clientX: 150,
             clientY: 170,
@@ -87,7 +88,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        topLeftPoint.dispatchEvent(
+        cut.resizePointTopLeft.dispatchEvent(
           new MouseEvent("mousemove", {
             clientX: 100,
             clientY: 100,
@@ -104,17 +105,14 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let topRightPoint = this.container.querySelector(
-          ".avatar-canvas-resize-point-top-right"
-        );
-        topRightPoint.dispatchEvent(
+        cut.resizePointTopRight.dispatchEvent(
           new MouseEvent("mousedown", {
             clientX: 360,
             clientY: 100,
             bubbles: true,
           })
         );
-        topRightPoint.dispatchEvent(
+        cut.resizePointTopRight.dispatchEvent(
           new MouseEvent("mouseup", {
             clientX: 360,
             clientY: 100,
@@ -131,17 +129,14 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let bottomRightPoint = this.container.querySelector(
-          ".avatar-canvas-resize-point-bottom-right"
-        );
-        bottomRightPoint.dispatchEvent(
+        cut.resizePointBottmRight.dispatchEvent(
           new MouseEvent("mousedown", {
             clientX: 300,
             clientY: 360,
             bubbles: true,
           })
         );
-        bottomRightPoint.dispatchEvent(
+        cut.resizePointBottmRight.dispatchEvent(
           new MouseEvent("mouseup", {
             clientX: 300,
             clientY: 360,
@@ -158,17 +153,14 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        let bottomLeftPoint = this.container.querySelector(
-          ".avatar-canvas-resize-point-bottom-left"
-        );
-        bottomLeftPoint.dispatchEvent(
+        cut.resizePointBottmLeft.dispatchEvent(
           new MouseEvent("mousedown", {
             clientX: 0,
             clientY: 360,
             bubbles: true,
           })
         );
-        bottomLeftPoint.dispatchEvent(
+        cut.resizePointBottmLeft.dispatchEvent(
           new MouseEvent("mouseup", {
             clientX: 0,
             clientY: 360,
@@ -201,7 +193,7 @@ TEST_RUNNER.run({
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
+        await puppeteerFileChooserAccept(wideImage);
 
         // Execute
         await cut.load(fileInput.files[0]);
@@ -217,7 +209,7 @@ TEST_RUNNER.run({
         // Prepare
         await puppeteerWaitForFileChooser();
         fileInput.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/wider.jpg");
+        await puppeteerFileChooserAccept(widerImage);
 
         // Execute
         await cut.load(fileInput.files[0]);
@@ -233,7 +225,7 @@ TEST_RUNNER.run({
         // Prepare
         await puppeteerWaitForFileChooser();
         fileInput.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/high.jpg");
+        await puppeteerFileChooserAccept(highImage);
 
         // Execute
         await cut.load(fileInput.files[0]);
@@ -249,7 +241,7 @@ TEST_RUNNER.run({
         // Prepare
         await puppeteerWaitForFileChooser();
         fileInput.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/higher.jpg");
+        await puppeteerFileChooserAccept(higherImage);
 
         // Execute
         await cut.load(fileInput.files[0]);
@@ -279,13 +271,10 @@ TEST_RUNNER.run({
         let fileInput = E.input({ type: "file" });
         await puppeteerWaitForFileChooser();
         fileInput.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
+        await puppeteerFileChooserAccept(wideImage);
         await cut.load(fileInput.files[0]);
 
-        let topLeftPoint = this.container.querySelector(
-          ".avatar-canvas-resize-point-top-left"
-        );
-        topLeftPoint.dispatchEvent(
+        cut.resizePointTopLeft.dispatchEvent(
           new MouseEvent("mousedown", {
             clientX: 50,
             clientY: 70,
@@ -304,15 +293,20 @@ TEST_RUNNER.run({
           };
           reader.readAsBinaryString(fileBlob);
         });
-        await puppeteerWriteFile(__dirname + "/cropped.png", fileData);
+        await puppeteerWriteFile(
+          __dirname + "/avatar_canvas_export_cropped.png",
+          fileData
+        );
         let goldenFileData = await puppeteerReadFile(
-          __dirname + "/golden/cropped.png",
+          __dirname + "/golden/avatar_canvas_export_cropped.png",
           "binary"
         );
         assertThat(fileData, eq(goldenFileData), "cropped file");
 
         // Cleanup
-        await puppeteerDeleteFile(__dirname + "/cropped.png");
+        await puppeteerDeleteFile(
+          __dirname + "/avatar_canvas_export_cropped.png"
+        );
       }
       public tearDown() {
         this.container.remove();

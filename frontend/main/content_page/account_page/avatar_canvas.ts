@@ -14,16 +14,18 @@ export class AvatarCanvas extends EventEmitter {
   public sy: number;
   public sWidth: number;
   public sHeight: number;
+  // Visible for testing
+  public resizePointTopLeft: HTMLDivElement;
+  public resizePointTopRight: HTMLDivElement;
+  public resizePointBottmLeft: HTMLDivElement;
+  public resizePointBottmRight: HTMLDivElement;
+
   private leftColumn: HTMLDivElement;
   private midColumn: HTMLDivElement;
   private rightColumn: HTMLDivElement;
   private midTopBlock: HTMLDivElement;
   private midMidBlock: HTMLDivElement;
   private midBottmBlock: HTMLDivElement;
-  private resizePointTopLeft: HTMLDivElement;
-  private resizePointTopRight: HTMLDivElement;
-  private resizePointBottmLeft: HTMLDivElement;
-  private resizePointBottmRight: HTMLDivElement;
 
   public constructor() {
     super();

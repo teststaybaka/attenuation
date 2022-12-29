@@ -1,6 +1,7 @@
+import { SCHEME } from "../../common/color_scheme";
+import { createHomeIcon } from "../../common/icons";
 import { normalizeBody } from "../../common/normalize_body";
 import { MenuItem } from "./menu_item";
-import { createHomeMenuIcon } from "./menu_items";
 import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
@@ -16,9 +17,13 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new MenuItem(createHomeMenuIcon(), "A long long test label");
+        let cut = new MenuItem(
+          createHomeIcon(SCHEME.neutral1),
+          `1rem`,
+          "A long long test label",
+          true
+        );
         this.container = E.div({}, cut.body);
-        let item = this.container.querySelector(".menu-item");
 
         // Execute
         document.body.append(this.container);
@@ -32,13 +37,30 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        item.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+        cut.body.dispatchEvent(new MouseEvent("mouseover"));
+        await new Promise<void>((resolve) =>
+          cut.once("transitionEnded", resolve)
+        );
 
         // Verify
         await asyncAssertScreenshot(
           __dirname + "/menu_item_hover.png",
           __dirname + "/golden/menu_item_hover.png",
           __dirname + "/menu_item_hover_diff.png",
+          { fullPage: true }
+        );
+
+        // Execute
+        cut.body.dispatchEvent(new MouseEvent("mouseleave"));
+        await new Promise<void>((resolve) =>
+          cut.once("transitionEnded", resolve)
+        );
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/menu_item_collapsed.png",
+          __dirname + "/golden/menu_item_render.png",
+          __dirname + "/menu_item_collapsed_diff.png",
           { fullPage: true }
         );
       }

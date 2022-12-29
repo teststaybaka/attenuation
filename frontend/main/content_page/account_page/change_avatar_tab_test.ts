@@ -1,7 +1,5 @@
-import { FillButton, OutlineButton } from "../../common/button";
+import wideImage = require("./test_data/wide.jpeg");
 import { normalizeBody } from "../../common/normalize_body";
-import { createBackMenuIcon } from "../common/menu_items";
-import { MenuItemMock } from "../common/mocks";
 import { ChangeAvatarTab } from "./change_avatar_tab";
 import { AvatarCanvasMock } from "./mocks";
 import { Counter } from "@selfage/counter";
@@ -21,10 +19,6 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let chooseButton = OutlineButton.create(
-          true,
-          E.text("Choose an image file")
-        );
         let avatarCanvasMock = new (class extends AvatarCanvasMock {
           public async load(imageFile: File): Promise<void> {
             await new Promise<void>((resolve) => {
@@ -48,13 +42,7 @@ TEST_RUNNER.run({
             });
           }
         })();
-        let cut = new ChangeAvatarTab(
-          new MenuItemMock(createBackMenuIcon(), "Back"),
-          avatarCanvasMock,
-          chooseButton,
-          FillButton.create(false, E.text("Upload")),
-          undefined
-        );
+        let cut = new ChangeAvatarTab(avatarCanvasMock, undefined);
         this.container = E.div(
           {},
           E.div(
@@ -81,8 +69,9 @@ TEST_RUNNER.run({
 
         // Execute
         await puppeteerWaitForFileChooser();
-        chooseButton.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
+        cut.chooseFileButton.click();
+        puppeteerFileChooserAccept(wideImage);
+        await new Promise<void>((resolve) => cut.once("imageLoaded", resolve));
 
         // Verify
         await asyncAssertScreenshot(
@@ -118,19 +107,12 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let chooseButton = OutlineButton.create(
-          true,
-          E.text("Choose an image file")
-        );
         let cut = new ChangeAvatarTab(
-          new MenuItemMock(createBackMenuIcon(), "Back"),
           new (class extends AvatarCanvasMock {
             public async load(imageFile: File): Promise<void> {
               throw new Error("load error");
             }
           })(),
-          chooseButton,
-          FillButton.create(false, E.text("Upload")),
           undefined
         );
         this.container = E.div(
@@ -149,8 +131,9 @@ TEST_RUNNER.run({
 
         // Execute
         await puppeteerWaitForFileChooser();
-        chooseButton.click();
-        await puppeteerFileChooserAccept(__dirname + "/test_data/wide.jpeg");
+        cut.chooseFileButton.click();
+        puppeteerFileChooserAccept(wideImage);
+        await new Promise<void>((resolve) => cut.once("imageLoaded", resolve));
 
         // Verify
         await asyncAssertScreenshot(
@@ -169,7 +152,6 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let uploadButton = FillButton.create(true, E.text("Upload"));
         let clientMock = new (class extends WebServiceClient {
           public counter = new Counter<string>();
           public constructor() {
@@ -187,10 +169,7 @@ TEST_RUNNER.run({
                   };
                   fileReader.readAsBinaryString(request.request.body as Blob);
                 });
-                let source = await puppeteerReadFile(
-                  __dirname + "/test_data/wide.jpeg",
-                  "binary"
-                );
+                let source = await puppeteerReadFile(wideImage, "binary");
                 assertThat(toBeSent, eq(source), "file content");
                 break;
               default:
@@ -199,20 +178,15 @@ TEST_RUNNER.run({
           }
         })();
         let cut = new ChangeAvatarTab(
-          new MenuItemMock(createBackMenuIcon(), "Back"),
           new (class extends AvatarCanvasMock {
             public async export(): Promise<Blob> {
               let input = E.input({ type: "file" });
               await puppeteerWaitForFileChooser();
               input.click();
-              await puppeteerFileChooserAccept(
-                __dirname + "/test_data/wide.jpeg"
-              );
+              await puppeteerFileChooserAccept(wideImage);
               return input.files[0];
             }
           })(),
-          OutlineButton.create(true, E.text("Choose an image file")),
-          uploadButton,
           clientMock
         );
         this.container = E.div(
@@ -230,7 +204,7 @@ TEST_RUNNER.run({
         cut.show();
 
         // Execute
-        await uploadButton.click();
+        await cut.uploadButton.click();
 
         // Verify
         assertThat(clientMock.counter.get("send"), eq(1), "send times");
@@ -242,7 +216,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        await uploadButton.click();
+        await cut.uploadButton.click();
 
         // Verify
         assertThat(clientMock.counter.get("send"), eq(2), "send times");
@@ -261,19 +235,12 @@ TEST_RUNNER.run({
       name: "Back",
       execute: () => {
         // Prepare
-        let backButton = new MenuItemMock(createBackMenuIcon(), "Back");
-        let cut = new ChangeAvatarTab(
-          backButton,
-          new AvatarCanvasMock(),
-          OutlineButton.create(true, E.text("Choose an image file")),
-          FillButton.create(false, E.text("Upload")),
-          undefined
-        );
+        let cut = new ChangeAvatarTab(new AvatarCanvasMock(), undefined);
         let isBack = false;
         cut.on("back", () => (isBack = true));
 
         // Execute
-        backButton.click();
+        cut.backMenuItem.click();
 
         // Verify
         assertThat(isBack, eq(true), "Back");

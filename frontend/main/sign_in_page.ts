@@ -1,10 +1,10 @@
 import EventEmitter = require("events");
-import { FillButton } from "./common/button";
-import { newSignInServiceRequest } from "./common/client_requests";
+import { FilledBlockingButton } from "./common/blocking_button";
 import { SCHEME } from "./common/color_scheme";
 import { LOCAL_SESSION_STORAGE } from "./common/local_session_storage";
 import { LOCALIZED_TEXT } from "./common/locales/localized_text";
 import { VerticalTextInputWithErrorMsg } from "./common/text_input";
+import { newSignInServiceRequest } from "./common/user_service_requests";
 import { WEB_SERVICE_CLIENT } from "./common/web_service_client";
 import { E } from "@selfage/element/factory";
 import { Ref, assign } from "@selfage/ref";
@@ -21,7 +21,7 @@ export class SignInPage extends EventEmitter {
   private usernameInput: VerticalTextInputWithErrorMsg;
   private passwordInput: VerticalTextInputWithErrorMsg;
   private switcherToSignUpButton: HTMLDivElement;
-  private submitButton: FillButton;
+  private submitButton: FilledBlockingButton;
 
   public constructor(
     private localSessionStorage: LocalSessionStorage,
@@ -31,7 +31,7 @@ export class SignInPage extends EventEmitter {
     let usernameInputRef = new Ref<VerticalTextInputWithErrorMsg>();
     let passwordInputRef = new Ref<VerticalTextInputWithErrorMsg>();
     let switcherToSignUpButtonRef = new Ref<HTMLDivElement>();
-    let submitButtonRef = new Ref<FillButton>();
+    let submitButtonRef = new Ref<FilledBlockingButton>();
     this.body = E.div(
       {
         class: "sign-in",
@@ -79,7 +79,10 @@ export class SignInPage extends EventEmitter {
           },
           assign(
             submitButtonRef,
-            FillButton.create(true, E.text(LOCALIZED_TEXT.signInButtonLabel))
+            FilledBlockingButton.create(
+              true,
+              E.text(LOCALIZED_TEXT.signInButtonLabel)
+            )
           ).body
         )
       )
@@ -90,7 +93,7 @@ export class SignInPage extends EventEmitter {
     this.submitButton = submitButtonRef.val;
     this.hide();
 
-    this.submitButton.on("click", () => this.signIn());
+    this.submitButton.on("action", () => this.signIn());
     this.switcherToSignUpButton.addEventListener("click", () =>
       this.switchToSignUp()
     );

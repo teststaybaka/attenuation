@@ -1,7 +1,6 @@
 import wideImage = require("./test_data/wide.jpeg");
 import { CREATE_TALE_REQUEST_BODY } from "../../../../interface/tale_service";
 import { WarningTagType } from "../../../../interface/warning_tag_type";
-import { FillButton, OutlineButton } from "../../common/button";
 import { normalizeBody } from "../../common/normalize_body";
 import { WriteTalePage } from "./container";
 import { QuickLayoutEditorMock } from "./quick_layout_editor/mocks";
@@ -17,6 +16,40 @@ normalizeBody();
 TEST_RUNNER.run({
   name: "WriteTalePageTest",
   cases: [
+    new (class implements TestCase {
+      public name = "RenderWide";
+      private container: HTMLDivElement;
+      public async execute() {
+        // Prepare
+        let cut = new WriteTalePage(new QuickLayoutEditorMock(), undefined);
+        this.container = E.div(
+          {},
+          cut.body,
+          E.div(
+            {
+              style: "position: fixed; right: 0; top: 0;",
+            },
+            cut.menuBody
+          )
+        );
+        await puppeteerSetViewport(1300, 600);
+        document.body.append(this.container);
+
+        // Execute
+        cut.show();
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/write_tale_page_render_wide.png",
+          __dirname + "/golden/write_tale_page_render_wide.png",
+          __dirname + "/write_tale_page_render_wide_diff.png",
+          { fullPage: true }
+        );
+      }
+      public tearDown() {
+        this.container.remove();
+      }
+    })(),
     new (class implements TestCase {
       public name = "RenderAndSubmit";
       private container: HTMLDivElement;
@@ -36,22 +69,19 @@ TEST_RUNNER.run({
             requestCaptured = request;
           }
         })();
-        let submitButton = FillButton.create(false, E.text("Submit your post"));
-        let cut = new WriteTalePage(
-          quickLayoutEditorMock,
-          OutlineButton.create(false, E.text("Preview")),
-          submitButton,
-          serviceClientMock
+        let cut = new WriteTalePage(quickLayoutEditorMock, serviceClientMock);
+        this.container = E.div(
+          {},
+          cut.body,
+          E.div(
+            {
+              style: "position: fixed; right: 0; top: 0;",
+            },
+            cut.menuBody
+          )
         );
-        this.container = E.div({}, ...cut.bodies);
-        document.body.append(this.container);
         await puppeteerSetViewport(1000, 600);
-        let tagInput = document.body.querySelector(
-          ".write-post-add-tag-input"
-        ) as HTMLInputElement;
-        let addTagButton = document.body.querySelector(
-          ".write-post-add-tag-button"
-        ) as HTMLButtonElement;
+        document.body.append(this.container);
 
         // Execute
         cut.show();
@@ -76,12 +106,12 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        tagInput.value = "some tag";
-        addTagButton.click();
-        tagInput.value = "tag 2";
-        addTagButton.click();
-        tagInput.value = "tag 3";
-        addTagButton.click();
+        cut.tagInput.value = "some tag";
+        cut.addTagButton.click();
+        cut.tagInput.value = "tag 2";
+        cut.addTagButton.click();
+        cut.tagInput.value = "tag 3";
+        cut.addTagButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -92,9 +122,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        document.body
-          .querySelectorAll(".normal-tag-delete-button")[0]
-          .dispatchEvent(new MouseEvent("click"));
+        cut.tags[0].deleteButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -105,9 +133,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        document.body
-          .querySelectorAll(".warning-tag")[2]
-          .dispatchEvent(new MouseEvent("click"));
+        cut.warningTagGross.body.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -121,7 +147,7 @@ TEST_RUNNER.run({
         serviceClientMock.errorToThrow = new Error("Some error");
 
         // Execute
-        submitButton.click();
+        await cut.submitButton.click();
 
         // Verify
         await asyncAssertScreenshot(
@@ -135,7 +161,7 @@ TEST_RUNNER.run({
         serviceClientMock.errorToThrow = undefined;
 
         // Execute
-        submitButton.click();
+        await cut.submitButton.click();
 
         // Verify
         assertThat(
@@ -151,7 +177,7 @@ TEST_RUNNER.run({
             },
             CREATE_TALE_REQUEST_BODY
           ),
-          "submitPost request"
+          "submitTale request"
         );
         await asyncAssertScreenshot(
           __dirname + "/write_tale_page_after_submit.png",

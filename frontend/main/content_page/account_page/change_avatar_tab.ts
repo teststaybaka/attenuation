@@ -1,19 +1,20 @@
 import EventEmitter = require("events");
-import { FillButton, OutlineButton } from "../../common/button";
-import { newUploadAvatarServiceRequest } from "../../common/client_requests";
+import { FilledBlockingButton } from "../../common/blocking_button";
+import { OUTLINE_BUTTON_STYLE } from "../../common/button_styles";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
+import { newUploadAvatarServiceRequest } from "../../common/user_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
-import { MenuContainer } from "../common/menu_container";
 import { MenuItem } from "../common/menu_item";
 import { createBackMenuItem } from "../common/menu_items";
 import { AvatarCanvas } from "./avatar_canvas";
 import { E } from "@selfage/element/factory";
-import { Ref } from "@selfage/ref";
+import { Ref, assign } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
 export interface ChangeAvatarTab {
   on(event: "back", listener: () => void): this;
+  on(event: "imageLoaded", listener: () => void): this;
 }
 
 export class ChangeAvatarTab extends EventEmitter {
@@ -22,34 +23,40 @@ export class ChangeAvatarTab extends EventEmitter {
 
   public body: HTMLDivElement;
   public menuBody: HTMLDivElement;
+  // Visible for testing
+  public backMenuItem: MenuItem;
+  public chooseFileButton: HTMLDivElement;
+  public uploadButton: FilledBlockingButton;
+
   private loadErrorText: HTMLDivElement;
   private previewLargeCanvas: HTMLCanvasElement;
   private previewSmallCanvas: HTMLCanvasElement;
   private uploadStatusText: HTMLDivElement;
-  private fileInput = E.input({ type: "file" });
-  private backMenuContainer: MenuContainer;
 
   public constructor(
-    private backMenuItem: MenuItem,
     private avatarCanvas: AvatarCanvas,
-    private chooseFileButton: OutlineButton,
-    private uploadButton: FillButton,
     private serviceClient: WebServiceClient
   ) {
     super();
-    this.backMenuContainer = MenuContainer.create(this.backMenuItem);
-    this.menuBody = this.backMenuContainer.body;
-
+    let chooseFileButtonRef = new Ref<HTMLDivElement>();
     let loadErrorTextRef = new Ref<HTMLDivElement>();
     let previewLargeCanvasRef = new Ref<HTMLCanvasElement>();
     let previewSmallCanvasRef = new Ref<HTMLCanvasElement>();
+    let uploadButtonRef = new Ref<FilledBlockingButton>();
     let uploadStatusTextRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
         class: "change-avatar",
         style: `flex-flow: column nowrap; align-items: center; width: 100%; padding: 3rem 0 5rem;`,
       },
-      chooseFileButton.body,
+      E.divRef(
+        chooseFileButtonRef,
+        {
+          class: "change-avatar-choose-file-button",
+          style: `${OUTLINE_BUTTON_STYLE} color: ${SCHEME.neutral0}; border-color: ${SCHEME.neutral1};`,
+        },
+        E.text(LOCALIZED_TEXT.chooseAvatarLabel)
+      ),
       E.divRef(loadErrorTextRef, {
         class: "change-avatar-image-load-error",
         style: `display: none; margin-top: 1rem; font-size: 1.4rem; color: ${SCHEME.error0};`,
@@ -120,47 +127,54 @@ export class ChangeAvatarTab extends EventEmitter {
           )
         )
       ),
-      uploadButton.body,
+      assign(
+        uploadButtonRef,
+        FilledBlockingButton.create(
+          false,
+          E.text(LOCALIZED_TEXT.uploadAvatarLabel)
+        )
+      ).body,
       E.divRef(uploadStatusTextRef, {
         class: "change-avatar-upload-status-text",
         style: `display: none; font-size: 1.4rem; margin-top: 1rem;`,
       })
     );
+    this.chooseFileButton = chooseFileButtonRef.val;
     this.loadErrorText = loadErrorTextRef.val;
     this.previewLargeCanvas = previewLargeCanvasRef.val;
     this.previewSmallCanvas = previewSmallCanvasRef.val;
+    this.uploadButton = uploadButtonRef.val;
     this.uploadStatusText = uploadStatusTextRef.val;
-    this.hide();
 
+    this.backMenuItem = createBackMenuItem(false);
+    this.menuBody = this.backMenuItem.body;
+
+    this.hide();
     this.backMenuItem.on("action", () => this.emit("back"));
-    this.chooseFileButton.on("click", () => this.chooseFile());
-    this.fileInput.addEventListener("input", () => this.load());
+    this.chooseFileButton.addEventListener("click", () => this.chooseFile());
     this.avatarCanvas.on("change", () => this.preview());
-    this.uploadButton.on("click", () => this.uploadAvatar());
+    this.uploadButton.on("action", () => this.uploadAvatar());
   }
 
   public static create(): ChangeAvatarTab {
-    return new ChangeAvatarTab(
-      createBackMenuItem(),
-      AvatarCanvas.create(),
-      OutlineButton.create(true, E.text(LOCALIZED_TEXT.chooseAvatarLabel)),
-      FillButton.create(false, E.text(LOCALIZED_TEXT.uploadAvatarLabel)),
-      WEB_SERVICE_CLIENT
-    );
+    return new ChangeAvatarTab(AvatarCanvas.create(), WEB_SERVICE_CLIENT);
   }
 
   private chooseFile(): void {
-    this.fileInput.click();
+    let fileInput = E.input({ type: "file" });
+    fileInput.addEventListener("input", () => this.load(fileInput.files));
+    fileInput.click();
   }
 
-  private async load(): Promise<void> {
+  private async load(files: FileList): Promise<void> {
     this.loadErrorText.style.display = "none";
     try {
-      await this.avatarCanvas.load(this.fileInput.files[0]);
+      await this.avatarCanvas.load(files[0]);
     } catch (e) {
       this.loadErrorText.textContent = LOCALIZED_TEXT.loadImageError;
       this.loadErrorText.style.display = "block";
       console.error(e);
+      this.emit("imageLoaded");
       return;
     }
 
@@ -175,6 +189,7 @@ export class ChangeAvatarTab extends EventEmitter {
       .getContext("2d")
       .drawImage(this.avatarCanvas.canvas, 0, 0);
     this.uploadButton.enable();
+    this.emit("imageLoaded");
   }
 
   private preview(): void {
@@ -238,12 +253,12 @@ export class ChangeAvatarTab extends EventEmitter {
   }
 
   public show(): void {
-    this.backMenuContainer.expand();
+    this.backMenuItem.show();
     this.body.style.display = "flex";
   }
 
   public hide(): void {
-    this.backMenuContainer.collapse();
+    this.backMenuItem.hide();
     this.body.style.display = "none";
   }
 }

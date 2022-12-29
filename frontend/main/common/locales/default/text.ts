@@ -29,7 +29,7 @@ export default class Text {
   get signUpButtonLabel() {
     return `Sign up`;
   }
-  get sendPostEntryButtonLabel() {
+  get sendTaleEntryButtonLabel() {
     return `Send`;
   }
   get saveButtonLabel() {
@@ -38,10 +38,10 @@ export default class Text {
   get cancelButtonLabel() {
     return `Cancel`;
   }
-  get writePostLabel() {
-    return `Write a post`;
+  get writeTaleLabel() {
+    return `Write a tale`;
   }
-  get refreshPostsLabel() {
+  get shuffleTalesLabel() {
     return `Shuffle`;
   }
   get accountLabel() {
@@ -49,9 +49,6 @@ export default class Text {
   }
   get homeLabel() {
     return `Home`;
-  }
-  get refreshLabel() {
-    return `Refresh`;
   }
   get changeAvatarLabel() {
     return `Update`;
@@ -81,7 +78,7 @@ export default class Text {
     return `Choose a layout from below`;
   }
   get quickLayoutOption() {
-    return `Simplest layout for a quick post.`;
+    return `Simplest layout for a quick tale.`;
   }
   get imageSeriesOption() {
     return `A series of vertically placed images with a cover image, such as comics or manga.`;
@@ -128,17 +125,17 @@ export default class Text {
   get warningTagGross() {
     return `Gross`;
   }
-  get previewPostButtonLabel() {
+  get previewTaleButtonLabel() {
     return `Preview`;
   }
-  get submitPostButtonLabel() {
-    return `Submit your post`;
+  get submitTaleButtonLabel() {
+    return `Submit`;
   }
-  get submitPostFailed() {
-    return `Failed to submit your post. Please try again later.`;
+  get submitTaleFailed() {
+    return `Failed to submit your tale. Please try again later.`;
   }
-  get submitPostSuccess() {
-    return `Successfully submitted your post!`;
+  get submitTaleSuccess() {
+    return `Successfully submitted your tale!`;
   }
   get showMoreButtonLabel() {
     return `Read more`;

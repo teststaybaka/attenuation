@@ -19,33 +19,42 @@ export class LightScheme {
   get logoBlue() {
     return LOGO_BLUE;
   }
+  // Main texts.
   get neutral0() {
     return GREY_20;
   }
+  // Main SVG icons.
   get neutral1() {
     return GREY_50;
   }
+  // Modal background.
   get neutral1Translucent() {
     return GREY_50_TRANSLUCENT;
   }
+  // Most borders. Hinted & disabled texts & SVG icons.
   get neutral2() {
     return GREY_80;
   }
+  // Overall background color.
   get neutral3() {
     return GREY_90;
   }
+  // Main background color for cards and popups.
   get neutral4() {
     return WHITE;
   }
   get transparent() {
     return TRANSPARENT;
   }
+  // Texts.
   get primary0() {
     return BLUE_50;
   }
+  // Borders, background and SVG icons.
   get primary1() {
     return BLUE_65;
   }
+  // Disabled background.
   get primary2() {
     return BLUE_85;
   }

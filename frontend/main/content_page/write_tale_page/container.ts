@@ -1,10 +1,13 @@
+import EventEmitter = require("events");
 import { WarningTagType } from "../../../../interface/warning_tag_type";
-import { FillButton, OutlineButton } from "../../common/button";
+import { FilledBlockingButton } from "../../common/blocking_button";
 import { SCHEME } from "../../common/color_scheme";
 import { createPlusIcon } from "../../common/icons";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { newCreateTaleServiceRequest } from "../../common/tale_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
+import { MenuItem } from "../common/menu_item";
+import { createBackMenuItem } from "../common/menu_items";
 import { MARGIN } from "./constants";
 import { QuickLayoutEditor } from "./quick_layout_editor/container";
 import { NormalTag, WarningTag } from "./tags";
@@ -12,45 +15,53 @@ import { E } from "@selfage/element/factory";
 import { Ref, assign } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
-export class WriteTalePage {
-  public bodies: Array<HTMLDivElement>;
-  private body: HTMLDivElement;
-  private tags = new Array<NormalTag>();
+export interface WriteTalePage {
+  on(event: "back", listener: () => void): this;
+}
+
+export class WriteTalePage extends EventEmitter {
+  public body: HTMLDivElement;
+  public menuBody: HTMLDivElement;
+  // Visible for testing
+  public tagInput: HTMLInputElement;
+  public addTagButton: HTMLDivElement;
+  public tags = new Array<NormalTag>();
+  public warningTagNudity: WarningTag;
+  public warningTagSpoiler: WarningTag;
+  public warningTagGross: WarningTag;
+  public submitButton: FilledBlockingButton;
+
   private tagsContainer: HTMLDivElement;
-  private tagInput: HTMLInputElement;
-  private addTagButton: HTMLDivElement;
-  private warningTagNudity: WarningTag;
-  private warningTagSpoiler: WarningTag;
-  private warningTagGross: WarningTag;
   private submitStatus: HTMLDivElement;
+  private backMenuItem: MenuItem;
 
   public constructor(
     private quickLayoutEditor: QuickLayoutEditor,
-    private previewButton: OutlineButton,
-    private submitButton: FillButton,
     private webServiceClient: WebServiceClient
   ) {
+    super();
     let tagsContainerRef = new Ref<HTMLDivElement>();
     let tagInputRef = new Ref<HTMLInputElement>();
     let addTagButtonRef = new Ref<HTMLDivElement>();
     let warningTagNudityRef = new Ref<WarningTag>();
     let warningTagSpoilerRef = new Ref<WarningTag>();
     let warningTagGrossRef = new Ref<WarningTag>();
+    let submitButtonRef = new Ref<FilledBlockingButton>();
     let submitStatusRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
-        class: "write-post",
+        class: "write-tale",
         style: `flex-flow: row nowrap; justify-content: center; width: 100vw;`,
       },
       E.div(
         {
-          class: "write-post-card",
+          class: "write-tale-card",
           style: `display: flex; flex-flow: column nowrap; box-sizing: border-box; width: 100%; max-width: 100rem; gap: ${MARGIN}; padding: ${MARGIN} ${MARGIN} 10rem ${MARGIN};`,
         },
         ...quickLayoutEditor.bodies,
         E.div(
           {
-            class: "write-post-tags-label",
+            class: "write-tale-tags-label",
             style: `font-size: 1.4rem; color: ${SCHEME.neutral0};`,
           },
           E.text(LOCALIZED_TEXT.tagsLabel)
@@ -58,23 +69,23 @@ export class WriteTalePage {
         E.divRef(
           tagsContainerRef,
           {
-            class: "write-post-tags",
+            class: "write-tale-tags",
             style: `display: flex; flex-flow: row wrap; align-items: center; gap: ${MARGIN};`,
           },
           E.div(
             {
-              class: "write-post-add-tag",
+              class: "write-tale-add-tag",
               style: `display: flex; flex-flow: row nowrap; align-items: center;`,
             },
             E.inputRef(tagInputRef, {
-              class: "write-post-add-tag-input",
+              class: "write-tale-add-tag-input",
               style: `padding: 0; margin: 0; outline: none; border: 0; background-color: initial; font-size: 1.4rem; line-height: 3rem; width: 8rem; border-bottom: .1rem solid ${SCHEME.neutral2};`,
             }),
             E.divRef(
               addTagButtonRef,
               {
-                class: "write-post-add-tag-button",
-                style: `height: 3rem; margin-left: .5rem;`,
+                class: "write-tale-add-tag-button",
+                style: `height: 3rem; width: 3rem; padding: .5rem; box-sizing: border-box; margin-left: .5rem;`,
               },
               createPlusIcon(SCHEME.neutral1)
             )
@@ -82,14 +93,14 @@ export class WriteTalePage {
         ),
         E.div(
           {
-            class: "write-post-warning-tags-label",
+            class: "write-tale-warning-tags-label",
             style: `font-size: 1.4rem; color: ${SCHEME.neutral0};`,
           },
           E.text(LOCALIZED_TEXT.warningTagsLabel)
         ),
         E.div(
           {
-            class: "write-post-warning-tags",
+            class: "write-tale-warning-tags",
             style: `display: flex; flex-flow: row wrap; algin-items: center; gap: ${MARGIN};`,
           },
           assign(
@@ -116,14 +127,19 @@ export class WriteTalePage {
         ),
         E.div(
           {
-            class: "write-post-finalizing-buttons",
-            style: `display: flex; flex-flow: row wrap; align-items: center; justify-content: center; gap: 4rem;`,
+            class: "write-tale-finalizing-button",
+            style: `align-self: center;`,
           },
-          previewButton.body,
-          submitButton.body
+          assign(
+            submitButtonRef,
+            FilledBlockingButton.create(
+              false,
+              E.text(LOCALIZED_TEXT.submitTaleButtonLabel)
+            )
+          ).body
         ),
         E.divRef(submitStatusRef, {
-          class: "write-post-submit-status",
+          class: "write-tale-submit-status",
           style: `display: none; align-self: center; font-size: 1.4rem; color: ${SCHEME.error0};`,
         })
       )
@@ -134,8 +150,11 @@ export class WriteTalePage {
     this.warningTagNudity = warningTagNudityRef.val;
     this.warningTagSpoiler = warningTagSpoilerRef.val;
     this.warningTagGross = warningTagGrossRef.val;
+    this.submitButton = submitButtonRef.val;
     this.submitStatus = submitStatusRef.val;
-    this.bodies = [this.body];
+
+    this.backMenuItem = createBackMenuItem(false);
+    this.menuBody = this.backMenuItem.body;
 
     this.hide();
     this.quickLayoutEditor.on("valid", () => this.enableButtons());
@@ -144,29 +163,20 @@ export class WriteTalePage {
       this.tagInputkeydown(event)
     );
     this.addTagButton.addEventListener("click", () => this.addTag());
-    this.submitButton.on("click", () => this.submitPost());
-    this.submitButton.on("afterClick", (e) => this.afterSubmitPost(e));
+    this.submitButton.on("action", () => this.submitTale());
+    this.submitButton.on("postAction", (e) => this.postSubmitTale(e));
+    this.backMenuItem.on("action", () => this.emit("back"));
   }
 
   public static create(): WriteTalePage {
-    return new WriteTalePage(
-      QuickLayoutEditor.create(),
-      OutlineButton.create(
-        false,
-        E.text(LOCALIZED_TEXT.previewPostButtonLabel)
-      ),
-      FillButton.create(false, E.text(LOCALIZED_TEXT.submitPostButtonLabel)),
-      WEB_SERVICE_CLIENT
-    );
+    return new WriteTalePage(QuickLayoutEditor.create(), WEB_SERVICE_CLIENT);
   }
 
   private enableButtons(): void {
-    this.previewButton.enable();
     this.submitButton.enable();
   }
 
   private disableButtons(): void {
-    this.previewButton.disable();
     this.submitButton.disable();
   }
 
@@ -197,7 +207,7 @@ export class WriteTalePage {
     tag.body.remove();
   }
 
-  private async submitPost(): Promise<void> {
+  private async submitTale(): Promise<void> {
     this.submitStatus.style.display = "none";
     let warningTags = new Array<WarningTagType>();
     if (this.warningTagNudity.selected) {
@@ -225,9 +235,9 @@ export class WriteTalePage {
     );
   }
 
-  private afterSubmitPost(e?: Error): void {
+  private postSubmitTale(e?: Error): void {
     if (e) {
-      this.submitStatus.textContent = LOCALIZED_TEXT.submitPostFailed;
+      this.submitStatus.textContent = LOCALIZED_TEXT.submitTaleFailed;
       this.submitStatus.style.display = "block";
       console.error(e);
       return;
@@ -243,10 +253,12 @@ export class WriteTalePage {
   }
 
   public show(): void {
+    this.backMenuItem.show();
     this.body.style.display = "flex";
   }
 
   public hide(): void {
+    this.backMenuItem.hide();
     this.body.style.display = "none";
   }
 }

@@ -1,4 +1,9 @@
 import EventEmitter = require("events");
+import {
+  FILLED_BUTTON_STYLE,
+  OUTLINE_BUTTON_STYLE,
+  TEXT_BUTTON_STYLE,
+} from "./button_styles";
 import { SCHEME } from "./color_scheme";
 import { E } from "@selfage/element/factory";
 
@@ -75,15 +80,9 @@ export abstract class BlockingButton extends EventEmitter {
   }
 }
 
-let COMMON_BUTTON_STYLE = `outline: none; border: 0; flex: 0 0 auto; background-color: initial; font-size: 1.4rem; line-height: 100%; border-radius: .5rem; padding: .8rem 1.2rem; cursor: pointer;`;
-
 export class FilledBlockingButton extends BlockingButton {
   public constructor(enabled: boolean, ...childNodes: Array<Node>) {
-    super(
-      `${COMMON_BUTTON_STYLE} color: ${SCHEME.primaryContrast0};`,
-      enabled,
-      ...childNodes
-    );
+    super(FILLED_BUTTON_STYLE, enabled, ...childNodes);
   }
 
   public static create(
@@ -104,11 +103,7 @@ export class FilledBlockingButton extends BlockingButton {
 
 export class OutlineBlockingButton extends BlockingButton {
   public constructor(enabled: boolean, ...childNodes: Array<Node>) {
-    super(
-      `${COMMON_BUTTON_STYLE} border: .1rem solid;`,
-      enabled,
-      ...childNodes
-    );
+    super(OUTLINE_BUTTON_STYLE, enabled, ...childNodes);
   }
 
   public static create(
@@ -131,7 +126,7 @@ export class OutlineBlockingButton extends BlockingButton {
 
 export class TextBlockingButton extends BlockingButton {
   public constructor(enabled: boolean, ...childNodes: Array<Node>) {
-    super(`${COMMON_BUTTON_STYLE}`, enabled, ...childNodes);
+    super(TEXT_BUTTON_STYLE, enabled, ...childNodes);
   }
 
   public static create(

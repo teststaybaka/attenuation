@@ -1,4 +1,5 @@
 import EventEmitter = require("events");
+import { BUTTON_BORDER_RADIUS } from "./button_styles";
 import { SCHEME } from "./color_scheme";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
@@ -43,7 +44,7 @@ export class IconButton extends EventEmitter {
         E.div(
           {
             class: "icon-button-tooltip-background",
-            style: `background-color: ${SCHEME.neutral4}; border: .1rem solid ${SCHEME.neutral3}; border-radius: .3rem; padding: .6rem 1rem; color: ${SCHEME.neutral0}; font-size: 1.4rem; white-space: nowrap;`,
+            style: `background-color: ${SCHEME.neutral4}; border: .1rem solid ${SCHEME.neutral2}; border-radius: ${BUTTON_BORDER_RADIUS}; padding: .6rem 1rem; color: ${SCHEME.neutral0}; font-size: 1.4rem; white-space: nowrap;`,
           },
           E.text(text)
         )

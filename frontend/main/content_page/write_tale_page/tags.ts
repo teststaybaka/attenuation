@@ -11,6 +11,8 @@ export interface NormalTag {
 
 export class NormalTag extends EventEmitter {
   public body: HTMLDivElement;
+  // Visible for testing.
+  public deleteButton: HTMLDivElement;
 
   public constructor(public text: string) {
     super();
@@ -31,12 +33,14 @@ export class NormalTag extends EventEmitter {
         deleteButtonRef,
         {
           class: "normal-tag-delete-button",
-          style: `height: 1.6rem; margin: 0 .5rem 0 .3rem; rotate: 45deg;`,
+          style: `height: 1.6rem; width: 1.6rem; padding: .2rem; box-sizing: border-box; margin: 0 .5rem 0 .3rem; rotate: 45deg;`,
         },
         createPlusIcon(SCHEME.neutral1)
       )
     );
-    deleteButtonRef.val.addEventListener("click", () => this.emit("delete"));
+    this.deleteButton = deleteButtonRef.val;
+
+    this.deleteButton.addEventListener("click", () => this.emit("delete"));
   }
 
   public static create(text: string): NormalTag {

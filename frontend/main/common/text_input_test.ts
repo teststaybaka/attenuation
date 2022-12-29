@@ -11,7 +11,7 @@ TEST_RUNNER.run({
   cases: [
     new (class implements TestCase {
       public name = "RenderVerticalTextInput";
-      private div: HTMLDivElement;
+      private container: HTMLDivElement;
       public async execute() {
         // Prepare
         let cut = VerticalTextInputWithErrorMsg.create(
@@ -20,7 +20,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        this.div = E.div(
+        this.container = E.div(
           {},
           cut.body,
           E.div(
@@ -30,7 +30,7 @@ TEST_RUNNER.run({
             E.text("following lines....")
           )
         );
-        document.body.append(this.div);
+        document.body.append(this.container);
 
         // Verify
         await asyncAssertScreenshot(
@@ -63,7 +63,7 @@ TEST_RUNNER.run({
         );
       }
       public tearDown() {
-        this.div.remove();
+        this.container.remove();
       }
     })(),
   ],

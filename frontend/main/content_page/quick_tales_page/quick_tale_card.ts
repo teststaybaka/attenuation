@@ -2,7 +2,6 @@ import EventEmitter = require("events");
 import { TaleCard } from "../../../../interface/tale";
 import { TaleReaction } from "../../../../interface/tale_reaction";
 import { AT_USER } from "../../common/at_user";
-import { AvatarUrlComposer } from "../../common/avatar_url_composer";
 import { SCHEME } from "../../common/color_scheme";
 import { IconButton, TooltipPosition } from "../../common/icon_button";
 import {
@@ -90,7 +89,7 @@ export class QuickTaleCard extends EventEmitter {
     this.body = E.div(
       {
         class: "quick-tale-card",
-        style: `display: flex; flex-flow: column nowrap; gap: 1rem; width: 60rem; padding: .6rem 1.2rem; border-bottom: .1rem solid ${SCHEME.neutral3}; box-sizing: border-box; overflow: hidden; background-color: ${SCHEME.neutral4}; margin-left: auto; margin-right: auto; cursor: pointer;`,
+        style: `display: flex; flex-flow: column nowrap; gap: 1rem; width: 60rem; padding: .6rem 1.2rem; border-bottom: .1rem solid ${SCHEME.neutral2}; box-sizing: border-box; overflow: hidden; background-color: ${SCHEME.neutral4}; margin-left: auto; margin-right: auto; cursor: pointer;`,
       },
       ...this.createTextContent(taleCard.quickLayoutTale.text),
       ...this.createPreviewImages(taleCard.quickLayoutTale.images),
@@ -102,7 +101,7 @@ export class QuickTaleCard extends EventEmitter {
         E.image({
           class: "quick-tale-card-user-picture",
           style: `flex: 0 0 auto; width: 4.8rem; height: 4.8rem; border-radius: 4.8rem;`,
-          src: AvatarUrlComposer.compose(taleCard.avatarSmallPath),
+          src: taleCard.avatarSmallPath,
         }),
         E.div(
           {

@@ -12,6 +12,7 @@ import { Ref } from "@selfage/ref";
 import { WebServiceClient } from "@selfage/web_service_client";
 
 export interface QuickLayoutEditor {
+  on(event: "imagesLoaded", listener: () => void): this;
   on(event: "valid", listener: () => void): this;
   on(event: "invalid", listener: () => void): this;
 }
@@ -24,16 +25,15 @@ export class QuickLayoutEditor extends EventEmitter {
   public textInput: HTMLTextAreaElement;
   public valid = false;
   public imageEditors = new Array<ImageEditor>();
+  // Visible for testing
+  public uploadImageButton: HTMLDivElement;
+
   private characterCountContainer: HTMLDivElement;
   private characterCount: HTMLDivElement;
   private uploadImagesContainer: HTMLDivElement;
-  private uploadImageButton: HTMLDivElement;
   private uploadImageError: HTMLDivElement;
 
-  public constructor(
-    private imageEditorFactoryFn: (imageUrl: string) => ImageEditor,
-    private webServiceClient: WebServiceClient
-  ) {
+  public constructor(private webServiceClient: WebServiceClient) {
     super();
     let textInputRef = new Ref<HTMLTextAreaElement>();
     let characterCountContainerRef = new Ref<HTMLDivElement>();
@@ -105,7 +105,7 @@ export class QuickLayoutEditor extends EventEmitter {
             E.div(
               {
                 class: "quick-layout-upload-image-icon",
-                style: `height: 4rem;`,
+                style: `height: 4rem; padding: .5rem; box-sizing: border-box;`,
               },
               createPlusIcon(SCHEME.neutral1)
             ),
@@ -137,7 +137,7 @@ export class QuickLayoutEditor extends EventEmitter {
   }
 
   public static create(): QuickLayoutEditor {
-    return new QuickLayoutEditor(ImageEditor.create, WEB_SERVICE_CLIENT);
+    return new QuickLayoutEditor(WEB_SERVICE_CLIENT);
   }
 
   private countCharacter(): void {
@@ -152,6 +152,7 @@ export class QuickLayoutEditor extends EventEmitter {
 
   private chooseFile(): void {
     let tempFileInput = E.input({ type: "file" });
+    tempFileInput.multiple = true;
     tempFileInput.addEventListener("input", () =>
       this.loadImages(tempFileInput)
     );
@@ -177,6 +178,7 @@ export class QuickLayoutEditor extends EventEmitter {
       this.uploadImageButton.style.display = "none";
     }
     this.checkValidity();
+    this.emit("imagesLoaded");
   }
 
   protected checkValidity(): void {
@@ -218,8 +220,8 @@ export class QuickLayoutEditor extends EventEmitter {
     this.addImageEditor(response.url);
   }
 
-  protected addImageEditor(iamgeUrl: string): void {
-    let imageEditor = this.imageEditorFactoryFn(iamgeUrl);
+  protected addImageEditor(imageUrl: string): void {
+    let imageEditor = ImageEditor.create(imageUrl);
     this.insertImageEditor(this.imageEditors.length, imageEditor);
     imageEditor.on("top", () => this.moveImageEditorToTop(imageEditor));
     imageEditor.on("up", () => this.moveImageEditorUp(imageEditor));

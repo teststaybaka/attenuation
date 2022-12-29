@@ -70,7 +70,7 @@ export function createArrowIcon(color: string): SVGSVGElement {
     {
       class: "arrow-icon",
       style: `height: 100%; fill-opacity: 0; stroke-width: 21.2132; stroke: ${color};`,
-      viewBox: "-94.5 -7.5 131 131",
+      viewBox: "-90.5 -7.5 131 131",
     },
     E.path({
       d: `M0 0 l-58 58 l58 58`,

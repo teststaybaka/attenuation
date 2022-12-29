@@ -1,4 +1,4 @@
-import path = require("path");
+import userImage = require("./test_data/user_image.jpg");
 import { normalizeBody } from "../../common/normalize_body";
 import { AccountBasicTab } from "./account_basic_tab";
 import { E } from "@selfage/element/factory";
@@ -14,7 +14,7 @@ TEST_RUNNER.run({
   name: "AccountBasicTabTest",
   cases: [
     new (class implements TestCase {
-      public name = "Render";
+      public name = "RenderAndHoverAndClick";
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
@@ -28,10 +28,7 @@ TEST_RUNNER.run({
                 username: "some-name",
                 naturalName: "Some Name",
                 email: "somename@something.com",
-                avatarLargePath: path.join(
-                  __dirname,
-                  "../common/user_image.jpg"
-                ),
+                avatarLargePath: userImage,
               } as any;
             }
           })()
@@ -50,42 +47,12 @@ TEST_RUNNER.run({
           __dirname + "/account_basic_tab_diff_render.png",
           { fullPage: true }
         );
-      }
-      public tearDown() {
-        this.container.remove();
-      }
-    })(),
-    new (class implements TestCase {
-      public name = "HoverAndClick";
-      private container: HTMLDivElement;
-      public async execute() {
-        // Prepare
-        let cut = new AccountBasicTab(
-          new (class extends WebServiceClient {
-            public constructor() {
-              super(undefined, undefined);
-            }
-            public send() {
-              return {
-                username: "some-name",
-                naturalName: "Some Name",
-                email: "somename@something.com",
-                avatarLargePath: path.join(
-                  __dirname,
-                  "../common/user_image.jpg"
-                ),
-              } as any;
-            }
-          })()
-        );
-        this.container = E.div({}, cut.body);
-        document.body.style.width = "1000px";
-        document.body.appendChild(this.container);
-        await cut.show();
-        let avatar = this.container.querySelector(".account-basic-avatar");
 
         // Execute
-        avatar.dispatchEvent(new MouseEvent("mouseenter"));
+        cut.avatarContainer.dispatchEvent(new MouseEvent("mouseenter"));
+        await new Promise<void>((resolve) =>
+          cut.once("avatarChangeHintTransitionEnded", resolve)
+        );
 
         // Verify
         await asyncAssertScreenshot(
@@ -100,10 +67,24 @@ TEST_RUNNER.run({
         cut.on("changeAvatar", () => (changed = true));
 
         // Execute
-        avatar.dispatchEvent(new MouseEvent("click"));
+        cut.avatarContainer.dispatchEvent(new MouseEvent("click"));
 
         // Verify
         assertThat(changed, eq(true), "changed avatar");
+
+        // Execute
+        cut.avatarContainer.dispatchEvent(new MouseEvent("mouseleave"));
+        await new Promise<void>((resolve) =>
+          cut.once("avatarChangeHintTransitionEnded", resolve)
+        );
+
+        // Verify
+        await asyncAssertScreenshot(
+          __dirname + "/account_basic_tab_leave_avatar.png",
+          __dirname + "/golden/account_basic_tab_render.png",
+          __dirname + "/account_basic_tab_leave_avatar_diff.png",
+          { fullPage: true }
+        );
       }
       public tearDown() {
         this.container.remove();

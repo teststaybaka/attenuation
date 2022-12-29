@@ -1,9 +1,8 @@
 import EventEmitter = require("events");
-import { GetUserInfoResponse } from "../../../../interface/service";
-import { AvatarUrlComposer } from "../../common/avatar_url_composer";
-import { newGetUserInfoServiceRequest } from "../../common/client_requests";
+import { GetUserInfoResponse } from "../../../../interface/user_service";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
+import { newGetUserInfoServiceRequest } from "../../common/user_service_requests";
 import { WEB_SERVICE_CLIENT } from "../../common/web_service_client";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
@@ -14,17 +13,20 @@ let LABEL_STYLE = `flex: 0 0 12rem; font-size: 1.4rem; color: ${SCHEME.neutral0}
 let VALUE_TEXT_STYLE = `flex: 1 0 0; font-size: 1.4rem; color: ${SCHEME.neutral0};`;
 
 export interface AccountBasicTab {
+  on(event: "avatarChangeHintTransitionEnded", listener: () => void): this;
   on(event: "changeAvatar", listener: () => void): this;
 }
 
 export class AccountBasicTab extends EventEmitter {
   public body: HTMLDivElement;
-  protected avatarContainer: HTMLDivElement;
-  protected avatarImage: HTMLImageElement;
-  protected avatarChangeHint: HTMLDivElement;
-  protected usernameValue: HTMLDivElement;
-  protected naturalNameValue: HTMLDivElement;
-  protected emailValue: HTMLDivElement;
+  // Visible for testing
+  public avatarContainer: HTMLDivElement;
+
+  private avatarImage: HTMLImageElement;
+  private avatarChangeHint: HTMLDivElement;
+  private usernameValue: HTMLDivElement;
+  private naturalNameValue: HTMLDivElement;
+  private emailValue: HTMLDivElement;
 
   public constructor(private webServiceClient: WebServiceClient) {
     super();
@@ -123,6 +125,8 @@ export class AccountBasicTab extends EventEmitter {
     this.naturalNameValue = naturalNameValueRef.val;
     this.emailValue = emailValueRef.val;
 
+    this.hide();
+    this.hideChangeAvatarHint();
     this.avatarContainer.addEventListener("mouseenter", () =>
       this.showChangeAvatarHint()
     );
@@ -132,8 +136,9 @@ export class AccountBasicTab extends EventEmitter {
     this.avatarContainer.addEventListener("click", () =>
       this.switchToChangeAvatar()
     );
-    this.hide();
-    this.hideChangeAvatarHint();
+    this.avatarChangeHint.addEventListener("transitionend", () =>
+      this.emit("avatarChangeHintTransitionEnded")
+    );
   }
 
   public static create(): AccountBasicTab {
@@ -158,7 +163,7 @@ export class AccountBasicTab extends EventEmitter {
     this.usernameValue.textContent = response.username;
     this.naturalNameValue.textContent = response.naturalName;
     this.emailValue.textContent = response.email;
-    this.avatarImage.src = AvatarUrlComposer.compose(response.avatarLargePath);
+    this.avatarImage.src = response.avatarLargePath;
   }
 
   protected loadBasicUserData(): Promise<GetUserInfoResponse> {

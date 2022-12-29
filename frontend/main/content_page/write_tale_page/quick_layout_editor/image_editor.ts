@@ -18,11 +18,11 @@ export interface ImageEditor {
 
 export class ImageEditor extends EventEmitter {
   public body: HTMLDivElement;
-  protected moveToTopButton: HTMLDivElement;
-  protected moveUpButton: HTMLDivElement;
-  protected moveDownButton: HTMLDivElement;
-  protected moveToBottomButton: HTMLDivElement;
-  protected deleteButton: HTMLDivElement;
+  private moveToTopButton: HTMLDivElement;
+  private moveUpButton: HTMLDivElement;
+  private moveDownButton: HTMLDivElement;
+  private moveToBottomButton: HTMLDivElement;
+  private deleteButton: HTMLDivElement;
 
   public constructor(public imageUrl: string) {
     super();
@@ -56,7 +56,7 @@ export class ImageEditor extends EventEmitter {
           moveToTopButtonRef,
           {
             class: "image-editor-move-top-button",
-            style: `width: 3rem; height: 3rem;`,
+            style: `width: 3rem; height: 3rem; padding: .6rem; box-sizing: border-box;`,
           },
           createArrowWithBarIcon(SCHEME.neutral1)
         ),
@@ -64,7 +64,7 @@ export class ImageEditor extends EventEmitter {
           moveUpButtonRef,
           {
             class: "image-editor-move-up-button",
-            style: `width: 3rem; height: 3rem;`,
+            style: `width: 3rem; height: 3rem; padding: .6rem; box-sizing: border-box;`,
           },
           createArrowIcon(SCHEME.neutral1)
         ),
@@ -72,7 +72,7 @@ export class ImageEditor extends EventEmitter {
           moveDownButtonRef,
           {
             class: "image-editor-move-down-button",
-            style: `rotate: 180deg; width: 3rem; height: 3rem;`,
+            style: `rotate: 180deg; width: 3rem; height: 3rem; padding: .6rem; box-sizing: border-box;`,
           },
           createArrowIcon(SCHEME.neutral1)
         ),
@@ -80,7 +80,7 @@ export class ImageEditor extends EventEmitter {
           moveToBottomButtonRef,
           {
             class: "image-editor-move-bottom-button",
-            style: `rotate: 180deg; width: 3rem; height: 3rem;`,
+            style: `rotate: 180deg; width: 3rem; height: 3rem; padding: .6rem; box-sizing: border-box;`,
           },
           createArrowWithBarIcon(SCHEME.neutral1)
         ),
@@ -88,7 +88,7 @@ export class ImageEditor extends EventEmitter {
           deleteButtonRef,
           {
             class: "image-editor-delete-button",
-            style: `width: 3rem; height: 3rem;`,
+            style: `width: 3rem; height: 3rem; padding: .3rem; box-sizing: border-box;`,
           },
           createTrashCanIcon(SCHEME.neutral1)
         )
@@ -131,5 +131,30 @@ export class ImageEditor extends EventEmitter {
   public hideMoveDownButtons(): void {
     this.moveDownButton.style.display = "none";
     this.moveToBottomButton.style.display = "none";
+  }
+
+  // Visible for testing
+  public moveUp(): void {
+    this.moveUpButton.click();
+  }
+
+  // Visible for testing
+  public moveToTop(): void {
+    this.moveToTopButton.click();
+  }
+
+  // Visible for testing
+  public moveDown(): void {
+    this.moveDownButton.click();
+  }
+
+  // Visible for testing
+  public moveToBottom(): void {
+    this.moveToBottomButton.click();
+  }
+
+  // Visible for testing
+  public delete(): void {
+    this.deleteButton.click();
   }
 }
