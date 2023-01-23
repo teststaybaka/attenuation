@@ -1,6 +1,8 @@
 import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 import { ServiceDescriptor, PrimitveTypeForBody } from '@selfage/service_descriptor';
 import { USER_SESSION } from './user_session';
+import { UserInfoCard, USER_INFO_CARD } from './user_info_card';
+import { UserRelationship, USER_RELATIONSHIP } from './user_relationship';
 
 export interface SignUpRequestBody {
   username?: string,
@@ -169,5 +171,91 @@ export let UPLOAD_AVATAR: ServiceDescriptor = {
   },
   response: {
     messageType: UPLOAD_AVATAR_RESPONSE,
+  },
+}
+
+export interface GetUserInfoCardRequestBody {
+  userId?: string,
+}
+
+export let GET_USER_INFO_CARD_REQUEST_BODY: MessageDescriptor<GetUserInfoCardRequestBody> = {
+  name: 'GetUserInfoCardRequestBody',
+  fields: [
+    {
+      name: 'userId',
+      primitiveType: PrimitiveType.STRING,
+    },
+  ]
+};
+
+export interface GetUserInfoCardResponse {
+  card?: UserInfoCard,
+}
+
+export let GET_USER_INFO_CARD_RESPONSE: MessageDescriptor<GetUserInfoCardResponse> = {
+  name: 'GetUserInfoCardResponse',
+  fields: [
+    {
+      name: 'card',
+      messageType: USER_INFO_CARD,
+    },
+  ]
+};
+
+export let GET_USER_INFO_CARD: ServiceDescriptor = {
+  name: "GetUserInfoCard",
+  path: "/GetUserInfoCard",
+  body: {
+    messageType: GET_USER_INFO_CARD_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: GET_USER_INFO_CARD_RESPONSE,
+  },
+}
+
+export interface SetUserRelationshipRequestBody {
+  userId?: string,
+  relationship?: UserRelationship,
+}
+
+export let SET_USER_RELATIONSHIP_REQUEST_BODY: MessageDescriptor<SetUserRelationshipRequestBody> = {
+  name: 'SetUserRelationshipRequestBody',
+  fields: [
+    {
+      name: 'userId',
+      primitiveType: PrimitiveType.STRING,
+    },
+    {
+      name: 'relationship',
+      enumType: USER_RELATIONSHIP,
+    },
+  ]
+};
+
+export interface SetUserRelationshipResponse {
+}
+
+export let SET_USER_RELATIONSHIP_RESPONSE: MessageDescriptor<SetUserRelationshipResponse> = {
+  name: 'SetUserRelationshipResponse',
+  fields: [
+  ]
+};
+
+export let SET_USER_RELATIONSHIP: ServiceDescriptor = {
+  name: "SetUserRelationship",
+  path: "/SetUserRelationship",
+  body: {
+    messageType: SET_USER_RELATIONSHIP_REQUEST_BODY,
+  },
+  signedUserSession: {
+    key: "u",
+    type: USER_SESSION
+  },
+  response: {
+    messageType: SET_USER_RELATIONSHIP_RESPONSE,
   },
 }

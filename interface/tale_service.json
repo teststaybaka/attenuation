@@ -21,12 +21,23 @@
     "outputHandler": "../backend/handler/tale_service_handlers"
   }
 }, {
+  "name": "QuickLayoutTaleToCreate",
+  "message": {
+    "fields": [{
+      "name": "text",
+      "type": "string"
+    }, {
+      "name": "images",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}, {
   "name": "CreateTaleRequestBody",
   "message": {
     "fields": [{
-      "name": "quickLayoutTale",
-      "type": "QuickLayoutTale",
-      "import": "./tale"
+      "name": "quickLayout",
+      "type": "QuickLayoutTaleToCreate"
     }, {
       "name": "tags",
       "type": "string",
@@ -41,11 +52,7 @@
 }, {
   "name": "CreateTaleResponse",
   "message": {
-    "fields": [{
-      "name": "taleCard",
-      "type": "TaleCard",
-      "import": "./tale"
-    }]
+    "fields": []
   }
 }, {
   "name": "CreateTale",
@@ -58,6 +65,97 @@
       "import": "./user_session"
     },
     "response": "CreateTaleResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}, {
+  "name": "GetQuickTaleRequestBody",
+  "message": {
+    "fields": [{
+      "name": "taleId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetQuickTaleResponse",
+  "message": {
+    "fields": [{
+      "name": "card",
+      "type": "QuickTaleCard",
+      "import": "./tale_card"
+    }]
+  }
+}, {
+  "name": "GetQuickTale",
+  "service": {
+    "path": "/GetQuickTale",
+    "body": "GetQuickTaleRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "GetQuickTaleResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}, {
+  "name": "GetRecommendedQuickTalesRequestBody",
+  "message": {
+    "fields": [{
+      "name": "context",
+      "type": "TaleContext",
+      "import": "./tale_context"
+    }]
+  }
+}, {
+  "name": "GetRecommendedQuickTalesResponse",
+  "message": {
+    "fields": [{
+      "name": "cards",
+      "type": "QuickTaleCard",
+      "isArray": true,
+      "import": "./tale_card"
+    }]
+  }
+}, {
+  "name": "GetRecommendedQuickTales",
+  "service": {
+    "path": "/GetRecommendedQuickTales",
+    "body": "GetRecommendedQuickTalesRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "GetRecommendedQuickTalesResponse",
+    "outputWebClient": "../frontend/main/common/tale_service_requests",
+    "outputHandler": "../backend/handler/tale_service_handlers"
+  }
+}, {
+  "name": "ViewTaleRequestBody",
+  "message": {
+    "fields": [{
+      "name": "taleId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "ViewTaleResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "ViewTale",
+  "service": {
+    "path": "/ViewTale",
+    "body": "ViewTaleRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "ViewTaleResponse",
     "outputWebClient": "../frontend/main/common/tale_service_requests",
     "outputHandler": "../backend/handler/tale_service_handlers"
   }

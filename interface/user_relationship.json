@@ -1,0 +1,15 @@
+[{
+  "name": "UserRelationship",
+  "enum": {
+    "values": [{
+      "name": "UNKNOWN",
+      "value": 0
+    }, {
+      "name": "LIKE",
+      "value": 1
+    }, {
+      "name": "DISLIKE",
+      "value": 2
+    }]
+  }
+}]

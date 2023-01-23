@@ -21,32 +21,36 @@ class RenderCase implements TestCase {
   private container: HTMLDivElement;
   public constructor(
     public name: string,
-    private text: string | undefined,
-    private images: Array<string>,
+    private option: {
+      text?: string;
+      images?: Array<string>;
+      pinned?: boolean;
+    },
     private screenshotPath: string,
     private screenshotGoldenPath: string,
     private screenshotDiffPath: string
   ) {}
   public async execute() {
     // Prepare
-    let cut = new QuickTaleCard(undefined, undefined, {
-      avatarSmallPath: userImage,
-      username: "some-name",
-      userNatureName: "Some Name",
-      createdTimestamp: Date.parse("2022-10-11"),
-      quickLayoutTale: {
-        text: this.text,
-        images: this.images,
+    let cut = new QuickTaleCard(
+      {
+        metadata: {
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+        },
+        text: this.option.text,
+        images: this.option.images,
       },
-    });
+      this.option.pinned,
+      undefined
+    );
     this.container = E.div({}, cut.body);
     document.body.style.width = "800px";
 
     // Execute
     document.body.appendChild(this.container);
-    if (this.images.length > 0) {
-      await new Promise<void>((resolve) => cut.once("imagesLoaded", resolve));
-    }
 
     // Verify
     await asyncAssertScreenshot(
@@ -55,76 +59,6 @@ class RenderCase implements TestCase {
       this.screenshotDiffPath,
       { fullPage: true }
     );
-  }
-  public tearDown() {
-    this.container.remove();
-  }
-}
-
-class ReactionAndDeleteCase implements TestCase {
-  private container: HTMLDivElement;
-  public constructor(
-    public name: string,
-    private getReactionButtonFn: (cut: QuickTaleCard) => IconButton,
-    private reaction: TaleReaction
-  ) {}
-  public async execute() {
-    // Prepare
-    let webServiceClientMock = new (class extends WebServiceClient {
-      public constructor() {
-        super(undefined, undefined);
-      }
-    })();
-    let windowMock = new (class {
-      public callback: Function;
-      setTimeout(callback: Function) {
-        this.callback = callback;
-        return 0;
-      }
-    })();
-    let cut = new QuickTaleCard(webServiceClientMock, windowMock as any, {
-      taleId: "id1",
-      avatarSmallPath: userImage,
-      username: "some-name",
-      userNatureName: "Some Name",
-      createdTimestamp: Date.parse("2022-10-11"),
-      quickLayoutTale: {
-        text: "blahblahblahblah\nsomethingsomething",
-      },
-    });
-    this.container = E.div({}, cut.body);
-    document.body.style.width = "800px";
-    document.body.appendChild(this.container);
-    document.body.clientHeight; // Force reflow
-    // Expand actions
-    cut.actionsExpandButton.click();
-    await new Promise<void>((resolve) =>
-      cut.once("actionsLineTranstionEnded", resolve)
-    );
-    // Reacting
-    this.getReactionButtonFn(cut).click();
-
-    // Prepare
-    let requestCaptured: any;
-    webServiceClientMock.send = (request) => {
-      requestCaptured = request;
-      return {} as any;
-    };
-
-    // Execute
-    windowMock.callback();
-    await new Promise<void>((resolve) => cut.once("deleted", resolve));
-
-    // Verify
-    assertThat(
-      requestCaptured.request.body,
-      eqMessage(
-        { taleId: "id1", reaction: this.reaction },
-        REACT_TO_TALE_REQUEST_BODY
-      ),
-      "request"
-    );
-    assertThat(this.container.childElementCount, eq(0), "deleted");
   }
   public tearDown() {
     this.container.remove();
@@ -143,27 +77,30 @@ class UndoReactionCase implements TestCase {
   ) {}
   public async execute() {
     // Prepare
-    let windowMock = new (class {
-      public timeoutHandle = 0;
-      public clearedTimeoutHandler: number;
-      setTimeout() {
-        this.timeoutHandle += 1;
-        return this.timeoutHandle;
+    let webServiceClientMock = new (class extends WebServiceClient {
+      public requestCaptured: any;
+      public constructor() {
+        super(undefined, undefined);
       }
-      clearTimeout(timeoutHandle: number) {
-        this.clearedTimeoutHandler = timeoutHandle;
+      public send(request: any) {
+        this.requestCaptured = request;
+        return {} as any;
       }
     })();
-    let cut = new QuickTaleCard(undefined, windowMock as any, {
-      taleId: "id1",
-      avatarSmallPath: userImage,
-      username: "some-name",
-      userNatureName: "Some Name",
-      createdTimestamp: Date.parse("2022-10-11"),
-      quickLayoutTale: {
+    let cut = new QuickTaleCard(
+      {
+        metadata: {
+          taleId: "id1",
+          avatarSmallPath: userImage,
+          username: "some-name",
+          userNatureName: "Some Name",
+          createdTimestamp: Date.parse("2022-10-11"),
+        },
         text: "blahblahblahblah\nsomethingsomething",
       },
-    });
+      false,
+      webServiceClientMock
+    );
     this.container = E.div({}, cut.body);
     document.body.style.width = "800px";
     document.body.appendChild(this.container);
@@ -180,7 +117,11 @@ class UndoReactionCase implements TestCase {
     this.getUndoReactionButtonFn(cut).click();
 
     // Verify
-    assertThat(windowMock.clearedTimeoutHandler, eq(1), "cleared");
+    assertThat(
+      webServiceClientMock.requestCaptured.request.body,
+      eqMessage({ taleId: "id1" }, REACT_TO_TALE_REQUEST_BODY),
+      "request"
+    );
     await asyncAssertScreenshot(
       this.screenshotPath,
       this.screenshotBaselinePath,
@@ -199,24 +140,28 @@ TEST_RUNNER.run({
   cases: [
     new RenderCase(
       "RenderOneWideImage",
-      undefined,
-      [wideImage],
+      {
+        images: [wideImage],
+      },
       __dirname + "/quick_tale_card_render_one_wide_image.png",
       __dirname + "/golden/quick_tale_card_render_one_wide_image.png",
       __dirname + "/quick_tale_card_render_one_wide_image_diff.png"
     ),
     new RenderCase(
       "RenderOneTallImage",
-      undefined,
-      [tallImage],
+      {
+        images: [tallImage],
+      },
       __dirname + "/quick_tale_card_render_one_tall_image.png",
       __dirname + "/golden/quick_tale_card_render_one_tall_image.png",
       __dirname + "/quick_tale_card_render_one_tall_image_diff.png"
     ),
     new RenderCase(
       "RenderOneSmallImageOnly",
-      "blahblahblahblah\nsomethingsomething",
-      [smallImage],
+      {
+        text: "blahblahblahblah\nsomethingsomething",
+        images: [smallImage],
+      },
       __dirname + "/quick_tale_card_render_one_small_image_with_text.png",
       __dirname +
         "/golden/quick_tale_card_render_one_small_image_with_text.png",
@@ -224,8 +169,9 @@ TEST_RUNNER.run({
     ),
     new RenderCase(
       "RenderFourImages",
-      undefined,
-      [smallImage, tallImage, wideImage, userImage],
+      {
+        images: [smallImage, userImage, wideImage, tallImage],
+      },
       __dirname + "/quick_tale_card_render_4_images.png",
       __dirname + "/golden/quick_tale_card_render_4_images.png",
       __dirname + "/quick_tale_card_render_4_images_diff.png"
@@ -234,25 +180,28 @@ TEST_RUNNER.run({
       public name = "ViewOneImage";
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(undefined, undefined, {
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
+        let cut = new QuickTaleCard(
+          {
+            metadata: {
+              avatarSmallPath: userImage,
+              username: "some-name",
+              userNatureName: "Some Name",
+              createdTimestamp: Date.parse("2022-10-11"),
+            },
             images: [smallImage],
           },
-        });
+          false,
+          undefined
+        );
         let imageUrlsCaptured: Array<string>;
         let indexCaptured: number;
         cut.on("viewImages", (imageUrls, index) => {
           imageUrlsCaptured = imageUrls;
           indexCaptured = index;
         });
-        let imageElement = cut.body.querySelector("img") as HTMLElement;
 
         // Execute
-        imageElement.click();
+        cut.previewImages[0].click();
 
         // Verify
         assertThat(imageUrlsCaptured, eqArray([eq(smallImage)]), "image URLs");
@@ -263,26 +212,29 @@ TEST_RUNNER.run({
       public name = "ViewImages";
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(undefined, undefined, {
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
+        let cut = new QuickTaleCard(
+          {
+            metadata: {
+              avatarSmallPath: userImage,
+              username: "some-name",
+              userNatureName: "Some Name",
+              createdTimestamp: Date.parse("2022-10-11"),
+            },
             images: [smallImage, tallImage, wideImage],
           },
-        });
+          false,
+          undefined
+        );
         let imageUrlsCaptured: Array<string>;
         let indexCaptured: number;
         cut.on("viewImages", (imageUrls, index) => {
           imageUrlsCaptured = imageUrls;
           indexCaptured = index;
         });
-        let imageElements = cut.body.querySelectorAll("img");
         let expectedImageUrls = [eq(smallImage), eq(tallImage), eq(wideImage)];
 
         // Execute
-        (imageElements[0] as HTMLElement).click();
+        cut.previewImages[0].click();
 
         // Verify
         assertThat(
@@ -293,7 +245,7 @@ TEST_RUNNER.run({
         assertThat(indexCaptured, eq(0), "index");
 
         // Execute
-        (imageElements[1] as HTMLElement).click();
+        cut.previewImages[1].click();
 
         // Verify
         assertThat(
@@ -304,7 +256,7 @@ TEST_RUNNER.run({
         assertThat(indexCaptured, eq(1), "index");
 
         // Execute
-        (imageElements[2] as HTMLElement).click();
+        cut.previewImages[2].click();
 
         // Verify
         assertThat(
@@ -317,26 +269,41 @@ TEST_RUNNER.run({
     })(),
     new RenderCase(
       "RenderTextOnly",
-      "blahblahblahblah\nsomethingsomething\n3rdline\n4thline",
-      [],
+      {
+        text: "blahblahblahblah\nsomethingsomething\n3rdline\n4thline",
+      },
       __dirname + "/quick_tale_card_render_text_only.png",
       __dirname + "/golden/quick_tale_card_render_text_only.png",
       __dirname + "/quick_tale_card_render_text_only_diff.png"
+    ),
+    new RenderCase(
+      "RenderPinned",
+      {
+        text: "blahblahblahblah\nsomethingsomething\n3rdline\n4thline",
+        pinned: true
+      },
+      __dirname + "/quick_tale_card_render_pinned.png",
+      __dirname + "/golden/quick_tale_card_render_pinned.png",
+      __dirname + "/quick_tale_card_render_pinned_diff.png"
     ),
     new (class implements TestCase {
       public name = "MultiLinesText";
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(undefined, undefined, {
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
+        let cut = new QuickTaleCard(
+          {
+            metadata: {
+              avatarSmallPath: userImage,
+              username: "some-name",
+              userNatureName: "Some Name",
+              createdTimestamp: Date.parse("2022-10-11"),
+            },
             text: "hahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\nhahah\n",
           },
-        });
+          false,
+          undefined
+        );
         this.container = E.div({}, cut.body);
         document.body.style.width = "800px";
 
@@ -382,15 +349,19 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let cut = new QuickTaleCard(undefined, undefined, {
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
+        let cut = new QuickTaleCard(
+          {
+            metadata: {
+              avatarSmallPath: userImage,
+              username: "some-name",
+              userNatureName: "Some Name",
+              createdTimestamp: Date.parse("2022-10-11"),
+            },
             text: "blahblahblahblah\nsomethingsomething",
           },
-        });
+          false,
+          undefined
+        );
         this.container = E.div({}, cut.body);
         document.body.style.width = "800px";
         document.body.appendChild(this.container);
@@ -439,26 +410,30 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let windowMock = new (class {
-          public timeoutHandle = 0;
-          public clearedTimeoutHandler: number;
-          setTimeout() {
-            this.timeoutHandle += 1;
-            return this.timeoutHandle;
+        let webServiceClientMock = new (class extends WebServiceClient {
+          public requestCaptured: any;
+          public constructor() {
+            super(undefined, undefined);
           }
-          clearTimeout(timeoutHandle: number) {
-            this.clearedTimeoutHandler = timeoutHandle;
+          public send(request: any) {
+            this.requestCaptured = request;
+            return {} as any;
           }
         })();
-        let cut = new QuickTaleCard(undefined, windowMock as any, {
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
+        let cut = new QuickTaleCard(
+          {
+            metadata: {
+              taleId: "id1",
+              avatarSmallPath: userImage,
+              username: "some-name",
+              userNatureName: "Some Name",
+              createdTimestamp: Date.parse("2022-10-11"),
+            },
             text: "blahblahblahblah\nsomethingsomething",
           },
-        });
+          false,
+          webServiceClientMock
+        );
         this.container = E.div({}, cut.body);
         document.body.style.width = "800px";
         document.body.appendChild(this.container);
@@ -472,7 +447,14 @@ TEST_RUNNER.run({
         cut.loveButton.click();
 
         // Verify
-        assertThat(windowMock.timeoutHandle, eq(1), "love");
+        assertThat(
+          webServiceClientMock.requestCaptured.request.body,
+          eqMessage(
+            { taleId: "id1", reaction: TaleReaction.LOVE },
+            REACT_TO_TALE_REQUEST_BODY
+          ),
+          "love request"
+        );
         await asyncAssertScreenshot(
           __dirname + "/quick_tale_card_loved.png",
           __dirname + "/golden/quick_tale_card_loved.png",
@@ -484,7 +466,14 @@ TEST_RUNNER.run({
         cut.likeButton.click();
 
         // Verify
-        assertThat(windowMock.clearedTimeoutHandler, eq(1), "cleared love");
+        assertThat(
+          webServiceClientMock.requestCaptured.request.body,
+          eqMessage(
+            { taleId: "id1", reaction: TaleReaction.LIKE },
+            REACT_TO_TALE_REQUEST_BODY
+          ),
+          "like request"
+        );
         await asyncAssertScreenshot(
           __dirname + "/quick_tale_card_liked.png",
           __dirname + "/golden/quick_tale_card_liked.png",
@@ -496,7 +485,14 @@ TEST_RUNNER.run({
         cut.dislikeButton.click();
 
         // Verify
-        assertThat(windowMock.clearedTimeoutHandler, eq(2), "cleared liked");
+        assertThat(
+          webServiceClientMock.requestCaptured.request.body,
+          eqMessage(
+            { taleId: "id1", reaction: TaleReaction.DISLIKE },
+            REACT_TO_TALE_REQUEST_BODY
+          ),
+          "dislike request"
+        );
         await asyncAssertScreenshot(
           __dirname + "/quick_tale_card_disliked.png",
           __dirname + "/golden/quick_tale_card_disliked.png",
@@ -508,7 +504,14 @@ TEST_RUNNER.run({
         cut.hateButton.click();
 
         // Verify
-        assertThat(windowMock.clearedTimeoutHandler, eq(3), "cleared disliked");
+        assertThat(
+          webServiceClientMock.requestCaptured.request.body,
+          eqMessage(
+            { taleId: "id1", reaction: TaleReaction.HATE },
+            REACT_TO_TALE_REQUEST_BODY
+          ),
+          "hate request"
+        );
         await asyncAssertScreenshot(
           __dirname + "/quick_tale_card_hated.png",
           __dirname + "/golden/quick_tale_card_hated.png",
@@ -520,7 +523,15 @@ TEST_RUNNER.run({
         cut.loveButton.click();
 
         // Verify
-        assertThat(windowMock.clearedTimeoutHandler, eq(4), "cleared hated");
+
+        assertThat(
+          webServiceClientMock.requestCaptured.request.body,
+          eqMessage(
+            { taleId: "id1", reaction: TaleReaction.LOVE },
+            REACT_TO_TALE_REQUEST_BODY
+          ),
+          "love request"
+        );
         await asyncAssertScreenshot(
           __dirname + "/quick_tale_card_loved.png",
           __dirname + "/golden/quick_tale_card_loved.png",
@@ -564,79 +575,5 @@ TEST_RUNNER.run({
       __dirname + "/quick_tale_card_undo_hate_baseline.png",
       __dirname + "/quick_tale_card_undo_hate_diff.png"
     ),
-    new ReactionAndDeleteCase(
-      "LoveAndDelete",
-      (cut) => cut.loveButton,
-      TaleReaction.LOVE
-    ),
-    new ReactionAndDeleteCase(
-      "LikeAndDelete",
-      (cut) => cut.likeButton,
-      TaleReaction.LIKE
-    ),
-    new ReactionAndDeleteCase(
-      "DislikeAndDelete",
-      (cut) => cut.dislikeButton,
-      TaleReaction.DISLIKE
-    ),
-    new ReactionAndDeleteCase(
-      "HateAndDelete",
-      (cut) => cut.hateButton,
-      TaleReaction.HATE
-    ),
-    new (class implements TestCase {
-      public name = "Dismiss";
-      private container: HTMLDivElement;
-      public async execute() {
-        // Prepare
-        let webServiceClientMock = new (class extends WebServiceClient {
-          public constructor() {
-            super(undefined, undefined);
-          }
-        })();
-        let cut = new QuickTaleCard(webServiceClientMock, undefined, {
-          taleId: "id1",
-          avatarSmallPath: userImage,
-          username: "some-name",
-          userNatureName: "Some Name",
-          createdTimestamp: Date.parse("2022-10-11"),
-          quickLayoutTale: {
-            text: "blahblahblahblah\nsomethingsomething",
-          },
-        });
-        this.container = E.div({}, cut.body);
-        document.body.style.width = "800px";
-        document.body.appendChild(this.container);
-        document.body.clientHeight; // Force reflow.
-        // Expand actions.
-        cut.actionsExpandButton.click();
-        await new Promise<void>((resolve) =>
-          cut.once("actionsLineTranstionEnded", resolve)
-        );
-        let requestCaptured: any;
-        webServiceClientMock.send = (request) => {
-          requestCaptured = request;
-          return {} as any;
-        };
-
-        // Execute
-        cut.dismissButton.click();
-        await new Promise<void>((resolve) => cut.once("deleted", resolve));
-
-        // Verify
-        assertThat(
-          requestCaptured.request.body,
-          eqMessage(
-            { taleId: "id1", reaction: TaleReaction.DISMISS },
-            REACT_TO_TALE_REQUEST_BODY
-          ),
-          "request"
-        );
-        assertThat(this.container.childElementCount, eq(0), "deleted");
-      }
-      public tearDown() {
-        this.container.remove();
-      }
-    })(),
   ],
 });

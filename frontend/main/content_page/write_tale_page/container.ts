@@ -222,7 +222,7 @@ export class WriteTalePage extends EventEmitter {
     await this.webServiceClient.send(
       newCreateTaleServiceRequest({
         body: {
-          quickLayoutTale: {
+          quickLayout: {
             text: this.quickLayoutEditor.textInput.value,
             images: this.quickLayoutEditor.imageEditors.map(
               (imageEditor) => imageEditor.imageUrl

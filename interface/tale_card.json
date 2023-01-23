@@ -1,0 +1,43 @@
+[{
+  "name": "TaleCardMedata",
+  "message": {
+    "fields": [{
+      "name": "taleId",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "userNatureName",
+      "type": "string"
+    }, {
+      "name": "avatarSmallPath",
+      "type": "string"
+    }, {
+      "name": "createdTimestamp",
+      "type": "number"
+    }, {
+      "name": "reaction",
+      "type": "TaleReaction",
+      "import": "./tale_reaction"
+    }]
+  }
+}, {
+  "name": "QuickTaleCard",
+  "message": {
+    "fields": [{
+      "name": "metadata",
+      "type": "TaleCardMedata"
+    }, {
+      "name": "text",
+      "type": "string"
+    }, {
+      "name": "images",
+      "type": "string",
+      "isArray": true
+    }]
+  }
+}]

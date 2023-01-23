@@ -1,4 +1,4 @@
-import { SignUpRequestBody, SignUpResponse, SIGN_UP, SignInRequestBody, SignInResponse, SIGN_IN, GetUserInfoRequestBody, GetUserInfoResponse, GET_USER_INFO, UploadAvatarResponse, UPLOAD_AVATAR } from '../../../interface/user_service';
+import { SignUpRequestBody, SignUpResponse, SIGN_UP, SignInRequestBody, SignInResponse, SIGN_IN, GetUserInfoRequestBody, GetUserInfoResponse, GET_USER_INFO, UploadAvatarResponse, UPLOAD_AVATAR, GetUserInfoCardRequestBody, GetUserInfoCardResponse, GET_USER_INFO_CARD, SetUserRelationshipRequestBody, SetUserRelationshipResponse, SET_USER_RELATIONSHIP } from '../../../interface/user_service';
 import { WebServiceRequest } from '@selfage/service_descriptor';
 
 export interface SignUpClientRequest {
@@ -49,6 +49,32 @@ export function newUploadAvatarServiceRequest(
 ): WebServiceRequest<UploadAvatarClientRequest, UploadAvatarResponse> {
   return {
     descriptor: UPLOAD_AVATAR,
+    request,
+  };
+}
+
+export interface GetUserInfoCardClientRequest {
+  body: GetUserInfoCardRequestBody;
+}
+
+export function newGetUserInfoCardServiceRequest(
+  request: GetUserInfoCardClientRequest
+): WebServiceRequest<GetUserInfoCardClientRequest, GetUserInfoCardResponse> {
+  return {
+    descriptor: GET_USER_INFO_CARD,
+    request,
+  };
+}
+
+export interface SetUserRelationshipClientRequest {
+  body: SetUserRelationshipRequestBody;
+}
+
+export function newSetUserRelationshipServiceRequest(
+  request: SetUserRelationshipClientRequest
+): WebServiceRequest<SetUserRelationshipClientRequest, SetUserRelationshipResponse> {
+  return {
+    descriptor: SET_USER_RELATIONSHIP,
     request,
   };
 }

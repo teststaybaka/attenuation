@@ -79,6 +79,10 @@ export class MenuItem extends EventEmitter {
     this.body.style.display = `none`;
   }
 
+  public remove(): void {
+    this.body.remove();
+  }
+
   public click(): void {
     this.body.click();
   }

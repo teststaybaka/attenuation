@@ -18,7 +18,7 @@ export class ImageViewer extends EventEmitter {
   private static BUTTON_STYLE = `width: 3rem; height: 3rem; box-sizing: border-box; cursor: pointer;`;
 
   public body: HTMLDivElement;
-  public controllerBodies: Array<HTMLDivElement>;
+  public controllerBodies: Array<HTMLElement>;
   // Visible for testing
   public zoomInButton: IconButton;
   public zoomOutButton: IconButton;

@@ -1,0 +1,25 @@
+[{
+  "name": "UserInfoCard",
+  "message": {
+    "fields": [{
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "username",
+      "type": "string"
+    }, {
+      "name": "naturalName",
+      "type": "string"
+    }, {
+      "name": "description",
+      "type": "string"
+    }, {
+      "name": "avatarLargePath",
+      "type": "string"
+    }, {
+      "name": "relationship",
+      "type": "UserRelationship",
+      "import": "./user_relationship"
+    }]
+  }
+}]

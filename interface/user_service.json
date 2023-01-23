@@ -112,4 +112,66 @@
     "outputWebClient": "../frontend/main/common/user_service_requests",
     "outputHandler": "../backend/handler/user_service_handlers"
   }
+}, {
+  "name": "GetUserInfoCardRequestBody",
+  "message": {
+    "fields": [{
+      "name": "userId",
+      "type": "string"
+    }]
+  }
+}, {
+  "name": "GetUserInfoCardResponse",
+  "message": {
+    "fields": [{
+      "name": "card",
+      "type": "UserInfoCard",
+      "import": "./user_info_card"
+    }]
+  }
+}, {
+  "name": "GetUserInfoCard",
+  "service": {
+    "path": "/GetUserInfoCard",
+    "body": "GetUserInfoCardRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "GetUserInfoCardResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
+}, {
+  "name": "SetUserRelationshipRequestBody",
+  "message": {
+    "fields": [{
+      "name": "userId",
+      "type": "string"
+    }, {
+      "name": "relationship",
+      "type": "UserRelationship",
+      "import": "./user_relationship"
+    }]
+  }
+}, {
+  "name": "SetUserRelationshipResponse",
+  "message": {
+    "fields": []
+  }
+}, {
+  "name": "SetUserRelationship",
+  "service": {
+    "path": "/SetUserRelationship",
+    "body": "SetUserRelationshipRequestBody",
+    "signedUserSession": {
+      "key": "u",
+      "type": "UserSession",
+      "import": "./user_session"
+    },
+    "response": "SetUserRelationshipResponse",
+    "outputWebClient": "../frontend/main/common/user_service_requests",
+    "outputHandler": "../backend/handler/user_service_handlers"
+  }
 }]

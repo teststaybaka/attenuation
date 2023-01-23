@@ -18,7 +18,7 @@ export interface ImagesViewerPage {
 
 export class ImagesViewerPage extends EventEmitter {
   public menuBody: HTMLDivElement;
-  public controllerBodies: Array<HTMLDivElement>;
+  public controllerBodies: Array<HTMLElement>;
   // Visible for testing
   public backMenuItem: MenuItem;
   public upButton: IconButton;
@@ -128,13 +128,22 @@ export class ImagesViewerPage extends EventEmitter {
     }
   }
 
-  private restoreButton(button: HTMLDivElement): void {
+  private restoreButton(button: HTMLButtonElement): void {
     button.style.color = SCHEME.neutral1;
     button.style.cursor = "pointer";
   }
 
-  private fadeButton(button: HTMLDivElement): void {
+  private fadeButton(button: HTMLButtonElement): void {
     button.style.color = SCHEME.neutral3;
     button.style.cursor = "not-allowed";
+  }
+
+  public remove(): void {
+    for (let imageViewer of this.imageViewers) {
+      imageViewer.remove();
+    }
+    this.backMenuItem.remove();
+    this.upButton.remove();
+    this.downButton.remove();
   }
 }

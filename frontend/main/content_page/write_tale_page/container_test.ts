@@ -168,7 +168,7 @@ TEST_RUNNER.run({
           requestCaptured.request.body,
           eqMessage(
             {
-              quickLayoutTale: {
+              quickLayout: {
                 text: "",
                 images: [wideImage],
               },

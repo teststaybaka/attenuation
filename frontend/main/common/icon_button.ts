@@ -1,5 +1,5 @@
 import EventEmitter = require("events");
-import { BUTTON_BORDER_RADIUS } from "./button_styles";
+import { BUTTON_BORDER_RADIUS, NULLIFIED_BUTTON_STYLE } from "./button_styles";
 import { SCHEME } from "./color_scheme";
 import { E } from "@selfage/element/factory";
 import { Ref } from "@selfage/ref";
@@ -17,7 +17,7 @@ export interface IconButton {
 }
 
 export class IconButton extends EventEmitter {
-  public body: HTMLDivElement;
+  public body: HTMLButtonElement;
   private tooltip: HTMLDivElement;
   private displayStyle: string;
   public constructor(
@@ -25,14 +25,14 @@ export class IconButton extends EventEmitter {
     svgElement: SVGSVGElement,
     position: TooltipPosition,
     text: string,
-    showed: boolean
+    toShow: boolean
   ) {
     super();
     let tooltipRef = new Ref<HTMLDivElement>();
-    this.body = E.div(
+    this.body = E.button(
       {
         class: "icon-button",
-        style: `position: relative; ${customButtonStyle}`,
+        style: `${NULLIFIED_BUTTON_STYLE} position: relative; ${customButtonStyle}`,
       },
       svgElement,
       E.divRef(
@@ -80,7 +80,7 @@ export class IconButton extends EventEmitter {
         break;
     }
     this.hideTooltip();
-    if (!showed) {
+    if (!toShow) {
       this.hide();
     }
 
@@ -129,5 +129,9 @@ export class IconButton extends EventEmitter {
 
   public click(): void {
     this.body.click();
+  }
+
+  public remove(): void {
+    this.body.remove();
   }
 }

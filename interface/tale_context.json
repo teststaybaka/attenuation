@@ -1,0 +1,12 @@
+[{
+  "name": "TaleContext",
+  "message": {
+    "fields": [{
+      "name": "taleId",
+      "type": "string"
+    }, {
+      "name": "userId",
+      "type": "string"
+    }]
+  }
+}]

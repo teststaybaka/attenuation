@@ -39,7 +39,10 @@ export default class Text {
     return `Cancel`;
   }
   get writeTaleLabel() {
-    return `Write a tale`;
+    return `Compose`;
+  }
+  get replyTaleLabel() {
+    return `Reply`
   }
   get shuffleTalesLabel() {
     return `Shuffle`;
@@ -143,6 +146,12 @@ export default class Text {
   get showLessButtonLabel() {
     return `Show less`;
   }
+  get showRepliesLabel() {
+    return `Show replies`;
+  }
+  get pinnedLabel() {
+    return `Pinned`;
+  }
   get actionsExpandLabel() {
     return `Show actions`;
   }
@@ -190,5 +199,26 @@ export default class Text {
   }
   get prevImageLabel() {
     return `Previous`;
+  }
+  get noMoreTales() {
+    return `You have reached the end of universe`;
+  }
+  get tryLoadingTalesLabel() {
+    return `Try reload`;
+  }
+  get likeUserLabel() {
+    return `Recommend more`
+  }
+  get likedUserLabel() {
+    return `Recommending more`
+  }
+  get dislikeUserLabel() {
+    return `Recommend less`
+  }
+  get dislikedUserLabel() {
+    return `Recommending less`
+  }
+  get noUserDescription() {
+    return `They didn't say anything about theirselves.`;
   }
 }
