@@ -1,8 +1,10 @@
 import userImage = require("./test_data/user_image.jpg");
 import { normalizeBody } from "../../common/normalize_body";
+import { AccountBasicTabMock } from "./account_basic_tab_mock";
+import { ChangeAvatarTabMock } from "./change_avartar_tab_mock";
 import { AccountPage } from "./container";
-import { AccountBasicTabMock, ChangeAvatarTabMock } from "./mocks";
 import { E } from "@selfage/element/factory";
+import { Ref } from "@selfage/ref";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
 import { TEST_RUNNER, TestCase } from "@selfage/test_runner";
 
@@ -12,10 +14,11 @@ TEST_RUNNER.run({
   name: "AccountPageTest",
   cases: [
     new (class implements TestCase {
-      public name = "Render";
+      public name = "RenderAndSwitch";
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
+        await puppeteerSetViewport(1600, 800);
         let accountBasicTabMock = new AccountBasicTabMock({
           username: "some user name",
           naturalName: "Mr. Your Name",
@@ -23,19 +26,21 @@ TEST_RUNNER.run({
           avatarLargePath: userImage,
         });
         let changeAvatarTabMock = new ChangeAvatarTabMock();
-        let cut = new AccountPage(accountBasicTabMock, changeAvatarTabMock);
+        let menuBodyContainerRef = new Ref<HTMLDivElement>();
         this.container = E.div(
           {},
-          E.div(
-            {
-              style: `position: fixed;`,
-            },
-            ...cut.menuBodies
-          ),
-          E.div({}, cut.body)
+          E.divRef(menuBodyContainerRef, {
+            style: `position: fixed;`,
+          })
         );
-        await puppeteerSetViewport(1600, 800);
         document.body.append(this.container);
+        let cut = new AccountPage(
+          {},
+          (menuBodies) => menuBodyContainerRef.val.append(...menuBodies),
+          () => accountBasicTabMock,
+          () => changeAvatarTabMock
+        );
+        this.container.append(cut.body);
 
         // Execute
         await cut.show();
@@ -82,7 +87,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        cut.accountMenuItem.click();
+        await cut.show();
 
         // Verify
         await asyncAssertScreenshot(

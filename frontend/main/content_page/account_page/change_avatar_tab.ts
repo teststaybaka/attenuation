@@ -22,7 +22,7 @@ export class ChangeAvatarTab extends EventEmitter {
   private static SMALL_IMAGE_LENGTH = 50;
 
   public body: HTMLDivElement;
-  public menuBody: HTMLDivElement;
+  public prependMenuBody: HTMLDivElement;
   // Visible for testing
   public backMenuItem: MenuItem;
   public chooseFileButton: HTMLDivElement;
@@ -35,7 +35,7 @@ export class ChangeAvatarTab extends EventEmitter {
 
   public constructor(
     private avatarCanvas: AvatarCanvas,
-    private serviceClient: WebServiceClient
+    protected serviceClient: WebServiceClient
   ) {
     super();
     let chooseFileButtonRef = new Ref<HTMLDivElement>();
@@ -146,10 +146,9 @@ export class ChangeAvatarTab extends EventEmitter {
     this.uploadButton = uploadButtonRef.val;
     this.uploadStatusText = uploadStatusTextRef.val;
 
-    this.backMenuItem = createBackMenuItem(false);
-    this.menuBody = this.backMenuItem.body;
+    this.backMenuItem = createBackMenuItem();
+    this.prependMenuBody = this.backMenuItem.body;
 
-    this.hide();
     this.backMenuItem.on("action", () => this.emit("back"));
     this.chooseFileButton.addEventListener("click", () => this.chooseFile());
     this.avatarCanvas.on("change", () => this.preview());
@@ -231,7 +230,11 @@ export class ChangeAvatarTab extends EventEmitter {
     this.uploadStatusText.style.display = "none";
     try {
       let blob = await this.avatarCanvas.export();
-      await this.sendUploadAvatarRequest(blob);
+      await this.serviceClient.send(
+        newUploadAvatarServiceRequest({
+          body: blob,
+        })
+      );
     } catch (e) {
       this.uploadStatusText.style.color = SCHEME.error0;
       this.uploadStatusText.textContent = LOCALIZED_TEXT.uploadAvatarError;
@@ -244,21 +247,15 @@ export class ChangeAvatarTab extends EventEmitter {
     this.uploadStatusText.style.display = "block";
   }
 
-  protected async sendUploadAvatarRequest(blob: Blob): Promise<void> {
-    await this.serviceClient.send(
-      newUploadAvatarServiceRequest({
-        body: blob,
-      })
-    );
-  }
-
-  public show(): void {
+  public show(): this {
     this.backMenuItem.show();
     this.body.style.display = "flex";
+    return this;
   }
 
-  public hide(): void {
+  public hide(): this {
     this.backMenuItem.hide();
     this.body.style.display = "none";
+    return this;
   }
 }

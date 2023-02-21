@@ -31,7 +31,7 @@ class RenderCase implements TestCase {
   ) {}
   public async execute() {
     // Prepare
-    let cut = this.buttonFactoryFn(true, E.text("some button"));
+    let cut = this.buttonFactoryFn(true, E.text("some button")).show();
     let resolveFn: Function;
     let resovablePromise = new Promise<void>((resolve) => {
       resolveFn = resolve;

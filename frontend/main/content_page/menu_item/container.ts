@@ -12,17 +12,12 @@ export class MenuItem extends EventEmitter {
 
   public body: HTMLDivElement;
 
-  public constructor(
-    svg: SVGSVGElement,
-    padding: string,
-    label: string,
-    showed: boolean
-  ) {
+  public constructor(svg: SVGSVGElement, padding: string, label: string) {
     super();
     this.body = E.div(
       {
         class: "menu-item",
-        style: `display: flex; flex-flow: row nowrap; align-items: center; height: ${MenuItem.MENU_ITEM_LENGTH}rem; border-radius: ${MenuItem.MENU_ITEM_LENGTH}rem; background-color: ${SCHEME.neutral4}; transition: width .3s .5s linear; overflow: hidden; cursor: pointer;`,
+        style: `display: flex; flex-flow: row nowrap; align-items: center; height: ${MenuItem.MENU_ITEM_LENGTH}rem; box-sizing: border-box; border: .1rem solid ${SCHEME.neutral2}; border-radius: ${MenuItem.MENU_ITEM_LENGTH}rem; background-color: ${SCHEME.neutral4}; transition: width .3s .5s linear; overflow: hidden; cursor: pointer;`,
       },
       E.div(
         {
@@ -40,11 +35,6 @@ export class MenuItem extends EventEmitter {
       )
     );
     this.collapse();
-    if (showed) {
-      this.show();
-    } else {
-      this.hide();
-    }
 
     this.body.addEventListener("transitionend", () =>
       this.emit("transitionEnded")
@@ -57,10 +47,9 @@ export class MenuItem extends EventEmitter {
   public static create(
     svg: SVGSVGElement,
     padding: string,
-    label: string,
-    showed: boolean
+    label: string
   ): MenuItem {
-    return new MenuItem(svg, padding, label, showed);
+    return new MenuItem(svg, padding, label);
   }
 
   private expand(): void {
@@ -71,12 +60,14 @@ export class MenuItem extends EventEmitter {
     this.body.style.width = `${MenuItem.MENU_ITEM_LENGTH}rem`;
   }
 
-  public show(): void {
+  public show(): this {
     this.body.style.display = `flex`;
+    return this;
   }
 
-  public hide(): void {
+  public hide(): this {
     this.body.style.display = `none`;
+    return this;
   }
 
   public remove(): void {

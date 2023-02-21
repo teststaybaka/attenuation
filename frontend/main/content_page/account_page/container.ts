@@ -1,84 +1,131 @@
 import EventEmitter = require("events");
 import { SCHEME } from "../../common/color_scheme";
-import { MenuItem } from "../menu_item/container";
-import {
-  createAccountMenuItem,
-  createHomeMenuItem,
-} from "../menu_item/factory";
 import { AccountBasicTab } from "./account_basic_tab";
 import { ChangeAvatarTab } from "./change_avatar_tab";
+import { ACCOUNT_PAGE_STATE, AccountPageState, Page } from "./state";
 import { E } from "@selfage/element/factory";
+import { copyMessage } from "@selfage/message/copier";
+import { LazyInstance } from "@selfage/once/lazy_instance";
+import { Ref } from "@selfage/ref";
 
 export interface AccountPage {
-  on(event: "home", listener: () => void): this;
+  on(event: "newState", listener: (newState: AccountPageState) => void): this;
 }
 
 export class AccountPage extends EventEmitter {
   public body: HTMLDivElement;
-  public menuBodies = new Array<HTMLDivElement>();
-  // Visible for testing
-  public homeMenuItem: MenuItem;
-  public accountMenuItem: MenuItem;
+  private card: HTMLDivElement;
+  private lazyAccountBasicTab: LazyInstance<AccountBasicTab>;
+  private lazyChangeAvatarTab: LazyInstance<ChangeAvatarTab>;
+  private state: AccountPageState = {};
 
   public constructor(
-    private accountBasic: AccountBasicTab,
-    private changeAvatar: ChangeAvatarTab
+    newState: AccountPageState,
+    private prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
+    private accountBasicTabFactoryFn: () => AccountBasicTab,
+    private changeAvatarTabFactoryFn: () => ChangeAvatarTab
   ) {
     super();
+    let cardRef = new Ref<HTMLDivElement>();
     this.body = E.div(
       {
         class: "account",
         style: `flex-flow: row nowrap; justify-content: center; width: 100vw;`,
       },
-      E.div(
-        {
-          class: "account-card",
-          style: `background-color: ${SCHEME.neutral4}; width: 100%; max-width: 100rem;`,
-        },
-        accountBasic.body,
-        changeAvatar.body
-      )
+      E.divRef(cardRef, {
+        class: "account-card",
+        style: `background-color: ${SCHEME.neutral4}; width: 100%; max-width: 100rem;`,
+      })
     );
+    this.card = cardRef.val;
 
-    this.homeMenuItem = createHomeMenuItem(false);
-    this.accountMenuItem = createAccountMenuItem(false);
-    this.menuBodies.push(
-      this.changeAvatar.menuBody,
-      this.homeMenuItem.body,
-      this.accountMenuItem.body
+    this.lazyAccountBasicTab = new LazyInstance(() => {
+      let tab = this.accountBasicTabFactoryFn();
+      this.card.append(tab.body);
+      tab.on("changeAvatar", () => this.goToChangeAvatar());
+      return tab;
+    });
+    this.lazyChangeAvatarTab = new LazyInstance(() => {
+      let tab = this.changeAvatarTabFactoryFn();
+      this.card.append(tab.body);
+      tab.on("back", () => this.goToAccountBasic());
+      this.prependMenuBodiesFn([tab.prependMenuBody]);
+      return tab;
+    });
+
+    this.updateState(newState);
+  }
+
+  public static create(
+    newState: AccountPageState,
+    prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void
+  ): AccountPage {
+    return new AccountPage(
+      newState,
+      prependMenuBodiesFn,
+      AccountBasicTab.create,
+      ChangeAvatarTab.create
     );
-
-    this.hide();
-    this.homeMenuItem.on("action", () => this.emit("home"));
-    this.accountMenuItem.on("action", () => this.showAccountBasic());
-    this.accountBasic.on("changeAvatar", () => this.showChangeAvatar());
-    this.changeAvatar.on("back", () => this.showAccountBasic());
   }
 
-  public static create(): AccountPage {
-    return new AccountPage(AccountBasicTab.create(), ChangeAvatarTab.create());
+  public updateState(newState: AccountPageState): void {
+    if (!newState.page) {
+      newState.page = Page.Basic;
+    }
+    if (newState.page !== this.state.page) {
+      switch (this.state.page) {
+        case Page.Basic:
+          this.lazyAccountBasicTab.get().hide();
+          break;
+        case Page.ChangeAvatar:
+          this.lazyChangeAvatarTab.get().hide();
+          break;
+      }
+    }
+    this.state = newState;
   }
 
-  private showChangeAvatar(): void {
-    this.accountBasic.hide();
-    this.changeAvatar.show();
+  private updateStateFromInternal(newState: AccountPageState): void {
+    this.updateState(newState);
+    this.showPage();
+    this.emit("newState", this.state);
   }
 
-  private async showAccountBasic(): Promise<void> {
-    this.changeAvatar.hide();
-    await this.accountBasic.show();
+  private async showPage(): Promise<void> {
+    switch (this.state.page) {
+      case Page.Basic:
+        await this.lazyAccountBasicTab.get().show();
+        break;
+      case Page.ChangeAvatar:
+        this.lazyChangeAvatarTab.get().show();
+        break;
+    }
   }
 
-  public async show(): Promise<void> {
-    this.homeMenuItem.show();
-    this.accountMenuItem.show();
+  private copyState(): AccountPageState {
+    return copyMessage(this.state, ACCOUNT_PAGE_STATE);
+  }
+
+  private goToChangeAvatar(): void {
+    let newState = this.copyState();
+    newState.page = Page.ChangeAvatar;
+    this.updateStateFromInternal(newState);
+  }
+
+  private goToAccountBasic(): void {
+    let newState = this.copyState();
+    newState.page = Page.Basic;
+    this.updateStateFromInternal(newState);
+  }
+
+  public show(): this {
     this.body.style.display = "flex";
-    await this.showAccountBasic();
+    this.showPage();
+    return this;
   }
 
-  public hide(): void {
-    this.homeMenuItem.hide();
-    this.accountMenuItem.hide();
+  public hide(): this {
     this.body.style.display = "none";
+    return this;
   }
 }

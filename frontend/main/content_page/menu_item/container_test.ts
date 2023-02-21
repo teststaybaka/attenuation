@@ -20,9 +20,8 @@ TEST_RUNNER.run({
         let cut = new MenuItem(
           createHomeIcon(SCHEME.neutral1),
           `1rem`,
-          "A long long test label",
-          true
-        );
+          "A long long test label"
+        ).show();
         this.container = E.div({}, cut.body);
 
         // Execute

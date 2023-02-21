@@ -95,6 +95,9 @@ export default class Text {
   get textImageInterleavedOption() {
     return `An article that can insert iamges into texts.`;
   }
+  get replyToLabel() {
+    return `Reply to`;
+  }
   get quickLayoutTextLabel() {
     return `Write something to share`;
   }

@@ -4,52 +4,56 @@ import {
   createArrowIcon,
   createHomeIcon,
   createPlusIcon,
+  createReplyIcon,
   createShuffleIcon,
 } from "../../common/icons";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { MenuItem } from "./container";
 
-export function createHomeMenuItem(showed: boolean): MenuItem {
+export function createHomeMenuItem(): MenuItem {
   return MenuItem.create(
     createHomeIcon(SCHEME.neutral1),
     `1rem`,
     LOCALIZED_TEXT.homeLabel,
-    showed
   );
 }
 
-export function createShuffleMenuItem(showed: boolean): MenuItem {
+export function createShuffleMenuItem(): MenuItem {
   return MenuItem.create(
     createShuffleIcon(SCHEME.neutral1),
     `1rem`,
     LOCALIZED_TEXT.shuffleTalesLabel,
-    showed
   );
 }
 
-export function createWritePostMenuItem(showed: boolean): MenuItem {
+export function createWritePostMenuItem(): MenuItem {
   return MenuItem.create(
-    createPlusIcon(SCHEME.neutral1),
+    createPlusIcon(SCHEME.primary1),
     `1rem`,
     LOCALIZED_TEXT.writeTaleLabel,
-    showed
   );
 }
 
-export function createAccountMenuItem(showed: boolean): MenuItem {
+export function createReplyPostMenuItem(): MenuItem {
+  return MenuItem.create(
+    createReplyIcon(SCHEME.primary1),
+    `1rem`,
+    LOCALIZED_TEXT.replyTaleLabel,
+  );
+}
+
+export function createAccountMenuItem(): MenuItem {
   return MenuItem.create(
     createAccountIcon(SCHEME.neutral1),
     `1rem`,
     LOCALIZED_TEXT.accountLabel,
-    showed
   );
 }
 
-export function createBackMenuItem(showed: boolean): MenuItem {
+export function createBackMenuItem(): MenuItem {
   return MenuItem.create(
     createArrowIcon(SCHEME.neutral1),
     `1rem`,
     LOCALIZED_TEXT.backLabel,
-    showed
   );
 }

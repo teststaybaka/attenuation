@@ -23,9 +23,8 @@ class RenderOversizeCentering implements TestCase {
       `width: 1rem; height: 1rem;`,
       createCommentIcon(SCHEME.neutral1),
       this.position,
-      "some text",
-      true
-    );
+      "some text"
+    ).show();
     this.container = E.div(
       {
         style: `display: inline-block; background-color: red; margin: 10rem;`,
@@ -66,9 +65,8 @@ class RenderCenteringWithin implements TestCase {
       `width: 12rem; height: 12rem;`,
       createCommentIcon(SCHEME.neutral1),
       this.position,
-      "some text",
-      true
-    );
+      "some text"
+    ).show();
     this.container = E.div(
       {
         style: `display: inline-block; background-color: red; margin: 10rem;`,

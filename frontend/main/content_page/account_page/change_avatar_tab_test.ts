@@ -1,7 +1,7 @@
 import wideImage = require("./test_data/wide.jpeg");
 import { normalizeBody } from "../../common/normalize_body";
+import { AvatarCanvas } from "./avatar_canvas";
 import { ChangeAvatarTab } from "./change_avatar_tab";
-import { AvatarCanvasMock } from "./mocks";
 import { Counter } from "@selfage/counter";
 import { E } from "@selfage/element/factory";
 import { asyncAssertScreenshot } from "@selfage/screenshot_test_matcher";
@@ -19,7 +19,7 @@ TEST_RUNNER.run({
       private container: HTMLDivElement;
       public async execute() {
         // Prepare
-        let avatarCanvasMock = new (class extends AvatarCanvasMock {
+        let avatarCanvasMock = new (class extends AvatarCanvas {
           public async load(imageFile: File): Promise<void> {
             await new Promise<void>((resolve) => {
               let fileReader = new FileReader();
@@ -42,7 +42,9 @@ TEST_RUNNER.run({
             });
           }
         })();
-        let cut = new ChangeAvatarTab(avatarCanvasMock, undefined);
+
+        // Execute
+        let cut = new ChangeAvatarTab(avatarCanvasMock, undefined).show();
         this.container = E.div(
           {},
           E.div(
@@ -55,9 +57,6 @@ TEST_RUNNER.run({
         );
         document.body.style.width = "1000px";
         document.body.appendChild(this.container);
-
-        // Execute
-        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -108,13 +107,13 @@ TEST_RUNNER.run({
       public async execute() {
         // Prepare
         let cut = new ChangeAvatarTab(
-          new (class extends AvatarCanvasMock {
+          new (class extends AvatarCanvas {
             public async load(imageFile: File): Promise<void> {
               throw new Error("load error");
             }
           })(),
           undefined
-        );
+        ).show();
         this.container = E.div(
           {},
           E.div(
@@ -127,7 +126,6 @@ TEST_RUNNER.run({
         );
         document.body.style.width = "1000px";
         document.body.appendChild(this.container);
-        cut.show();
 
         // Execute
         await puppeteerWaitForFileChooser();
@@ -178,7 +176,7 @@ TEST_RUNNER.run({
           }
         })();
         let cut = new ChangeAvatarTab(
-          new (class extends AvatarCanvasMock {
+          new (class extends AvatarCanvas {
             public async export(): Promise<Blob> {
               let input = E.input({ type: "file" });
               await puppeteerWaitForFileChooser();
@@ -188,7 +186,7 @@ TEST_RUNNER.run({
             }
           })(),
           clientMock
-        );
+        ).show();
         this.container = E.div(
           {},
           E.div(
@@ -201,7 +199,6 @@ TEST_RUNNER.run({
         );
         document.body.style.width = "1000px";
         document.body.appendChild(this.container);
-        cut.show();
 
         // Execute
         await cut.uploadButton.click();
@@ -235,7 +232,7 @@ TEST_RUNNER.run({
       name: "Back",
       execute: () => {
         // Prepare
-        let cut = new ChangeAvatarTab(new AvatarCanvasMock(), undefined);
+        let cut = new ChangeAvatarTab(new AvatarCanvas(), undefined);
         let isBack = false;
         cut.on("back", () => (isBack = true));
 

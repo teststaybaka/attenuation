@@ -67,12 +67,14 @@ export abstract class BlockingButton extends EventEmitter {
   }
   protected abstract disableOverride(): void;
 
-  public show(): void {
+  public show(): this {
     this.body.style.display = this.displayStyle;
+    return this;
   }
 
-  public hide(): void {
+  public hide(): this {
     this.body.style.display = "none";
+    return this;
   }
 
   public remove(): void {

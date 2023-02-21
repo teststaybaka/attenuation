@@ -1,5 +1,4 @@
 import EventEmitter = require("events");
-import { GetUserInfoResponse } from "../../../../interface/user_service";
 import { SCHEME } from "../../common/color_scheme";
 import { LOCALIZED_TEXT } from "../../common/locales/localized_text";
 import { newGetUserInfoServiceRequest } from "../../common/user_service_requests";
@@ -21,14 +20,13 @@ export class AccountBasicTab extends EventEmitter {
   public body: HTMLDivElement;
   // Visible for testing
   public avatarContainer: HTMLDivElement;
-
   private avatarImage: HTMLImageElement;
   private avatarChangeHint: HTMLDivElement;
   private usernameValue: HTMLDivElement;
   private naturalNameValue: HTMLDivElement;
   private emailValue: HTMLDivElement;
 
-  public constructor(private webServiceClient: WebServiceClient) {
+  public constructor(protected webServiceClient: WebServiceClient) {
     super();
     let avatarContainerRef = new Ref<HTMLDivElement>();
     let avatarImagePef = new Ref<HTMLImageElement>();
@@ -125,7 +123,6 @@ export class AccountBasicTab extends EventEmitter {
     this.naturalNameValue = naturalNameValueRef.val;
     this.emailValue = emailValueRef.val;
 
-    this.hide();
     this.hideChangeAvatarHint();
     this.avatarContainer.addEventListener("mouseenter", () =>
       this.showChangeAvatarHint()
@@ -159,20 +156,17 @@ export class AccountBasicTab extends EventEmitter {
 
   public async show(): Promise<void> {
     this.body.style.display = "flex";
-    let response = await this.loadBasicUserData();
+    let response = await this.webServiceClient.send(
+      newGetUserInfoServiceRequest({ body: {} })
+    );
     this.usernameValue.textContent = response.username;
     this.naturalNameValue.textContent = response.naturalName;
     this.emailValue.textContent = response.email;
     this.avatarImage.src = response.avatarLargePath;
   }
 
-  protected loadBasicUserData(): Promise<GetUserInfoResponse> {
-    return this.webServiceClient.send(
-      newGetUserInfoServiceRequest({ body: {} })
-    );
-  }
-
-  public hide(): void {
+  public hide(): this {
     this.body.style.display = "none";
+    return this;
   }
 }

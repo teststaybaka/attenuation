@@ -24,8 +24,7 @@ export class IconButton extends EventEmitter {
     customButtonStyle: string,
     svgElement: SVGSVGElement,
     position: TooltipPosition,
-    text: string,
-    toShow: boolean
+    text: string
   ) {
     super();
     let tooltipRef = new Ref<HTMLDivElement>();
@@ -80,9 +79,6 @@ export class IconButton extends EventEmitter {
         break;
     }
     this.hideTooltip();
-    if (!toShow) {
-      this.hide();
-    }
 
     this.tooltip.addEventListener("transitionend", () =>
       this.emit("tooltipShowed")
@@ -96,16 +92,9 @@ export class IconButton extends EventEmitter {
     customButtonStyle: string,
     svgElement: SVGSVGElement,
     position: TooltipPosition,
-    text: string,
-    showed: boolean
+    text: string
   ): IconButton {
-    return new IconButton(
-      customButtonStyle,
-      svgElement,
-      position,
-      text,
-      showed
-    );
+    return new IconButton(customButtonStyle, svgElement, position, text);
   }
 
   private showTootlip(): void {
@@ -119,12 +108,14 @@ export class IconButton extends EventEmitter {
     this.tooltip.style.opacity = "0";
   }
 
-  public show(): void {
+  public show(): this {
     this.body.style.display = this.displayStyle;
+    return this;
   }
 
-  public hide(): void {
+  public hide(): this {
     this.body.style.display = "none";
+    return this;
   }
 
   public click(): void {
