@@ -20,7 +20,6 @@ export class AccountPage extends EventEmitter {
   private state: AccountPageState = {};
 
   public constructor(
-    newState: AccountPageState,
     private prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
     private accountBasicTabFactoryFn: () => AccountBasicTab,
     private changeAvatarTabFactoryFn: () => ChangeAvatarTab
@@ -52,80 +51,77 @@ export class AccountPage extends EventEmitter {
       this.prependMenuBodiesFn([tab.prependMenuBody]);
       return tab;
     });
-
-    this.updateState(newState);
   }
 
   public static create(
-    newState: AccountPageState,
     prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void
   ): AccountPage {
     return new AccountPage(
-      newState,
       prependMenuBodiesFn,
       AccountBasicTab.create,
       ChangeAvatarTab.create
     );
   }
 
-  public updateState(newState: AccountPageState): void {
-    if (!newState.page) {
-      newState.page = Page.Basic;
-    }
-    if (newState.page !== this.state.page) {
-      switch (this.state.page) {
-        case Page.Basic:
-          this.lazyAccountBasicTab.get().hide();
-          break;
-        case Page.ChangeAvatar:
-          this.lazyChangeAvatarTab.get().hide();
-          break;
-      }
-    }
-    this.state = newState;
+  private goToChangeAvatar(): void {
+    let newState = this.copyState();
+    newState.page = Page.ChangeAvatar;
+    this.showFromInternal(newState);
   }
 
-  private updateStateFromInternal(newState: AccountPageState): void {
-    this.updateState(newState);
-    this.showPage();
-    this.emit("newState", this.state);
-  }
-
-  private async showPage(): Promise<void> {
-    switch (this.state.page) {
-      case Page.Basic:
-        await this.lazyAccountBasicTab.get().show();
-        break;
-      case Page.ChangeAvatar:
-        this.lazyChangeAvatarTab.get().show();
-        break;
-    }
+  private goToAccountBasic(): void {
+    let newState = this.copyState();
+    newState.page = Page.Basic;
+    this.showFromInternal(newState);
   }
 
   private copyState(): AccountPageState {
     return copyMessage(this.state, ACCOUNT_PAGE_STATE);
   }
 
-  private goToChangeAvatar(): void {
-    let newState = this.copyState();
-    newState.page = Page.ChangeAvatar;
-    this.updateStateFromInternal(newState);
+  private showFromInternal(newState: AccountPageState): void {
+    this.show(newState);
+    this.emit("newState", this.state);
   }
 
-  private goToAccountBasic(): void {
-    let newState = this.copyState();
-    newState.page = Page.Basic;
-    this.updateStateFromInternal(newState);
-  }
-
-  public show(): this {
+  public show(newState?: AccountPageState): this {
     this.body.style.display = "flex";
-    this.showPage();
+
+    if (!newState) {
+      newState = {};
+    }
+    if (!newState.page) {
+      newState.page = Page.Basic;
+    }
+    if (newState.page !== this.state.page) {
+      this.hidePage();
+    }
+    switch (newState.page) {
+      case Page.Basic:
+        this.lazyAccountBasicTab.get().show();
+        break;
+      case Page.ChangeAvatar:
+        this.lazyChangeAvatarTab.get().show();
+        break;
+    }
+    this.state = newState;
     return this;
+  }
+
+  private async hidePage(): Promise<void> {
+    switch (this.state.page) {
+      case Page.Basic:
+        this.lazyAccountBasicTab.get().hide();
+        break;
+      case Page.ChangeAvatar:
+        this.lazyChangeAvatarTab.get().hide();
+        break;
+    }
   }
 
   public hide(): this {
     this.body.style.display = "none";
+    this.hidePage();
     return this;
   }
 }

@@ -1,66 +1,46 @@
-import { EnumDescriptor } from '@selfage/message/descriptor';
-import { EventEmitter } from 'events';
-import { ObservableDescriptor } from '@selfage/observable/descriptor';
+import { EnumDescriptor, MessageDescriptor } from '@selfage/message/descriptor';
+import { HomePageState, HOME_PAGE_STATE } from './home_page/state';
+import { AccountPageState, ACCOUNT_PAGE_STATE } from './account_page/state';
 
 export enum Page {
-  HOME = 1,
-  ACCOUNT = 2,
+  Home = 1,
+  Account = 2,
 }
 
 export let PAGE: EnumDescriptor<Page> = {
   name: 'Page',
   values: [
     {
-      name: 'HOME',
+      name: 'Home',
       value: 1,
     },
     {
-      name: 'ACCOUNT',
+      name: 'Account',
       value: 2,
     },
   ]
 }
 
-export interface ContentState {
-  on(event: 'page', listener: (newValue: Page, oldValue: Page) => void): this;
-  on(event: 'init', listener: () => void): this;
+export interface ContentPageState {
+  page?: Page,
+  home?: HomePageState,
+  account?: AccountPageState,
 }
 
-export class ContentState extends EventEmitter {
-  private page_?: Page;
-  get page(): Page {
-    return this.page_;
-  }
-  set page(value: Page) {
-    let oldValue = this.page_;
-    if (value === oldValue) {
-      return;
-    }
-    this.page_ = value;
-    this.emit('page', this.page_, oldValue);
-  }
-
-  public triggerInitialEvents(): void {
-    if (this.page_ !== undefined) {
-      this.emit('page', this.page_, undefined);
-    }
-    this.emit('init');
-  }
-
-  public toJSON(): Object {
-    return {
-      page: this.page,
-    };
-  }
-}
-
-export let CONTENT_STATE: ObservableDescriptor<ContentState> = {
-  name: 'ContentState',
-  constructor: ContentState,
+export let CONTENT_PAGE_STATE: MessageDescriptor<ContentPageState> = {
+  name: 'ContentPageState',
   fields: [
     {
       name: 'page',
       enumType: PAGE,
+    },
+    {
+      name: 'home',
+      messageType: HOME_PAGE_STATE,
+    },
+    {
+      name: 'account',
+      messageType: ACCOUNT_PAGE_STATE,
     },
   ]
 };

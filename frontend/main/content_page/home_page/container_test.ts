@@ -44,7 +44,6 @@ TEST_RUNNER.run({
 
         // Execute
         let cut = new HomePage(
-          {},
           (bodies) => this.container.append(...bodies),
           (menuBodies) => menuContainerRef.val.prepend(...menuBodies),
           (menuBodies) => menuContainerRef.val.append(...menuBodies),
@@ -369,7 +368,6 @@ TEST_RUNNER.run({
 
         // Execute
         let cut = new HomePage(
-          { page: Page.List, list: [{}, { taleId: "tale0" }] },
           (bodies) => this.container.append(...bodies),
           (menuBodies) => menuContainerRef.val.prepend(...menuBodies),
           (menuBodies) => menuContainerRef.val.append(...menuBodies),
@@ -392,7 +390,7 @@ TEST_RUNNER.run({
               quickTalesPageMockData
             );
           }
-        ).show();
+        ).show({ page: Page.List, list: [{}, { taleId: "tale0" }] });
 
         // Verify
         await asyncAssertScreenshot(
@@ -422,7 +420,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        cut.updateState({
+        cut.show({
           list: [{ taleId: "tale0" }],
         });
 
@@ -434,7 +432,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        cut.updateState({
+        cut.show({
           page: Page.Reply,
         });
 

@@ -19,7 +19,6 @@ export class HomePage extends EventEmitter {
   public writeTaleMenuItem: MenuItem;
   private state: HomePageState = {};
   public constructor(
-    newState: HomePageState,
     private appendBodiesFn: (bodies: Array<HTMLElement>) => void,
     private prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
     private appendMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
@@ -48,19 +47,15 @@ export class HomePage extends EventEmitter {
     this.writeTaleMenuItem = createWritePostMenuItem();
     this.appendMenuBodiesFn([this.writeTaleMenuItem.body]);
     this.writeTaleMenuItem.on("action", () => this.goToWriteTalePage());
-
-    this.updateState(newState);
   }
 
   public static create(
-    newState: HomePageState,
     appendBodiesFn: (bodies: Array<HTMLElement>) => void,
     prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
     appendMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void,
     appendControllerBodiesFn: (controllerBodies: Array<HTMLElement>) => void
   ): HomePage {
     return new HomePage(
-      newState,
       appendBodiesFn,
       prependMenuBodiesFn,
       appendMenuBodiesFn,
@@ -78,7 +73,52 @@ export class HomePage extends EventEmitter {
     page.remove();
   }
 
-  public updateState(newState: HomePageState): void {
+  private goToWriteTalePage(): void {
+    let newState = this.copyToNewState();
+    newState.page = Page.Write;
+    this.showFromInternal(newState);
+  }
+
+  private goBackFromWriteTalePage(): void {
+    let newState = this.copyToNewState();
+    newState.page = Page.List;
+    this.showFromInternal(newState);
+  }
+
+  private goBackFromTalesListPage(): void {
+    let newState = this.copyToNewState();
+    newState.list.pop();
+    this.showFromInternal(newState);
+  }
+
+  private goToPinedTalesListPage(context: TaleContext): void {
+    let newState = this.copyToNewState();
+    newState.list.push(context);
+    this.showFromInternal(newState);
+  }
+
+  private goToReplyTalePage(taleId: string): void {
+    let newState = this.copyToNewState();
+    newState.page = Page.Reply;
+    newState.reply = taleId;
+    this.showFromInternal(newState);
+  }
+
+  private copyToNewState(): HomePageState {
+    return copyMessage(this.state, HOME_PAGE_STATE);
+  }
+
+  private showFromInternal(newState: HomePageState): void {
+    this.show(newState);
+    this.emit("newState", this.state);
+  }
+
+  public show(newState?: HomePageState): this {
+    this.writeTaleMenuItem.show();
+
+    if (!newState) {
+      newState = {};
+    }
     if (!newState.page) {
       newState.page = Page.List;
     }
@@ -98,16 +138,16 @@ export class HomePage extends EventEmitter {
     }
 
     if (newState.page !== this.state.page) {
-      this.hide();
+      this.hidePage();
       switch (newState.page) {
         case Page.List:
-          this.createTalesListPage(newState.list[newState.list.length - 1]);
+          this.showTalesListPage(newState.list[newState.list.length - 1]);
           break;
         case Page.Write:
-          this.createWriteTalePage();
+          this.showWriteTalePage();
           break;
         case Page.Reply:
-          this.createWriteTalePage(newState.reply);
+          this.showWriteTalePage(newState.reply);
           break;
       }
     } else {
@@ -121,114 +161,24 @@ export class HomePage extends EventEmitter {
           );
           if (newContextKey !== oldContextKey) {
             this.talesListPages.get(oldContextKey).hide();
-            this.createTalesListPage(newState.list[newState.list.length - 1]);
           }
+          this.showTalesListPage(newState.list[newState.list.length - 1]);
           break;
+        case Page.Write:
+          this.showWriteTalePage();
         case Page.Reply:
           if (newState.reply !== this.state.reply) {
             this.writeTalePages.get(this.state.reply).hide();
-            this.createWriteTalePage(newState.reply);
           }
+          this.showWriteTalePage(newState.reply);
           break;
       }
     }
     this.state = newState;
-  }
-
-  private updateStateFromInternal(newState: HomePageState): void {
-    this.updateState(newState);
-    this.show();
-    this.emit("newState", this.state);
-  }
-
-  private createWriteTalePage(taleId: string = ""): void {
-    if (this.writeTalePages.has(taleId)) {
-      return;
-    }
-
-    let writeTalePage = this.writeTalePageFactoryFn(taleId);
-    this.writeTalePages.set(taleId, writeTalePage);
-    this.appendBodiesFn([writeTalePage.body]);
-    this.prependMenuBodiesFn([writeTalePage.prependMenuBody]);
-    writeTalePage.on("back", () => this.goBackFromWriteTalePage());
-  }
-
-  private createTalesListPage(context: TaleContext): void {
-    let contextKey = HomePage.taleContextToKey(context);
-    if (this.talesListPages.has(contextKey)) {
-      return;
-    }
-
-    let talesListPage = this.talesListPageFactoryFn(
-      context,
-      this.appendBodiesFn,
-      this.prependMenuBodiesFn,
-      this.appendMenuBodiesFn,
-      this.appendControllerBodiesFn
-    );
-    this.talesListPages.set(contextKey, talesListPage);
-    talesListPage.on("back", () => this.goBackFromTalesListPage());
-    talesListPage.on("pin", (context) => this.goToPinedTalesListPage(context));
-    talesListPage.on("reply", (taleId) => this.goToReplyTalePage(taleId));
-  }
-
-  private copyToNewState(): HomePageState {
-    return copyMessage(this.state, HOME_PAGE_STATE);
-  }
-
-  private goToWriteTalePage(): void {
-    let newState = this.copyToNewState();
-    newState.page = Page.Write;
-    this.updateStateFromInternal(newState);
-  }
-
-  private goBackFromWriteTalePage(): void {
-    let newState = this.copyToNewState();
-    newState.page = Page.List;
-    this.updateStateFromInternal(newState);
-  }
-
-  private goBackFromTalesListPage(): void {
-    let newState = this.copyToNewState();
-    newState.list.pop();
-    this.updateStateFromInternal(newState);
-  }
-
-  private goToPinedTalesListPage(context: TaleContext): void {
-    let newState = this.copyToNewState();
-    newState.list.push(context);
-    this.updateStateFromInternal(newState);
-  }
-
-  private goToReplyTalePage(taleId: string): void {
-    let newState = this.copyToNewState();
-    newState.page = Page.Reply;
-    newState.reply = taleId;
-    this.updateStateFromInternal(newState);
-  }
-
-  public show(): this {
-    switch (this.state.page) {
-      case Page.List:
-        this.talesListPages
-          .get(
-            HomePage.taleContextToKey(
-              this.state.list[this.state.list.length - 1]
-            )
-          )
-          .show();
-        break;
-      case Page.Write:
-        this.writeTalePages.get("").show();
-        break;
-      case Page.Reply:
-        this.writeTalePages.get(this.state.reply).show();
-        break;
-    }
     return this;
   }
 
-  public hide(): this {
+  private hidePage(): void {
     switch (this.state.page) {
       case Page.List:
         this.talesListPages
@@ -246,6 +196,44 @@ export class HomePage extends EventEmitter {
         this.writeTalePages.get(this.state.reply).hide();
         break;
     }
+  }
+
+  private showWriteTalePage(taleId: string = ""): void {
+    if (this.writeTalePages.has(taleId)) {
+      this.writeTalePages.get(taleId).show();
+      return;
+    }
+
+    let writeTalePage = this.writeTalePageFactoryFn(taleId).show();
+    this.writeTalePages.set(taleId, writeTalePage);
+    this.appendBodiesFn([writeTalePage.body]);
+    this.prependMenuBodiesFn([writeTalePage.prependMenuBody]);
+    writeTalePage.on("back", () => this.goBackFromWriteTalePage());
+  }
+
+  private showTalesListPage(context: TaleContext): void {
+    let contextKey = HomePage.taleContextToKey(context);
+    if (this.talesListPages.has(contextKey)) {
+      this.talesListPages.get(contextKey).show();
+      return;
+    }
+
+    let talesListPage = this.talesListPageFactoryFn(
+      context,
+      this.appendBodiesFn,
+      this.prependMenuBodiesFn,
+      this.appendMenuBodiesFn,
+      this.appendControllerBodiesFn
+    ).show();
+    this.talesListPages.set(contextKey, talesListPage);
+    talesListPage.on("back", () => this.goBackFromTalesListPage());
+    talesListPage.on("pin", (context) => this.goToPinedTalesListPage(context));
+    talesListPage.on("reply", (taleId) => this.goToReplyTalePage(taleId));
+  }
+
+  public hide(): this {
+    this.hidePage();
+    this.writeTaleMenuItem.hide();
     return this;
   }
 

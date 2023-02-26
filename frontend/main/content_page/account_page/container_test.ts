@@ -35,7 +35,6 @@ TEST_RUNNER.run({
         );
         document.body.append(this.container);
         let cut = new AccountPage(
-          {},
           (menuBodies) => menuBodyContainerRef.val.append(...menuBodies),
           () => accountBasicTabMock,
           () => changeAvatarTabMock
@@ -43,7 +42,7 @@ TEST_RUNNER.run({
         this.container.append(cut.body);
 
         // Execute
-        await cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(
@@ -87,7 +86,7 @@ TEST_RUNNER.run({
         );
 
         // Execute
-        await cut.show();
+        cut.show();
 
         // Verify
         await asyncAssertScreenshot(

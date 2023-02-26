@@ -4,15 +4,19 @@ import { ChangeAvatarTabMock } from "./change_avartar_tab_mock";
 import { AccountPage } from "./container";
 
 export class AccountPageMock extends AccountPage {
-  public constructor() {
+  public constructor(
+    prependMenuBodiesFn: (menuBodies: Array<HTMLElement>) => void
+  ) {
     super(
-      new AccountBasicTabMock({
-        username: "some user name",
-        naturalName: "Mr. Your Name",
-        email: "xxxxx@gmail.com",
-        avatarLargePath: userImage,
-      }),
-      new ChangeAvatarTabMock()
+      prependMenuBodiesFn,
+      () =>
+        new AccountBasicTabMock({
+          username: "some user name",
+          naturalName: "Mr. Your Name",
+          email: "xxxxx@gmail.com",
+          avatarLargePath: userImage,
+        }),
+      () => new ChangeAvatarTabMock()
     );
   }
 }

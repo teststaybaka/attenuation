@@ -2,19 +2,27 @@
   "name": "Page",
   "enum": {
     "values": [{
-      "name": "HOME",
+      "name": "Home",
       "value": 1
     }, {
-      "name": "ACCOUNT",
+      "name": "Account",
       "value": 2
     }]
   }
 }, {
-  "name": "ContentState",
-  "observable": {
+  "name": "ContentPageState",
+  "message": {
     "fields": [{
-      "name": "tab",
+      "name": "page",
       "type": "Page"
+    }, {
+      "name": "home",
+      "type": "HomePageState",
+      "import": "./home_page/state"
+    }, {
+      "name": "account",
+      "type": "AccountPageState",
+      "import": "./account_page/state"
     }]
   }
 }]
